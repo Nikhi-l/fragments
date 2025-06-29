@@ -33,7 +33,7 @@ export function ChatSettings({
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground h-6 w-6 rounded-sm">
+              <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400 h-auto w-auto p-1">
                 <Settings2 className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
