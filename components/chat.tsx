@@ -1,3 +1,4 @@
+import { LandingPage } from './landing-page'
 import { Message } from '@/lib/messages'
 import { FragmentSchema } from '@/lib/schema'
 import { ExecutionResult } from '@/lib/types'
@@ -23,6 +24,18 @@ export function Chat({
       chatContainer.scrollTop = chatContainer.scrollHeight
     }
   }, [JSON.stringify(messages)])
+
+  // Show landing page when there are no messages
+  if (messages.length === 0 && !isLoading) {
+    return (
+      <div
+        id="chat-container"
+        className="flex flex-col pb-12 gap-2 overflow-y-auto max-h-full"
+      >
+        <LandingPage />
+      </div>
+    )
+  }
 
   return (
     <div
