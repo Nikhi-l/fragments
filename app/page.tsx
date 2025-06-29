@@ -46,6 +46,7 @@ export default function Home() {
   const [authView, setAuthView] = useState<ViewType>('sign_in')
   const [isRateLimited, setIsRateLimited] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [isCameraLoading, setIsCameraLoading] = useState(false)
   const { session, userTeam } = useAuth(setAuthDialog, setAuthView)
 
   const filteredModels = modelsList.models.filter((model) => {
@@ -190,8 +191,9 @@ export default function Home() {
       return setAuthDialog(true)
     }
 
-    if (isLoading) {
+    if (isLoading || isCameraLoading) {
       stop()
+      setIsCameraLoading(false)
     }
 
     const content: Message['content'] = [{ type: 'text', text: chatInput }]
@@ -210,25 +212,34 @@ export default function Home() {
 
     // Check if user input contains "camera" keyword
     if (chatInput.toLowerCase().includes('camera')) {
-      // Create hardcoded camera feed fragment
-      const cameraFragment = createCameraFeedFragment(chatInput)
+      // Set loading state to simulate LLM processing
+      setIsCameraLoading(true)
       
-      // Set the fragment directly without LLM call
-      setFragment(cameraFragment)
-      setCurrentPreview({ fragment: cameraFragment, result: undefined })
-      setCurrentTab('fragment')
-      
-      // Add assistant response
-      addMessage({
-        role: 'assistant',
-        content: [{ type: 'text', text: cameraFragment.commentary || '' }],
-        object: cameraFragment,
-      })
+      // Add a 2-second delay to simulate LLM call
+      setTimeout(() => {
+        // Create hardcoded camera feed fragment
+        const cameraFragment = createCameraFeedFragment(chatInput)
+        
+        // Set the fragment directly without LLM call
+        setFragment(cameraFragment)
+        setCurrentPreview({ fragment: cameraFragment, result: undefined })
+        setCurrentTab('fragment')
+        
+        // Add assistant response
+        addMessage({
+          role: 'assistant',
+          content: [{ type: 'text', text: cameraFragment.commentary || '' }],
+          object: cameraFragment,
+        })
 
-      posthog.capture('camera_feed_triggered', {
-        store_name: cameraFragment.store_name,
-        trigger: 'hardcoded'
-      })
+        // Stop loading state
+        setIsCameraLoading(false)
+
+        posthog.capture('camera_feed_triggered', {
+          store_name: cameraFragment.store_name,
+          trigger: 'hardcoded'
+        })
+      }, 2000) // 2-second delay
     } else {
       // Normal LLM processing for non-camera requests
       submit({
@@ -299,6 +310,7 @@ export default function Home() {
 
   function handleClearChat() {
     stop()
+    setIsCameraLoading(false)
     setChatInput('')
     setFiles([])
     setMessages([])
@@ -321,6 +333,9 @@ export default function Home() {
     setCurrentPreview({ fragment: undefined, result: undefined })
   }
 
+  // Combine loading states for UI
+  const isAnyLoading = isLoading || isCameraLoading
+
   return (
     <main className="flex min-h-screen max-h-screen">
       {supabase && (
@@ -342,21 +357,24 @@ export default function Home() {
             onSocialClick={handleSocialClick}
             onClear={handleClearChat}
             canClear={messages.length > 0}
-            canUndo={messages.length > 1 && !isLoading}
+            canUndo={messages.length > 1 && !isAnyLoading}
             onUndo={handleUndo}
           />
           <Chat
             messages={messages}
-            isLoading={isLoading}
+            isLoading={isAnyLoading}
             setCurrentPreview={setCurrentPreview}
           />
           <ChatInput
             retry={retry}
             isErrored={error !== undefined}
             errorMessage={errorMessage}
-            isLoading={isLoading}
+            isLoading={isAnyLoading}
             isRateLimited={isRateLimited}
-            stop={stop}
+            stop={() => {
+              stop()
+              setIsCameraLoading(false)
+            }}
             input={chatInput}
             handleInputChange={handleSaveInputChange}
             handleSubmit={handleSubmitAuth}
@@ -385,7 +403,7 @@ export default function Home() {
           accessToken={session?.access_token}
           selectedTab={currentTab}
           onSelectedTabChange={setCurrentTab}
-          isChatLoading={isLoading}
+          isChatLoading={isAnyLoading}
           isPreviewLoading={isPreviewLoading}
           fragment={fragment}
           result={result as ExecutionResult}
