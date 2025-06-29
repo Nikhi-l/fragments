@@ -70,7 +70,8 @@ export function LandingPage() {
             Try asking me about:
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Vertical layout for prompts */}
+          <div className="space-y-3 max-w-2xl">
             {samplePrompts.map((sample, index) => {
               const IconComponent = sample.icon
               return (
