@@ -19,6 +19,7 @@ import {
   Shield, 
   Clock,
   Maximize2,
+  Minimize2,
   Volume2,
   VolumeX,
   RotateCcw,
@@ -33,9 +34,10 @@ import {
   WifiOff,
   Eye,
   EyeOff,
-  RefreshCw
+  RefreshCw,
+  X
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface Store {
   id: string
@@ -67,8 +69,9 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isMuted, setIsMuted] = useState(true)
   const [isPlaying, setIsPlaying] = useState(true)
-  const [showGrid, setShowGrid] = useState(false)
   const [lastRefresh, setLastRefresh] = useState(new Date())
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const fullscreenContainerRef = useRef<HTMLDivElement>(null)
 
   // Mock store data - in real app this would come from API
   const stores: Store[] = [
@@ -172,6 +175,62 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
     // In real app, this would trigger a data refresh
   }
 
+  const toggleFullscreen = async () => {
+    if (!isFullscreen) {
+      // Enter fullscreen
+      if (fullscreenContainerRef.current) {
+        try {
+          if (fullscreenContainerRef.current.requestFullscreen) {
+            await fullscreenContainerRef.current.requestFullscreen()
+          } else if ((fullscreenContainerRef.current as any).webkitRequestFullscreen) {
+            await (fullscreenContainerRef.current as any).webkitRequestFullscreen()
+          } else if ((fullscreenContainerRef.current as any).msRequestFullscreen) {
+            await (fullscreenContainerRef.current as any).msRequestFullscreen()
+          }
+          setIsFullscreen(true)
+        } catch (error) {
+          console.error('Error entering fullscreen:', error)
+        }
+      }
+    } else {
+      // Exit fullscreen
+      try {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen()
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen()
+        } else if ((document as any).msExitFullscreen) {
+          await (document as any).msExitFullscreen()
+        }
+        setIsFullscreen(false)
+      } catch (error) {
+        console.error('Error exiting fullscreen:', error)
+      }
+    }
+  }
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isCurrentlyFullscreen = !!(
+        document.fullscreenElement ||
+        (document as any).webkitFullscreenElement ||
+        (document as any).msFullscreenElement
+      )
+      setIsFullscreen(isCurrentlyFullscreen)
+    }
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange)
+    document.addEventListener('msfullscreenchange', handleFullscreenChange)
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange)
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange)
+      document.removeEventListener('msfullscreenchange', handleFullscreenChange)
+    }
+  }, [])
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'online': return 'text-green-600 border-green-600'
@@ -191,6 +250,187 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
     }
   }
 
+  // Fullscreen component
+  if (isFullscreen) {
+    return (
+      <div 
+        ref={fullscreenContainerRef}
+        className="fixed inset-0 bg-black z-50 flex flex-col"
+      >
+        {/* Fullscreen Header */}
+        <div className="bg-black/80 text-white p-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <Camera className="h-5 w-5" />
+              <span className="font-medium">{currentStore.name} - {currentCamera?.location}</span>
+            </div>
+            <Badge variant="outline" className="text-white border-white">
+              {currentCamera?.resolution} • {currentCamera?.fps}fps
+            </Badge>
+            {currentCamera?.status === 'recording' && (
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                <span className="text-sm">LIVE</span>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Button
+              onClick={() => setIsPlaying(!isPlaying)}
+              variant="outline"
+              size="sm"
+              className="text-white border-white hover:bg-white/20"
+            >
+              {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            </Button>
+            <Button
+              onClick={() => setIsMuted(!isMuted)}
+              variant="outline"
+              size="sm"
+              disabled={!currentCamera?.hasAudio}
+              className="text-white border-white hover:bg-white/20"
+            >
+              {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+            </Button>
+            <Button
+              onClick={toggleFullscreen}
+              variant="outline"
+              size="sm"
+              className="text-white border-white hover:bg-white/20"
+            >
+              <Minimize2 className="h-4 w-4" />
+            </Button>
+            <Button
+              onClick={toggleFullscreen}
+              variant="outline"
+              size="sm"
+              className="text-white border-white hover:bg-white/20"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Fullscreen Video */}
+        <div className="flex-1 relative">
+          {currentCamera?.status === 'offline' ? (
+            <div className="w-full h-full flex items-center justify-center text-white">
+              <div className="text-center">
+                <WifiOff className="h-16 w-16 mx-auto mb-4 text-red-500" />
+                <div className="text-2xl font-medium">Camera Offline</div>
+                <div className="text-lg text-gray-400">Unable to connect to camera feed</div>
+              </div>
+            </div>
+          ) : currentCamera?.status === 'maintenance' ? (
+            <div className="w-full h-full flex items-center justify-center text-white">
+              <div className="text-center">
+                <Settings className="h-16 w-16 mx-auto mb-4 text-yellow-500 animate-spin" />
+                <div className="text-2xl font-medium">Under Maintenance</div>
+                <div className="text-lg text-gray-400">Camera is being serviced</div>
+              </div>
+            </div>
+          ) : (
+            <video
+              ref={videoRef}
+              key={`${selectedStore}-${selectedCamera}-fullscreen`}
+              className="w-full h-full object-contain"
+              controls={false}
+              autoPlay={isPlaying}
+              muted={isMuted}
+              loop
+              src={currentCamera?.url}
+            >
+              Your browser does not support the video tag.
+            </video>
+          )}
+
+          {/* Fullscreen Overlays */}
+          {currentCamera?.status !== 'offline' && currentCamera?.status !== 'maintenance' && (
+            <>
+              {/* Camera Info Overlay */}
+              <div className="absolute top-4 left-4 bg-black/70 text-white px-4 py-3 rounded-md space-y-1">
+                <div className="font-medium text-lg">{currentStore.name}</div>
+                <div className="text-sm opacity-80">{currentCamera?.location}</div>
+                <div className="text-xs opacity-60">
+                  Recording: {currentCamera?.recordingTime} • {currentCamera?.viewerCount} viewers
+                </div>
+              </div>
+              
+              {/* Motion Detection Alert */}
+              {currentCamera?.lastMotion && (
+                <div className="absolute bottom-4 left-4 bg-orange-600 text-white px-4 py-3 rounded-md flex items-center space-x-2">
+                  <Zap className="h-5 w-5" />
+                  <span>Motion detected {currentCamera.lastMotion}</span>
+                </div>
+              )}
+
+              {/* Audio Indicator */}
+              {currentCamera?.hasAudio && !isMuted && (
+                <div className="absolute top-1/2 left-8 transform -translate-y-1/2">
+                  <div className="flex items-center space-x-1">
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <div
+                        key={i}
+                        className="w-2 bg-green-500 rounded-full animate-pulse"
+                        style={{
+                          height: `${Math.random() * 30 + 15}px`,
+                          animationDelay: `${i * 0.1}s`
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Fullscreen Camera Grid */}
+        <div className="bg-black/80 p-4">
+          <div className="flex items-center space-x-2 overflow-x-auto">
+            {cameraFeeds.map((camera, index) => (
+              <div
+                key={camera.id}
+                className={`flex-shrink-0 cursor-pointer transition-all ${
+                  selectedCamera === index ? 'ring-2 ring-blue-500' : ''
+                }`}
+                onClick={() => setSelectedCamera(index)}
+              >
+                <div className="relative w-24 h-16 bg-gray-800 rounded overflow-hidden">
+                  {camera.status === 'offline' || camera.status === 'maintenance' ? (
+                    <div className="w-full h-full flex items-center justify-center text-white">
+                      {camera.status === 'offline' ? (
+                        <WifiOff className="h-4 w-4 text-red-500" />
+                      ) : (
+                        <Settings className="h-4 w-4 text-yellow-500" />
+                      )}
+                    </div>
+                  ) : (
+                    <video
+                      className="w-full h-full object-cover"
+                      muted
+                      autoPlay
+                      loop
+                      src={camera.url}
+                    />
+                  )}
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white px-1 py-0.5">
+                    <div className="text-xs truncate">{camera.location}</div>
+                  </div>
+                  {camera.status === 'recording' && (
+                    <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Regular view
   return (
     <div className="flex flex-col h-full p-4 space-y-4">
       {/* Header with Store Selection */}
@@ -273,23 +513,17 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 flex-1">
-        {/* Camera Selection Panel */}
-        <div className="lg:col-span-1 space-y-2">
+      <div className="flex gap-4 flex-1">
+        {/* Camera Selection Panel - Full Height */}
+        <div className="w-80 flex flex-col space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-medium text-sm text-muted-foreground">Camera Locations</h3>
-            <Button
-              onClick={() => setShowGrid(!showGrid)}
-              variant="outline"
-              size="sm"
-              className="text-xs"
-            >
-              {showGrid ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
-              Grid
-            </Button>
+            <Badge variant="outline" className="text-xs">
+              {cameraFeeds.length} cameras
+            </Badge>
           </div>
           
-          <div className="space-y-2 max-h-96 overflow-y-auto">
+          <div className="flex-1 space-y-2 overflow-y-auto">
             {cameraFeeds.map((camera, index) => (
               <Card 
                 key={camera.id}
@@ -338,8 +572,8 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
         </div>
 
         {/* Main Camera Feed */}
-        <div className="lg:col-span-3">
-          <Card className="h-full">
+        <div className="flex-1 flex flex-col">
+          <Card className="flex-1 flex flex-col">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center space-x-2">
@@ -368,7 +602,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                     {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                   </Button>
                   <Button
-                    onClick={() => setIsFullscreen(!isFullscreen)}
+                    onClick={toggleFullscreen}
                     variant="outline"
                     size="sm"
                   >
@@ -383,10 +617,8 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-0">
-              <div className={`relative bg-black rounded-b-lg overflow-hidden ${
-                isFullscreen ? 'aspect-video' : 'aspect-video'
-              }`}>
+            <CardContent className="p-0 flex-1 flex flex-col">
+              <div className="relative bg-black rounded-b-lg overflow-hidden flex-1">
                 {currentCamera?.status === 'offline' ? (
                   <div className="w-full h-full flex items-center justify-center text-white">
                     <div className="text-center">
@@ -405,6 +637,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                   </div>
                 ) : (
                   <video
+                    ref={videoRef}
                     key={`${selectedStore}-${selectedCamera}`}
                     className="w-full h-full object-cover"
                     controls={false}
@@ -512,57 +745,58 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
         </div>
       </div>
 
-      {/* Camera Grid View */}
-      {showGrid && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">All Cameras - {currentStore.name}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-              {cameraFeeds.map((camera, index) => (
-                <Card 
-                  key={camera.id} 
-                  className="overflow-hidden cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
-                  onClick={() => setSelectedCamera(index)}
-                >
-                  <div className="relative aspect-video bg-black">
-                    {camera.status === 'offline' || camera.status === 'maintenance' ? (
-                      <div className="w-full h-full flex items-center justify-center text-white">
-                        <div className="text-center">
-                          {camera.status === 'offline' ? (
-                            <WifiOff className="h-6 w-6 mx-auto text-red-500" />
-                          ) : (
-                            <Settings className="h-6 w-6 mx-auto text-yellow-500" />
-                          )}
-                          <div className="text-xs mt-1">{camera.status}</div>
-                        </div>
+      {/* Camera Grid View - Always Visible */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">All Cameras - {currentStore.name}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+            {cameraFeeds.map((camera, index) => (
+              <Card 
+                key={camera.id} 
+                className="overflow-hidden cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
+                onClick={() => setSelectedCamera(index)}
+              >
+                <div className="relative aspect-video bg-black">
+                  {camera.status === 'offline' || camera.status === 'maintenance' ? (
+                    <div className="w-full h-full flex items-center justify-center text-white">
+                      <div className="text-center">
+                        {camera.status === 'offline' ? (
+                          <WifiOff className="h-6 w-6 mx-auto text-red-500" />
+                        ) : (
+                          <Settings className="h-6 w-6 mx-auto text-yellow-500" />
+                        )}
+                        <div className="text-xs mt-1">{camera.status}</div>
                       </div>
-                    ) : (
-                      <video
-                        className="w-full h-full object-cover"
-                        muted
-                        autoPlay
-                        loop
-                        src={camera.url}
-                      />
-                    )}
-                    <div className="absolute bottom-1 left-1 bg-black/70 text-white px-2 py-0.5 rounded text-xs">
-                      {camera.location}
                     </div>
-                    {camera.status === 'recording' && (
-                      <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                    )}
-                    {camera.lastMotion && (
-                      <div className="absolute top-1 left-1 w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
-                    )}
+                  ) : (
+                    <video
+                      className="w-full h-full object-cover"
+                      muted
+                      autoPlay
+                      loop
+                      src={camera.url}
+                    />
+                  )}
+                  <div className="absolute bottom-1 left-1 bg-black/70 text-white px-2 py-0.5 rounded text-xs">
+                    {camera.location}
                   </div>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                  {camera.status === 'recording' && (
+                    <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                  )}
+                  {camera.lastMotion && (
+                    <div className="absolute top-1 left-1 w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                  )}
+                  {selectedCamera === index && (
+                    <div className="absolute inset-0 ring-2 ring-blue-500 ring-inset" />
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* System Status Footer */}
       <Card className="bg-gray-50 dark:bg-gray-900">
