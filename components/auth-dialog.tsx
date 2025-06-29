@@ -35,7 +35,7 @@ export function AuthDialog({
             <div className="flex items-center justify-center rounded-md shadow-md bg-black p-2">
               <Logo className="text-white w-6 h-6" />
             </div>
-            Sign in to RetailX
+            Sign in to Retail<span className="text-[#ff8800]">X</span>
           </h1>
           <div className="w-full">
             <Auth
