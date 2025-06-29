@@ -51,10 +51,10 @@ export function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col justify-center min-h-[60vh] px-4 py-8">
-      {/* Left-aligned Welcome Text */}
-      <div className="space-y-6 max-w-4xl">
-        <div className="space-y-4">
+    <div className="flex flex-col justify-center items-center min-h-[70vh] px-4 py-8">
+      {/* Centered Welcome Content */}
+      <div className="space-y-6 max-w-4xl w-full flex flex-col items-center">
+        <div className="space-y-4 text-center">
           <h1 className="text-4xl font-bold text-foreground">
             Hello there!
           </h1>
@@ -65,13 +65,13 @@ export function LandingPage() {
         </div>
 
         {/* Sample Prompts */}
-        <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+        <div className="space-y-4 w-full max-w-2xl">
+          <p className="text-sm text-muted-foreground text-center">
             Try asking me about:
           </p>
           
           {/* Vertical layout for prompts */}
-          <div className="space-y-3 max-w-2xl">
+          <div className="space-y-3">
             {samplePrompts.map((sample, index) => {
               const IconComponent = sample.icon
               return (
@@ -110,7 +110,7 @@ export function LandingPage() {
         </div>
 
         {/* Additional Help Text */}
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground text-center max-w-2xl">
           <p>
             I can help you with store analytics, camera monitoring, inventory management, 
             staff performance, and much more. Just ask me in plain English!
