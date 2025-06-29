@@ -166,6 +166,23 @@ export default function Home() {
     })
   }
 
+  // Function to create hardcoded camera feed fragment
+  function createCameraFeedFragment(userInput: string): DeepPartial<FragmentSchema> {
+    // Extract store name from user input or use default
+    const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
+    const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
+
+    return {
+      type: 'camera_feed',
+      commentary: `Displaying live camera feeds for ${storeName}. This shows multiple camera angles throughout the store including entrance, checkout areas, aisles, and storage areas. You can switch between different camera views to monitor different areas of the store in real-time.`,
+      title: 'Camera Feeds',
+      description: `Live security camera feeds for ${storeName}`,
+      store_name: storeName,
+      camera_feed_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      camera_locations: ['Entrance', 'Checkout Counter', 'Aisle 1', 'Aisle 2', 'Storage Room', 'Parking Lot']
+    }
+  }
+
   async function handleSubmitAuth(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -191,23 +208,47 @@ export default function Home() {
       content,
     })
 
-    submit({
-      userID: session?.user?.id,
-      teamID: userTeam?.id,
-      messages: toAISDKMessages(updatedMessages),
-      template: currentTemplate,
-      model: currentModel,
-      config: languageModel,
-    })
+    // Check if user input contains "camera" keyword
+    if (chatInput.toLowerCase().includes('camera')) {
+      // Create hardcoded camera feed fragment
+      const cameraFragment = createCameraFeedFragment(chatInput)
+      
+      // Set the fragment directly without LLM call
+      setFragment(cameraFragment)
+      setCurrentPreview({ fragment: cameraFragment, result: undefined })
+      setCurrentTab('fragment')
+      
+      // Add assistant response
+      addMessage({
+        role: 'assistant',
+        content: [{ type: 'text', text: cameraFragment.commentary || '' }],
+        object: cameraFragment,
+      })
+
+      posthog.capture('camera_feed_triggered', {
+        store_name: cameraFragment.store_name,
+        trigger: 'hardcoded'
+      })
+    } else {
+      // Normal LLM processing for non-camera requests
+      submit({
+        userID: session?.user?.id,
+        teamID: userTeam?.id,
+        messages: toAISDKMessages(updatedMessages),
+        template: currentTemplate,
+        model: currentModel,
+        config: languageModel,
+      })
+
+      posthog.capture('chat_submit', {
+        template: selectedTemplate,
+        model: languageModel.model,
+      })
+    }
 
     setChatInput('')
     setFiles([])
     setCurrentTab('fragment')
-
-    posthog.capture('chat_submit', {
-      template: selectedTemplate,
-      model: languageModel.model,
-    })
   }
 
   function retry() {
