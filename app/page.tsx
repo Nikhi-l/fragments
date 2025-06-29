@@ -47,6 +47,7 @@ export default function Home() {
   const [isRateLimited, setIsRateLimited] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [isCameraLoading, setIsCameraLoading] = useState(false)
+  const [isAnalyticsLoading, setIsAnalyticsLoading] = useState(false)
   const { session, userTeam } = useAuth(setAuthDialog, setAuthView)
 
   const filteredModels = modelsList.models.filter((model) => {
@@ -184,6 +185,42 @@ export default function Home() {
     }
   }
 
+  // Function to create hardcoded analytics dashboard fragment
+  function createAnalyticsDashboardFragment(userInput: string): DeepPartial<FragmentSchema> {
+    // Extract store name from user input or use default
+    const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
+    const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
+
+    // Determine time period from user input
+    let timePeriod = 'This Month'
+    if (userInput.toLowerCase().includes('today')) timePeriod = 'Today'
+    else if (userInput.toLowerCase().includes('week')) timePeriod = 'This Week'
+    else if (userInput.toLowerCase().includes('quarter')) timePeriod = 'This Quarter'
+    else if (userInput.toLowerCase().includes('year')) timePeriod = 'This Year'
+
+    return {
+      type: 'dashboard',
+      commentary: `Displaying comprehensive analytics dashboard for ${storeName}. This dashboard shows key performance metrics including sales revenue, customer traffic, inventory levels, average transaction values, top-selling products, and staff performance. The data is presented for ${timePeriod.toLowerCase()} with comparisons to previous periods to help you understand trends and make informed business decisions.`,
+      title: 'Store Analytics',
+      description: `Performance dashboard and analytics for ${storeName}`,
+      store_name: storeName,
+      dashboard_url: 'https://public.tableau.com/views/RetailDashboard_16234567890/Dashboard1?:embed=yes&:display_count=no&:showVizHome=no',
+      dashboard_metrics: [
+        'Sales Revenue',
+        'Customer Traffic',
+        'Inventory Levels',
+        'Average Transaction Value',
+        'Top Selling Products',
+        'Staff Performance',
+        'Customer Satisfaction',
+        'Conversion Rate',
+        'Return Rate',
+        'Profit Margins'
+      ],
+      time_period: timePeriod
+    }
+  }
+
   async function handleSubmitAuth(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -191,9 +228,10 @@ export default function Home() {
       return setAuthDialog(true)
     }
 
-    if (isLoading || isCameraLoading) {
+    if (isLoading || isCameraLoading || isAnalyticsLoading) {
       stop()
       setIsCameraLoading(false)
+      setIsAnalyticsLoading(false)
     }
 
     const content: Message['content'] = [{ type: 'text', text: chatInput }]
@@ -210,8 +248,10 @@ export default function Home() {
       content,
     })
 
+    const inputLower = chatInput.toLowerCase()
+
     // Check if user input contains "camera" keyword
-    if (chatInput.toLowerCase().includes('camera')) {
+    if (inputLower.includes('camera')) {
       // Set loading state to simulate LLM processing
       setIsCameraLoading(true)
       
@@ -240,8 +280,49 @@ export default function Home() {
           trigger: 'hardcoded'
         })
       }, 2000) // 2-second delay
-    } else {
-      // Normal LLM processing for non-camera requests
+    } 
+    // Check if user input contains analytics/dashboard keywords
+    else if (
+      inputLower.includes('analytics') || 
+      inputLower.includes('dashboard') || 
+      inputLower.includes('performance') || 
+      inputLower.includes('metrics') || 
+      inputLower.includes('sales data') ||
+      inputLower.includes('how is my store') ||
+      inputLower.includes('store doing')
+    ) {
+      // Set loading state to simulate LLM processing
+      setIsAnalyticsLoading(true)
+      
+      // Add a 2-second delay to simulate LLM call
+      setTimeout(() => {
+        // Create hardcoded analytics dashboard fragment
+        const analyticsFragment = createAnalyticsDashboardFragment(chatInput)
+        
+        // Set the fragment directly without LLM call
+        setFragment(analyticsFragment)
+        setCurrentPreview({ fragment: analyticsFragment, result: undefined })
+        setCurrentTab('fragment')
+        
+        // Add assistant response
+        addMessage({
+          role: 'assistant',
+          content: [{ type: 'text', text: analyticsFragment.commentary || '' }],
+          object: analyticsFragment,
+        })
+
+        // Stop loading state
+        setIsAnalyticsLoading(false)
+
+        posthog.capture('analytics_dashboard_triggered', {
+          store_name: analyticsFragment.store_name,
+          time_period: analyticsFragment.time_period,
+          trigger: 'hardcoded'
+        })
+      }, 2000) // 2-second delay
+    } 
+    else {
+      // Normal LLM processing for other requests
       submit({
         userID: session?.user?.id,
         teamID: userTeam?.id,
@@ -311,6 +392,7 @@ export default function Home() {
   function handleClearChat() {
     stop()
     setIsCameraLoading(false)
+    setIsAnalyticsLoading(false)
     setChatInput('')
     setFiles([])
     setMessages([])
@@ -334,7 +416,7 @@ export default function Home() {
   }
 
   // Combine loading states for UI
-  const isAnyLoading = isLoading || isCameraLoading
+  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading
 
   return (
     <main className="flex min-h-screen max-h-screen">
@@ -374,6 +456,7 @@ export default function Home() {
             stop={() => {
               stop()
               setIsCameraLoading(false)
+              setIsAnalyticsLoading(false)
             }}
             input={chatInput}
             handleInputChange={handleSaveInputChange}
