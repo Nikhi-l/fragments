@@ -111,14 +111,14 @@ export function ChatInput({
         <div className="relative" key={file.name}>
           <span
             onClick={() => handleFileRemove(file)}
-            className="absolute -top-2 -right-2 bg-gray-500 hover:bg-gray-600 text-white rounded-full p-1 cursor-pointer"
+            className="absolute top-[-8] right-[-8] bg-muted rounded-full p-1"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3 cursor-pointer" />
           </span>
           <img
             src={URL.createObjectURL(file)}
             alt={file.name}
-            className="rounded-lg w-10 h-10 object-cover border"
+            className="rounded-xl w-10 h-10 object-cover"
           />
         </div>
       )
@@ -146,7 +146,7 @@ export function ChatInput({
     <form
       onSubmit={handleSubmit}
       onKeyDown={onEnter}
-      className="mb-4 mt-auto flex flex-col bg-background"
+      className="mb-2 mt-auto flex flex-col bg-background"
       onDragEnter={isMultiModal ? handleDrag : undefined}
       onDragLeave={isMultiModal ? handleDrag : undefined}
       onDragOver={isMultiModal ? handleDrag : undefined}
@@ -154,18 +154,16 @@ export function ChatInput({
     >
       {isErrored && (
         <div
-          className={`flex items-center p-3 text-sm font-medium mx-4 mb-4 rounded-lg ${
+          className={`flex items-center p-1.5 text-sm font-medium mx-4 mb-10 rounded-xl ${
             isRateLimited
-              ? 'bg-orange-50 text-orange-700 border border-orange-200'
-              : 'bg-red-50 text-red-700 border border-red-200'
+              ? 'bg-orange-400/10 text-orange-400'
+              : 'bg-red-400/10 text-red-400'
           }`}
         >
-          <span className="flex-1">{errorMessage}</span>
+          <span className="flex-1 px-1.5">{errorMessage}</span>
           <button
-            className={`px-3 py-1 rounded-md text-xs font-medium ${
-              isRateLimited 
-                ? 'bg-orange-100 hover:bg-orange-200 text-orange-700' 
-                : 'bg-red-100 hover:bg-red-200 text-red-700'
+            className={`px-2 py-1 rounded-sm ${
+              isRateLimited ? 'bg-orange-400/20' : 'bg-red-400/20'
             }`}
             onClick={retry}
           >
@@ -173,91 +171,73 @@ export function ChatInput({
           </button>
         </div>
       )}
-      
-      <div className="relative mx-4">
+      <div className="relative">
         <div
-          className={`border rounded-xl bg-white dark:bg-gray-950 shadow-sm transition-all ${
+          className={`shadow-md rounded-2xl relative z-10 bg-background border ${
             dragActive
-              ? 'border-blue-300 dark:border-blue-700 shadow-md'
-              : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'
+              ? 'before:absolute before:inset-0 before:rounded-2xl before:border-2 before:border-dashed before:border-primary'
+              : ''
           }`}
         >
-          {/* Settings row */}
-          <div className="flex items-center px-3 py-2 border-b border-gray-100 dark:border-gray-800">
-            {children}
-          </div>
-          
-          {/* Input area */}
-          <div className="flex items-end p-3 gap-2">
-            <div className="flex-1">
-              <TextareaAutosize
-                autoFocus={true}
-                minRows={1}
-                maxRows={6}
-                className="w-full resize-none bg-transparent text-sm placeholder:text-gray-500 dark:placeholder:text-gray-400 border-0 outline-none focus:ring-0"
-                required={true}
-                placeholder="Ask me about your store performance, camera feeds, inventory, or any retail question..."
-                disabled={isErrored}
-                value={input}
-                onChange={handleInputChange}
-                onPaste={isMultiModal ? handlePaste : undefined}
-              />
-              
-              {/* File previews */}
-              {files.length > 0 && (
-                <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
-                  {filePreview}
-                </div>
-              )}
+          <div className="flex items-center px-3 py-2 gap-1">{children}</div>
+          <TextareaAutosize
+            autoFocus={true}
+            minRows={1}
+            maxRows={5}
+            className="text-normal px-3 resize-none ring-0 bg-inherit w-full m-0 outline-none"
+            required={true}
+            placeholder="Ask me about your store performance, camera feeds, inventory, or any retail question..."
+            disabled={isErrored}
+            value={input}
+            onChange={handleInputChange}
+            onPaste={isMultiModal ? handlePaste : undefined}
+          />
+          <div className="flex p-3 gap-2 items-center">
+            <input
+              type="file"
+              id="multimodal"
+              name="multimodal"
+              accept="image/*"
+              multiple={true}
+              className="hidden"
+              onChange={handleFileInput}
+            />
+            <div className="flex items-center flex-1 gap-2">
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      disabled={!isMultiModal || isErrored}
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="rounded-xl h-10 w-10"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        document.getElementById('multimodal')?.click()
+                      }}
+                    >
+                      <Paperclip className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Add attachments</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              {files.length > 0 && filePreview}
             </div>
-            
-            {/* Action buttons */}
-            <div className="flex items-center gap-1">
-              <input
-                type="file"
-                id="multimodal"
-                name="multimodal"
-                accept="image/*"
-                multiple={true}
-                className="hidden"
-                onChange={handleFileInput}
-              />
-              
-              {isMultiModal && (
-                <TooltipProvider>
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        disabled={!isMultiModal || isErrored}
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          document.getElementById('multimodal')?.click()
-                        }}
-                      >
-                        <Paperclip className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Add attachments</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-              
+            <div>
               {!isLoading ? (
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
                       <Button
-                        disabled={isErrored || !input.trim()}
+                        disabled={isErrored}
                         variant="default"
-                        size="sm"
+                        size="icon"
                         type="submit"
-                        className="h-8 w-8 p-0 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 dark:text-black"
+                        className="rounded-xl h-10 w-10"
                       >
-                        <ArrowUp className="h-4 w-4" />
+                        <ArrowUp className="h-5 w-5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>Send message</TooltipContent>
@@ -268,15 +248,15 @@ export function ChatInput({
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
                       <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 w-8 p-0"
+                        variant="secondary"
+                        size="icon"
+                        className="rounded-xl h-10 w-10"
                         onClick={(e) => {
                           e.preventDefault()
                           stop()
                         }}
                       >
-                        <Square className="h-4 w-4" />
+                        <Square className="h-5 w-5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>Stop generation</TooltipContent>

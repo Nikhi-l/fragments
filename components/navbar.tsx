@@ -23,6 +23,7 @@ import {
 } from '@radix-ui/react-icons'
 import { Session } from '@supabase/supabase-js'
 import { ArrowRight, LogOut, Trash, Undo } from 'lucide-react'
+import Link from 'next/link'
 
 export function NavBar({
   session,
@@ -44,62 +45,61 @@ export function NavBar({
   canUndo: boolean
 }) {
   return (
-    <nav className="w-full flex items-center justify-between py-4 px-4 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm">
-      <div className="flex items-center space-x-2">
-        <Logo width={20} height={20} />
-        <h1 className="text-lg font-semibold">
-          Retail<span className="text-[#ff8800]">X</span>
-        </h1>
+    <nav className="w-full flex bg-background py-4">
+      <div className="flex flex-1 items-center">
+        <div className="flex items-center gap-2">
+          <Logo width={24} height={24} />
+          <h1 className="whitespace-pre">
+            Retail<span className="text-[#ff8800]">X</span>
+          </h1>
+        </div>
       </div>
-      
-      <div className="flex items-center gap-2">
-        {canUndo && (
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onUndo}
-                  disabled={!canUndo}
-                  className="h-8 w-8 p-0"
-                >
-                  <Undo className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Undo</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-        
-        {canClear && (
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onClear}
-                  disabled={!canClear}
-                  className="h-8 w-8 p-0"
-                >
-                  <Trash className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Clear chat</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-        
-        <ThemeToggle />
-        
+      <div className="flex items-center gap-1 md:gap-4">
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onUndo}
+                disabled={!canUndo}
+              >
+                <Undo className="h-4 w-4 md:h-5 md:w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Undo</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClear}
+                disabled={!canClear}
+              >
+                <Trash className="h-4 w-4 md:h-5 md:w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Clear chat</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <ThemeToggle />
+            </TooltipTrigger>
+            <TooltipContent>Toggle theme</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         {session ? (
           <DropdownMenu>
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <DropdownMenuTrigger asChild>
-                    <Avatar className="w-8 h-8 cursor-pointer">
+                    <Avatar className="w-8 h-8">
                       <AvatarImage
                         src={
                           session.user.user_metadata?.avatar_url ||
@@ -129,10 +129,6 @@ export function NavBar({
                 <TwitterLogoIcon className="mr-2 h-4 w-4 text-muted-foreground" />
                 Follow us on X
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onSocialClick('github')}>
-                <GitHubLogoIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-                Star on GitHub
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={signOut}>
                 <LogOut className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -141,7 +137,7 @@ export function NavBar({
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Button variant="default" onClick={showLogin} size="sm">
+          <Button variant="default" onClick={showLogin}>
             Sign in
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
