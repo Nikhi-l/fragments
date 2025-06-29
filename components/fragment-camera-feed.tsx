@@ -454,9 +454,10 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
         </CardContent>
       </Card>
 
-      <div className="flex gap-4 flex-1">
-        {/* Camera Selection Panel - Full Height */}
-        <div className="w-80 flex flex-col space-y-4">
+      {/* Main Content Area with Fixed Layout */}
+      <div className="flex-1 flex gap-4">
+        {/* Camera Selection Panel - Fixed Width to Match Video */}
+        <div className="flex flex-col space-y-4" style={{ width: '400px' }}>
           <div className="flex items-center justify-between">
             <h3 className="font-medium text-sm text-muted-foreground">Camera Locations</h3>
             <Badge variant="outline" className="text-xs">
@@ -464,7 +465,8 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
             </Badge>
           </div>
           
-          <div className="flex-1 space-y-2 overflow-y-auto">
+          {/* Camera List with Fixed Height */}
+          <div className="space-y-2 overflow-y-auto" style={{ height: '360px' }}>
             {cameraFeeds.map((camera, index) => (
               <Card 
                 key={camera.id}
@@ -512,9 +514,9 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
           </div>
         </div>
 
-        {/* Main Camera Feed */}
-        <div className="flex-1 flex flex-col">
-          <Card className="flex-1 flex flex-col">
+        {/* Main Camera Feed - Fixed Width */}
+        <div className="flex flex-col" style={{ width: '600px' }}>
+          <Card className="flex flex-col">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center space-x-2">
@@ -558,8 +560,12 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-0 flex-1 flex flex-col">
-              <div className="relative bg-black rounded-b-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+            <CardContent className="p-0 flex flex-col">
+              {/* Video Container with Fixed Dimensions */}
+              <div 
+                className="relative bg-black rounded-b-lg overflow-hidden"
+                style={{ width: '600px', height: '337px' }}
+              >
                 {currentCamera?.status === 'offline' ? (
                   <div className="w-full h-full flex items-center justify-center text-white">
                     <div className="text-center">
@@ -586,7 +592,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                     muted={isMuted}
                     loop
                     src={currentCamera?.url}
-                    style={{ aspectRatio: '16/9' }}
+                    style={{ width: '600px', height: '337px' }}
                   >
                     Your browser does not support the video tag.
                   </video>
