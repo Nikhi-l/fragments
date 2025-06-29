@@ -36,14 +36,25 @@ const dashboardFragmentSchema = baseFragmentSchema.extend({
   time_period: z.string().describe('Time period for the dashboard data (e.g., "Today", "This Week", "This Month").'),
 })
 
+// Sales data fragment schema
+const salesDataFragmentSchema = baseFragmentSchema.extend({
+  type: z.literal('sales_data'),
+  store_name: z.string().describe('Name of the store for which the sales data is being displayed.'),
+  time_period: z.string().describe('Time period for the sales data (e.g., "Today", "This Week", "This Month", "This Quarter").'),
+  sales_metrics: z.array(z.string()).describe('List of sales metrics to display (e.g., "Total Revenue", "Transaction Count", "Average Order Value", "Top Products").'),
+  comparison_period: z.string().optional().describe('Previous period for comparison (e.g., "Last Week", "Last Month", "Same Period Last Year").'),
+})
+
 // Union of all fragment types
 export const fragmentSchema = z.discriminatedUnion('type', [
   codeFragmentSchema,
   cameraFeedFragmentSchema,
   dashboardFragmentSchema,
+  salesDataFragmentSchema,
 ])
 
 export type FragmentSchema = z.infer<typeof fragmentSchema>
 export type CodeFragmentSchema = z.infer<typeof codeFragmentSchema>
 export type CameraFeedFragmentSchema = z.infer<typeof cameraFeedFragmentSchema>
 export type DashboardFragmentSchema = z.infer<typeof dashboardFragmentSchema>
+export type SalesDataFragmentSchema = z.infer<typeof salesDataFragmentSchema>
