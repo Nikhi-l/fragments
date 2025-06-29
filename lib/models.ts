@@ -30,7 +30,13 @@ export function getModelClient(model: LLMModel, config: LLMModelConfig) {
   const { apiKey, baseURL } = config
 
   const providerConfigs = {
-    anthropic: () => createAnthropic({ apiKey, baseURL })(modelNameString),
+    anthropic: () => {
+      const key = apiKey || process.env.ANTHROPIC_API_KEY
+      if (!key) {
+        throw new Error('Anthropic API key is required. Please set ANTHROPIC_API_KEY environment variable or provide apiKey in config.')
+      }
+      return createAnthropic({ apiKey: key, baseURL })(modelNameString)
+    },
     openai: () => createOpenAI({ apiKey, baseURL })(modelNameString),
     google: () =>
       createGoogleGenerativeAI({ apiKey, baseURL })(modelNameString),
