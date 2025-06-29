@@ -532,10 +532,10 @@ export default function Home() {
         />
       )}
       <div className="flex w-full transition-all duration-500 ease-in-out">
-        {/* Chat Window - Fixed width with constrained height */}
+        {/* Chat Window - Dynamic width based on artifact visibility */}
         <div 
-          className={`flex flex-col w-full max-w-[800px] mx-auto px-4 overflow-auto transition-all duration-500 ease-in-out ${
-            showArtifact ? 'max-w-[25%] mx-0 px-2' : 'max-w-[800px]'
+          className={`flex flex-col overflow-auto transition-all duration-500 ease-in-out ${
+            showArtifact ? 'w-[25%] px-2' : 'w-full max-w-[800px] mx-auto px-4'
           }`}
         >
           <NavBar
@@ -589,7 +589,7 @@ export default function Home() {
           </ChatInput>
         </div>
 
-        {/* Preview/Artifact Window - Animated slide-in from right */}
+        {/* Preview/Artifact Window - Fixed 75% width when shown */}
         <div 
           className={`transition-all duration-500 ease-in-out ${
             showArtifact 
