@@ -532,69 +532,61 @@ export default function Home() {
         />
       )}
       <div className="flex w-full transition-all duration-500 ease-in-out">
-        {/* Chat Window - Dynamic width with smooth animation */}
+        {/* Chat Window - Fixed width with constrained height */}
         <div 
-          className={`flex flex-col w-full max-h-full overflow-auto border-r transition-all duration-500 ease-in-out ${
-            showArtifact ? 'max-w-[25%]' : 'max-w-full'
+          className={`flex flex-col w-full max-w-[800px] mx-auto px-4 overflow-auto transition-all duration-500 ease-in-out ${
+            showArtifact ? 'max-w-[25%] mx-0 px-2' : 'max-w-[800px]'
           }`}
         >
-          <div className="px-4">
-            <NavBar
-              session={session}
-              showLogin={() => setAuthDialog(true)}
-              signOut={logout}
-              onSocialClick={handleSocialClick}
-              onClear={handleClearChat}
-              canClear={messages.length > 0}
-              canUndo={messages.length > 1 && !isAnyLoading}
-              onUndo={handleUndo}
+          <NavBar
+            session={session}
+            showLogin={() => setAuthDialog(true)}
+            signOut={logout}
+            onSocialClick={handleSocialClick}
+            onClear={handleClearChat}
+            canClear={messages.length > 0}
+            canUndo={messages.length > 1 && !isAnyLoading}
+            onUndo={handleUndo}
+          />
+          <Chat
+            messages={messages}
+            isLoading={isAnyLoading}
+            setCurrentPreview={setCurrentPreview}
+          />
+          <ChatInput
+            retry={retry}
+            isErrored={error !== undefined}
+            errorMessage={errorMessage}
+            isLoading={isAnyLoading}
+            isRateLimited={isRateLimited}
+            stop={() => {
+              stop()
+              setIsCameraLoading(false)
+              setIsAnalyticsLoading(false)
+              setIsSalesDataLoading(false)
+            }}
+            input={chatInput}
+            handleInputChange={handleSaveInputChange}
+            handleSubmit={handleSubmitAuth}
+            isMultiModal={currentModel?.multiModal || false}
+            files={files}
+            handleFileChange={handleFileChange}
+          >
+            <ChatPicker
+              templates={templates}
+              selectedTemplate={selectedTemplate}
+              onSelectedTemplateChange={setSelectedTemplate}
+              models={filteredModels}
+              languageModel={languageModel}
+              onLanguageModelChange={handleLanguageModelChange}
             />
-          </div>
-          <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex-1 px-4">
-              <Chat
-                messages={messages}
-                isLoading={isAnyLoading}
-                setCurrentPreview={setCurrentPreview}
-              />
-            </div>
-            <div className="px-4">
-              <ChatInput
-                retry={retry}
-                isErrored={error !== undefined}
-                errorMessage={errorMessage}
-                isLoading={isAnyLoading}
-                isRateLimited={isRateLimited}
-                stop={() => {
-                  stop()
-                  setIsCameraLoading(false)
-                  setIsAnalyticsLoading(false)
-                  setIsSalesDataLoading(false)
-                }}
-                input={chatInput}
-                handleInputChange={handleSaveInputChange}
-                handleSubmit={handleSubmitAuth}
-                isMultiModal={currentModel?.multiModal || false}
-                files={files}
-                handleFileChange={handleFileChange}
-              >
-                <ChatPicker
-                  templates={templates}
-                  selectedTemplate={selectedTemplate}
-                  onSelectedTemplateChange={setSelectedTemplate}
-                  models={filteredModels}
-                  languageModel={languageModel}
-                  onLanguageModelChange={handleLanguageModelChange}
-                />
-                <ChatSettings
-                  languageModel={languageModel}
-                  onLanguageModelChange={handleLanguageModelChange}
-                  apiKeyConfigurable={!process.env.NEXT_PUBLIC_NO_API_KEY_INPUT}
-                  baseURLConfigurable={!process.env.NEXT_PUBLIC_NO_BASE_URL_INPUT}
-                />
-              </ChatInput>
-            </div>
-          </div>
+            <ChatSettings
+              languageModel={languageModel}
+              onLanguageModelChange={handleLanguageModelChange}
+              apiKeyConfigurable={!process.env.NEXT_PUBLIC_NO_API_KEY_INPUT}
+              baseURLConfigurable={!process.env.NEXT_PUBLIC_NO_BASE_URL_INPUT}
+            />
+          </ChatInput>
         </div>
 
         {/* Preview/Artifact Window - Animated slide-in from right */}
