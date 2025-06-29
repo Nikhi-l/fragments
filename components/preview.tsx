@@ -44,6 +44,16 @@ export function Preview({
   const isCodeFragment = fragment.type === 'code'
   const hasExecutableCode = isCodeFragment && fragment.code && fragment.file_path
 
+  // Get the appropriate tab label based on fragment type
+  const getFragmentTabLabel = () => {
+    switch (fragment.type) {
+      case 'camera_feed': return 'Camera Feed'
+      case 'dashboard': return 'Dashboard'
+      case 'sales_data': return 'Sales Data'
+      default: return 'Preview'
+    }
+  }
+
   return (
     <div className="absolute md:relative z-10 top-0 left-0 shadow-2xl md:rounded-tl-3xl md:rounded-bl-3xl md:border-l md:border-y bg-popover h-full w-full overflow-auto">
       <Tabs
@@ -90,8 +100,7 @@ export function Preview({
                 className="font-normal text-xs py-1 px-2 gap-1 flex items-center"
                 value="fragment"
               >
-                {fragment.type === 'camera_feed' ? 'Camera Feed' : 
-                 fragment.type === 'dashboard' ? 'Dashboard' : 'Preview'}
+                {getFragmentTabLabel()}
                 {isPreviewLoading && (
                   <LoaderCircle
                     strokeWidth={3}

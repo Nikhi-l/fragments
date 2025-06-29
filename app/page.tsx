@@ -48,6 +48,7 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState('')
   const [isCameraLoading, setIsCameraLoading] = useState(false)
   const [isAnalyticsLoading, setIsAnalyticsLoading] = useState(false)
+  const [isSalesDataLoading, setIsSalesDataLoading] = useState(false)
   const { session, userTeam } = useAuth(setAuthDialog, setAuthView)
 
   const filteredModels = modelsList.models.filter((model) => {
@@ -81,8 +82,8 @@ export default function Home() {
       if (!error && fragment) {
         console.log('fragment', fragment)
         
-        // Handle non-code fragments (camera feeds and dashboards)
-        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard') {
+        // Handle non-code fragments (camera feeds, dashboards, and sales data)
+        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard' || fragment.type === 'sales_data') {
           setCurrentPreview({ fragment, result: undefined })
           setMessage({ result: undefined })
           setCurrentTab('fragment')
@@ -221,6 +222,49 @@ export default function Home() {
     }
   }
 
+  // Function to create hardcoded sales data fragment
+  function createSalesDataFragment(userInput: string): DeepPartial<FragmentSchema> {
+    // Extract store name from user input or use default
+    const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
+    const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
+
+    // Determine time period from user input
+    let timePeriod = 'This Month'
+    if (userInput.toLowerCase().includes('today')) timePeriod = 'Today'
+    else if (userInput.toLowerCase().includes('week')) timePeriod = 'This Week'
+    else if (userInput.toLowerCase().includes('quarter')) timePeriod = 'This Quarter'
+    else if (userInput.toLowerCase().includes('year')) timePeriod = 'This Year'
+
+    // Determine comparison period
+    let comparisonPeriod = 'Last Month'
+    if (timePeriod === 'Today') comparisonPeriod = 'Yesterday'
+    else if (timePeriod === 'This Week') comparisonPeriod = 'Last Week'
+    else if (timePeriod === 'This Quarter') comparisonPeriod = 'Last Quarter'
+    else if (timePeriod === 'This Year') comparisonPeriod = 'Last Year'
+
+    return {
+      type: 'sales_data',
+      commentary: `Displaying detailed sales data analysis for ${storeName}. This comprehensive view includes revenue trends, transaction volumes, customer metrics, top-performing products, sales by category, payment method distribution, and hourly sales patterns. The data covers ${timePeriod.toLowerCase()} with comparisons to ${comparisonPeriod.toLowerCase()} to help you identify trends, opportunities, and areas for improvement in your sales performance.`,
+      title: 'Sales Data',
+      description: `Detailed sales analytics and performance metrics for ${storeName}`,
+      store_name: storeName,
+      time_period: timePeriod,
+      sales_metrics: [
+        'Total Revenue',
+        'Transaction Count',
+        'Average Order Value',
+        'Customer Count',
+        'Conversion Rate',
+        'Return Customer Rate',
+        'Top Products',
+        'Sales by Category',
+        'Payment Methods',
+        'Hourly Trends'
+      ],
+      comparison_period: comparisonPeriod
+    }
+  }
+
   async function handleSubmitAuth(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -228,10 +272,11 @@ export default function Home() {
       return setAuthDialog(true)
     }
 
-    if (isLoading || isCameraLoading || isAnalyticsLoading) {
+    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading) {
       stop()
       setIsCameraLoading(false)
       setIsAnalyticsLoading(false)
+      setIsSalesDataLoading(false)
     }
 
     const content: Message['content'] = [{ type: 'text', text: chatInput }]
@@ -287,7 +332,6 @@ export default function Home() {
       inputLower.includes('dashboard') || 
       inputLower.includes('performance') || 
       inputLower.includes('metrics') || 
-      inputLower.includes('sales data') ||
       inputLower.includes('how is my store') ||
       inputLower.includes('store doing')
     ) {
@@ -317,6 +361,50 @@ export default function Home() {
         posthog.capture('analytics_dashboard_triggered', {
           store_name: analyticsFragment.store_name,
           time_period: analyticsFragment.time_period,
+          trigger: 'hardcoded'
+        })
+      }, 2000) // 2-second delay
+    }
+    // Check if user input contains sales data keywords
+    else if (
+      inputLower.includes('sales data') || 
+      inputLower.includes('sales report') || 
+      inputLower.includes('revenue') || 
+      inputLower.includes('transactions') || 
+      inputLower.includes('sales trends') ||
+      inputLower.includes('sales analytics') ||
+      inputLower.includes('sales performance') ||
+      inputLower.includes('order value') ||
+      inputLower.includes('conversion rate') ||
+      inputLower.includes('top products') ||
+      inputLower.includes('sales by category')
+    ) {
+      // Set loading state to simulate LLM processing
+      setIsSalesDataLoading(true)
+      
+      // Add a 2-second delay to simulate LLM call
+      setTimeout(() => {
+        // Create hardcoded sales data fragment
+        const salesDataFragment = createSalesDataFragment(chatInput)
+        
+        // Set the fragment directly without LLM call
+        setFragment(salesDataFragment)
+        setCurrentPreview({ fragment: salesDataFragment, result: undefined })
+        setCurrentTab('fragment')
+        
+        // Add assistant response
+        addMessage({
+          role: 'assistant',
+          content: [{ type: 'text', text: salesDataFragment.commentary || '' }],
+          object: salesDataFragment,
+        })
+
+        // Stop loading state
+        setIsSalesDataLoading(false)
+
+        posthog.capture('sales_data_triggered', {
+          store_name: salesDataFragment.store_name,
+          time_period: salesDataFragment.time_period,
           trigger: 'hardcoded'
         })
       }, 2000) // 2-second delay
@@ -393,6 +481,7 @@ export default function Home() {
     stop()
     setIsCameraLoading(false)
     setIsAnalyticsLoading(false)
+    setIsSalesDataLoading(false)
     setChatInput('')
     setFiles([])
     setMessages([])
@@ -416,7 +505,7 @@ export default function Home() {
   }
 
   // Combine loading states for UI
-  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading
+  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading
 
   return (
     <main className="flex min-h-screen max-h-screen">
@@ -457,6 +546,7 @@ export default function Home() {
               stop()
               setIsCameraLoading(false)
               setIsAnalyticsLoading(false)
+              setIsSalesDataLoading(false)
             }}
             input={chatInput}
             handleInputChange={handleSaveInputChange}
