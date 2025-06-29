@@ -52,21 +52,21 @@ export function LandingPage() {
 
   return (
     <div className="flex flex-col justify-center items-center min-h-[70vh] px-4 py-8">
-      {/* Centered Welcome Content */}
+      {/* Centered Welcome Content with Left-Aligned Text */}
       <div className="space-y-6 max-w-4xl w-full flex flex-col items-center">
-        <div className="space-y-4 text-center">
-          <h1 className="text-4xl font-bold text-foreground">
+        <div className="space-y-4 w-full">
+          <h1 className="text-4xl font-bold text-foreground text-left">
             Hello there!
           </h1>
           
-          <p className="text-xl text-muted-foreground">
+          <p className="text-xl text-muted-foreground text-left">
             How can I help you today?
           </p>
         </div>
 
         {/* Sample Prompts */}
         <div className="space-y-4 w-full max-w-2xl">
-          <p className="text-sm text-muted-foreground text-center">
+          <p className="text-sm text-muted-foreground text-left">
             Try asking me about:
           </p>
           
@@ -110,8 +110,8 @@ export function LandingPage() {
         </div>
 
         {/* Additional Help Text */}
-        <div className="text-sm text-muted-foreground text-center max-w-2xl">
-          <p>
+        <div className="text-sm text-muted-foreground w-full max-w-2xl">
+          <p className="text-left">
             I can help you with store analytics, camera monitoring, inventory management, 
             staff performance, and much more. Just ask me in plain English!
           </p>
