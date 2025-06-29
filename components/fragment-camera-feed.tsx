@@ -71,7 +71,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
   const [isPlaying, setIsPlaying] = useState(true)
   const [lastRefresh, setLastRefresh] = useState(new Date())
   const videoRef = useRef<HTMLVideoElement>(null)
-  const fullscreenContainerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   // Mock store data - in real app this would come from API
   const stores: Store[] = [
@@ -175,61 +175,9 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
     // In real app, this would trigger a data refresh
   }
 
-  const toggleFullscreen = async () => {
-    if (!isFullscreen) {
-      // Enter fullscreen
-      if (fullscreenContainerRef.current) {
-        try {
-          if (fullscreenContainerRef.current.requestFullscreen) {
-            await fullscreenContainerRef.current.requestFullscreen()
-          } else if ((fullscreenContainerRef.current as any).webkitRequestFullscreen) {
-            await (fullscreenContainerRef.current as any).webkitRequestFullscreen()
-          } else if ((fullscreenContainerRef.current as any).msRequestFullscreen) {
-            await (fullscreenContainerRef.current as any).msRequestFullscreen()
-          }
-          setIsFullscreen(true)
-        } catch (error) {
-          console.error('Error entering fullscreen:', error)
-        }
-      }
-    } else {
-      // Exit fullscreen
-      try {
-        if (document.exitFullscreen) {
-          await document.exitFullscreen()
-        } else if ((document as any).webkitExitFullscreen) {
-          await (document as any).webkitExitFullscreen()
-        } else if ((document as any).msExitFullscreen) {
-          await (document as any).msExitFullscreen()
-        }
-        setIsFullscreen(false)
-      } catch (error) {
-        console.error('Error exiting fullscreen:', error)
-      }
-    }
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen)
   }
-
-  // Listen for fullscreen changes
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      const isCurrentlyFullscreen = !!(
-        document.fullscreenElement ||
-        (document as any).webkitFullscreenElement ||
-        (document as any).msFullscreenElement
-      )
-      setIsFullscreen(isCurrentlyFullscreen)
-    }
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange)
-    document.addEventListener('msfullscreenchange', handleFullscreenChange)
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange)
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange)
-      document.removeEventListener('msfullscreenchange', handleFullscreenChange)
-    }
-  }, [])
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -254,11 +202,12 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
   if (isFullscreen) {
     return (
       <div 
-        ref={fullscreenContainerRef}
+        ref={containerRef}
         className="fixed inset-0 bg-black z-50 flex flex-col"
+        style={{ zIndex: 9999 }}
       >
         {/* Fullscreen Header */}
-        <div className="bg-black/80 text-white p-4 flex items-center justify-between">
+        <div className="bg-black/90 text-white p-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <Camera className="h-5 w-5" />
@@ -301,19 +250,11 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
             >
               <Minimize2 className="h-4 w-4" />
             </Button>
-            <Button
-              onClick={toggleFullscreen}
-              variant="outline"
-              size="sm"
-              className="text-white border-white hover:bg-white/20"
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         </div>
 
         {/* Fullscreen Video */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative bg-black">
           {currentCamera?.status === 'offline' ? (
             <div className="w-full h-full flex items-center justify-center text-white">
               <div className="text-center">
@@ -387,7 +328,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
         </div>
 
         {/* Fullscreen Camera Grid */}
-        <div className="bg-black/80 p-4">
+        <div className="bg-black/90 p-4">
           <div className="flex items-center space-x-2 overflow-x-auto">
             {cameraFeeds.map((camera, index) => (
               <div
@@ -618,7 +559,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
               </div>
             </CardHeader>
             <CardContent className="p-0 flex-1 flex flex-col">
-              <div className="relative bg-black rounded-b-lg overflow-hidden flex-1">
+              <div className="relative bg-black rounded-b-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
                 {currentCamera?.status === 'offline' ? (
                   <div className="w-full h-full flex items-center justify-center text-white">
                     <div className="text-center">
@@ -645,6 +586,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                     muted={isMuted}
                     loop
                     src={currentCamera?.url}
+                    style={{ aspectRatio: '16/9' }}
                   >
                     Your browser does not support the video tag.
                   </video>
@@ -758,7 +700,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                 className="overflow-hidden cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
                 onClick={() => setSelectedCamera(index)}
               >
-                <div className="relative aspect-video bg-black">
+                <div className="relative bg-black" style={{ aspectRatio: '16/9' }}>
                   {camera.status === 'offline' || camera.status === 'maintenance' ? (
                     <div className="w-full h-full flex items-center justify-center text-white">
                       <div className="text-center">
@@ -777,6 +719,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                       autoPlay
                       loop
                       src={camera.url}
+                      style={{ aspectRatio: '16/9' }}
                     />
                   )}
                   <div className="absolute bottom-1 left-1 bg-black/70 text-white px-2 py-0.5 rounded text-xs">
