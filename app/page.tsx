@@ -40,7 +40,7 @@ export default function Home() {
   const [result, setResult] = useState<ExecutionResult>()
   const [messages, setMessages] = useState<Message[]>([])
   const [fragment, setFragment] = useState<DeepPartial<FragmentSchema>>()
-  const [currentTab, setCurrentTab] = useState<'code' | 'fragment'>('code')
+  const [currentTab, setCurrentTab] = useState<'code' | 'fragment'>('fragment')
   const [isPreviewLoading, setIsPreviewLoading] = useState(false)
   const [isAuthDialogOpen, setAuthDialog] = useState(false)
   const [authView, setAuthView] = useState<ViewType>('sign_in')
@@ -76,33 +76,47 @@ export default function Home() {
       setErrorMessage(error.message)
     },
     onFinish: async ({ object: fragment, error }) => {
-      if (!error) {
-        // send it to /api/sandbox
+      if (!error && fragment) {
         console.log('fragment', fragment)
-        setIsPreviewLoading(true)
-        posthog.capture('fragment_generated', {
-          template: fragment?.template,
-        })
+        
+        // Handle non-code fragments (camera feeds and dashboards)
+        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard') {
+          setCurrentPreview({ fragment, result: undefined })
+          setMessage({ result: undefined })
+          setCurrentTab('fragment')
+          posthog.capture('fragment_generated', {
+            type: fragment.type,
+          })
+          return
+        }
 
-        const response = await fetch('/api/sandbox', {
-          method: 'POST',
-          body: JSON.stringify({
-            fragment,
-            userID: session?.user?.id,
-            teamID: userTeam?.id,
-            accessToken: session?.access_token,
-          }),
-        })
+        // Handle code fragments (original functionality)
+        if (fragment.type === 'code') {
+          setIsPreviewLoading(true)
+          posthog.capture('fragment_generated', {
+            template: fragment.template,
+          })
 
-        const result = await response.json()
-        console.log('result', result)
-        posthog.capture('sandbox_created', { url: result.url })
+          const response = await fetch('/api/sandbox', {
+            method: 'POST',
+            body: JSON.stringify({
+              fragment,
+              userID: session?.user?.id,
+              teamID: userTeam?.id,
+              accessToken: session?.access_token,
+            }),
+          })
 
-        setResult(result)
-        setCurrentPreview({ fragment, result })
-        setMessage({ result })
-        setCurrentTab('fragment')
-        setIsPreviewLoading(false)
+          const result = await response.json()
+          console.log('result', result)
+          posthog.capture('sandbox_created', { url: result.url })
+
+          setResult(result)
+          setCurrentPreview({ fragment, result })
+          setMessage({ result })
+          setCurrentTab('fragment')
+          setIsPreviewLoading(false)
+        }
       }
     },
   })
@@ -112,8 +126,12 @@ export default function Home() {
       setFragment(object)
       const content: Message['content'] = [
         { type: 'text', text: object.commentary || '' },
-        { type: 'code', text: object.code || '' },
       ]
+
+      // Only add code content for code fragments
+      if (object.type === 'code' && object.code) {
+        content.push({ type: 'code', text: object.code })
+      }
 
       if (!lastMessage || lastMessage.role !== 'assistant') {
         addMessage({
@@ -184,7 +202,7 @@ export default function Home() {
 
     setChatInput('')
     setFiles([])
-    setCurrentTab('code')
+    setCurrentTab('fragment')
 
     posthog.capture('chat_submit', {
       template: selectedTemplate,
@@ -245,7 +263,7 @@ export default function Home() {
     setMessages([])
     setFragment(undefined)
     setResult(undefined)
-    setCurrentTab('code')
+    setCurrentTab('fragment')
     setIsPreviewLoading(false)
   }
 
