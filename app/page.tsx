@@ -49,6 +49,7 @@ export default function Home() {
   const [isCameraLoading, setIsCameraLoading] = useState(false)
   const [isAnalyticsLoading, setIsAnalyticsLoading] = useState(false)
   const [isSalesDataLoading, setIsSalesDataLoading] = useState(false)
+  const [showArtifact, setShowArtifact] = useState(false)
   const { session, userTeam } = useAuth(setAuthDialog, setAuthView)
 
   const filteredModels = modelsList.models.filter((model) => {
@@ -81,6 +82,9 @@ export default function Home() {
     onFinish: async ({ object: fragment, error }) => {
       if (!error && fragment) {
         console.log('fragment', fragment)
+        
+        // Show artifact window when fragment is generated
+        setShowArtifact(true)
         
         // Handle non-code fragments (camera feeds, dashboards, and sales data)
         if (fragment.type === 'camera_feed' || fragment.type === 'dashboard' || fragment.type === 'sales_data') {
@@ -309,6 +313,7 @@ export default function Home() {
         setFragment(cameraFragment)
         setCurrentPreview({ fragment: cameraFragment, result: undefined })
         setCurrentTab('fragment')
+        setShowArtifact(true)
         
         // Add assistant response
         addMessage({
@@ -347,6 +352,7 @@ export default function Home() {
         setFragment(analyticsFragment)
         setCurrentPreview({ fragment: analyticsFragment, result: undefined })
         setCurrentTab('fragment')
+        setShowArtifact(true)
         
         // Add assistant response
         addMessage({
@@ -391,6 +397,7 @@ export default function Home() {
         setFragment(salesDataFragment)
         setCurrentPreview({ fragment: salesDataFragment, result: undefined })
         setCurrentTab('fragment')
+        setShowArtifact(true)
         
         // Add assistant response
         addMessage({
@@ -489,6 +496,7 @@ export default function Home() {
     setResult(undefined)
     setCurrentTab('fragment')
     setIsPreviewLoading(false)
+    setShowArtifact(false)
   }
 
   function setCurrentPreview(preview: {
@@ -502,6 +510,12 @@ export default function Home() {
   function handleUndo() {
     setMessages((previousMessages) => [...previousMessages.slice(0, -2)])
     setCurrentPreview({ fragment: undefined, result: undefined })
+    setShowArtifact(false)
+  }
+
+  function handleCloseArtifact() {
+    setFragment(undefined)
+    setShowArtifact(false)
   }
 
   // Combine loading states for UI
@@ -517,9 +531,13 @@ export default function Home() {
           supabase={supabase}
         />
       )}
-      <div className="grid w-full grid-cols-4">
-        {/* Chat Window - 25% width (1 column) */}
-        <div className="col-span-1 flex flex-col w-full max-h-full overflow-auto border-r">
+      <div className="flex w-full transition-all duration-500 ease-in-out">
+        {/* Chat Window - Dynamic width with smooth animation */}
+        <div 
+          className={`flex flex-col w-full max-h-full overflow-auto border-r transition-all duration-500 ease-in-out ${
+            showArtifact ? 'max-w-[25%]' : 'max-w-full'
+          }`}
+        >
           <div className="px-4">
             <NavBar
               session={session}
@@ -579,19 +597,27 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Preview/Artifact Window - 75% width (3 columns) */}
-        <div className="col-span-3">
-          <Preview
-            teamID={userTeam?.id}
-            accessToken={session?.access_token}
-            selectedTab={currentTab}
-            onSelectedTabChange={setCurrentTab}
-            isChatLoading={isAnyLoading}
-            isPreviewLoading={isPreviewLoading}
-            fragment={fragment}
-            result={result as ExecutionResult}
-            onClose={() => setFragment(undefined)}
-          />
+        {/* Preview/Artifact Window - Animated slide-in from right */}
+        <div 
+          className={`transition-all duration-500 ease-in-out ${
+            showArtifact 
+              ? 'w-[75%] opacity-100 translate-x-0' 
+              : 'w-0 opacity-0 translate-x-full overflow-hidden'
+          }`}
+        >
+          {showArtifact && (
+            <Preview
+              teamID={userTeam?.id}
+              accessToken={session?.access_token}
+              selectedTab={currentTab}
+              onSelectedTabChange={setCurrentTab}
+              isChatLoading={isAnyLoading}
+              isPreviewLoading={isPreviewLoading}
+              fragment={fragment}
+              result={result as ExecutionResult}
+              onClose={handleCloseArtifact}
+            />
+          )}
         </div>
       </div>
     </main>
