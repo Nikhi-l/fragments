@@ -76,7 +76,7 @@ interface Employee {
   certifications: string[]
   hourlyRate: number
   overtimeHours: number
-  avatar?: string
+  avatar: string
 }
 
 interface Task {
@@ -134,14 +134,44 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
     const locations = ['Checkout 1', 'Checkout 2', 'Electronics', 'Clothing', 'Grocery', 'Storage', 'Entrance', 'Customer Service']
     const skills = ['Customer Service', 'Cash Handling', 'Inventory Management', 'Security', 'Leadership', 'Problem Solving', 'Communication', 'Technical Support']
     
+    const names = [
+      'Sarah Johnson', 'Mike Chen', 'Emily Davis', 'James Wilson', 'Lisa Brown', 'David Lee',
+      'Anna Garcia', 'Tom Anderson', 'Maria Rodriguez', 'Chris Taylor', 'Jessica White', 'Ryan Clark',
+      'Amanda Lewis', 'Kevin Martinez', 'Nicole Thompson', 'Daniel Harris', 'Rachel Green', 'Mark Turner',
+      'Stephanie Moore', 'Jason Miller', 'Ashley Jones', 'Brandon Scott', 'Melissa Adams', 'Tyler Young'
+    ]
+
+    // Professional avatar URLs from Unsplash
+    const avatars = [
+      'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1521119989659-a83eee488004?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1525134479668-1bee5c7c6845?w=150&h=150&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face'
+    ]
+    
     return Array.from({ length: 24 }, (_, i) => ({
       id: `emp-${i + 1}`,
-      name: [
-        'Sarah Johnson', 'Mike Chen', 'Emily Davis', 'James Wilson', 'Lisa Brown', 'David Lee',
-        'Anna Garcia', 'Tom Anderson', 'Maria Rodriguez', 'Chris Taylor', 'Jessica White', 'Ryan Clark',
-        'Amanda Lewis', 'Kevin Martinez', 'Nicole Thompson', 'Daniel Harris', 'Rachel Green', 'Mark Turner',
-        'Stephanie Moore', 'Jason Miller', 'Ashley Jones', 'Brandon Scott', 'Melissa Adams', 'Tyler Young'
-      ][i],
+      name: names[i],
       role: roles[Math.floor(Math.random() * roles.length)],
       department: departments[Math.floor(Math.random() * departments.length)],
       status: ['active', 'break', 'lunch', 'offline', 'busy'][Math.floor(Math.random() * 5)] as Employee['status'],
@@ -160,6 +190,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
       certifications: ['Food Safety', 'First Aid', 'Security', 'Customer Service'][Math.floor(Math.random() * 4)] ? ['Food Safety'] : [],
       hourlyRate: Math.floor(Math.random() * 10) + 15,
       overtimeHours: Math.floor(Math.random() * 8),
+      avatar: avatars[i % avatars.length],
     }))
   }
 
@@ -268,9 +299,9 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Users className="h-5 w-5 text-blue-600" />
+          <Users className="h-5 w-5 text-orange-600" />
           <h2 className="text-xl font-semibold">Staff Management - {fragment.store_name}</h2>
-          <Badge variant="outline">{fragment.shift_period}</Badge>
+          <Badge variant="outline" className="border-orange-200 text-orange-700">{fragment.shift_period}</Badge>
         </div>
         <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-2">
@@ -279,6 +310,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
               onClick={() => setAutoAssignEnabled(!autoAssignEnabled)}
               variant={autoAssignEnabled ? 'default' : 'outline'}
               size="sm"
+              className={autoAssignEnabled ? 'bg-orange-500 hover:bg-orange-600' : 'border-orange-200 text-orange-700 hover:bg-orange-50'}
             >
               {autoAssignEnabled ? <Zap className="h-4 w-4" /> : <ZapOff className="h-4 w-4" />}
             </Button>
@@ -309,7 +341,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-orange-100 dark:border-orange-900/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Staff</CardTitle>
             <UserCheck className="h-4 w-4 text-muted-foreground" />
@@ -322,7 +354,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-orange-100 dark:border-orange-900/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">On Break</CardTitle>
             <Coffee className="h-4 w-4 text-muted-foreground" />
@@ -335,7 +367,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-orange-100 dark:border-orange-900/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending Tasks</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
@@ -348,7 +380,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-orange-100 dark:border-orange-900/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avg Performance</CardTitle>
             <Star className="h-4 w-4 text-muted-foreground" />
@@ -366,12 +398,12 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Current Staff Status */}
-        <Card className="lg:col-span-2">
+        {/* Current Staff Status - Full Height */}
+        <Card className="lg:col-span-2 border-orange-100 dark:border-orange-900/30 flex flex-col">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center space-x-2">
-                <Users className="h-4 w-4" />
+                <Users className="h-4 w-4 text-orange-600" />
                 <span>Current Staff Status</span>
               </CardTitle>
               <div className="flex space-x-2">
@@ -390,26 +422,33 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {employees.slice(0, 12).map((employee) => (
-                <div key={employee.id} className="flex items-center justify-between p-3 border rounded-lg">
+          <CardContent className="flex-1 overflow-hidden">
+            <div className="space-y-3 h-full overflow-y-auto">
+              {employees.map((employee) => (
+                <div key={employee.id} className="flex items-center justify-between p-3 border rounded-lg border-orange-100 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-3 h-3 rounded-full ${getStatusColor(employee.status)}`} />
+                    <div className="relative">
+                      <img
+                        src={employee.avatar}
+                        alt={employee.name}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-orange-200"
+                      />
+                      <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${getStatusColor(employee.status)}`} />
+                    </div>
                     <div>
                       <div className="font-medium">{employee.name}</div>
                       <div className="text-sm text-muted-foreground">
                         {employee.role} • {employee.location}
                       </div>
                       {employee.currentTask && (
-                        <div className="text-xs text-blue-600">
+                        <div className="text-xs text-orange-600">
                           Current: {employee.currentTask}
                         </div>
                       )}
                     </div>
                   </div>
                   <div className="text-right space-y-1">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs border-orange-200 text-orange-700">
                       {employee.status}
                     </Badge>
                     <div className="text-xs text-muted-foreground">
@@ -427,10 +466,10 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
         </Card>
 
         {/* Crowd Monitoring & Auto-Assignment */}
-        <Card>
+        <Card className="border-orange-100 dark:border-orange-900/30">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <BarChart3 className="h-4 w-4" />
+              <BarChart3 className="h-4 w-4 text-orange-600" />
               <span>Crowd Monitoring</span>
             </CardTitle>
           </CardHeader>
@@ -459,7 +498,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
                   <div className="flex justify-between text-xs">
                     <span>Staff: {area.staffAssigned}/{area.staffNeeded}</span>
                     {area.staffAssigned < area.staffNeeded && autoAssignEnabled && (
-                      <Button size="sm" variant="outline" className="h-6 text-xs">
+                      <Button size="sm" variant="outline" className="h-6 text-xs border-orange-200 text-orange-700 hover:bg-orange-50">
                         <UserPlus className="h-3 w-3 mr-1" />
                         Auto-assign
                       </Button>
@@ -482,10 +521,10 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
       </div>
 
       {/* Task Management */}
-      <Card>
+      <Card className="border-orange-100 dark:border-orange-900/30">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <CheckCircle className="h-4 w-4" />
+            <CheckCircle className="h-4 w-4 text-orange-600" />
             <span>Task Assignment & Tracking</span>
           </CardTitle>
         </CardHeader>
@@ -496,7 +535,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
               <h4 className="font-medium text-sm">Pending Tasks ({pendingTasks.length})</h4>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {pendingTasks.slice(0, 8).map((task) => (
-                  <div key={task.id} className="p-3 border rounded-lg">
+                  <div key={task.id} className="p-3 border rounded-lg border-orange-100 dark:border-orange-900/30">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="font-medium text-sm">{task.title}</div>
@@ -510,7 +549,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
                           </span>
                         </div>
                       </div>
-                      <Button size="sm" variant="outline" className="h-6 text-xs">
+                      <Button size="sm" variant="outline" className="h-6 text-xs border-orange-200 text-orange-700 hover:bg-orange-50">
                         <UserPlus className="h-3 w-3 mr-1" />
                         Assign
                       </Button>
@@ -527,13 +566,13 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
                 {tasks.filter(t => t.status === 'in_progress').slice(0, 8).map((task) => {
                   const assignedEmployee = employees.find(emp => emp.id === task.assignedTo)
                   return (
-                    <div key={task.id} className="p-3 border rounded-lg">
+                    <div key={task.id} className="p-3 border rounded-lg border-orange-100 dark:border-orange-900/30">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="font-medium text-sm">{task.title}</div>
                           <div className="text-xs text-muted-foreground">{task.location}</div>
                           {assignedEmployee && (
-                            <div className="text-xs text-blue-600 mt-1">
+                            <div className="text-xs text-orange-600 mt-1">
                               Assigned to: {assignedEmployee.name}
                             </div>
                           )}
@@ -557,10 +596,10 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
       </Card>
 
       {/* Break Schedule Optimization */}
-      <Card>
+      <Card className="border-orange-100 dark:border-orange-900/30">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-4 w-4 text-orange-600" />
             <span>Break Schedule Optimization</span>
           </CardTitle>
         </CardHeader>
@@ -573,7 +612,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
                 {breakSchedules.map((breakSched, index) => {
                   const employee = employees.find(emp => emp.id === breakSched.employeeId)
                   return (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg border-orange-100 dark:border-orange-900/30">
                       <div className="flex items-center space-x-3">
                         <div className={`w-3 h-3 rounded-full ${
                           breakSched.status === 'active' ? 'bg-yellow-500' :
@@ -591,7 +630,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
                         <div className="text-sm font-medium">
                           {breakSched.startTime} - {breakSched.endTime}
                         </div>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs border-orange-200 text-orange-700">
                           {breakSched.status}
                         </Badge>
                       </div>
@@ -606,20 +645,20 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
               <h4 className="font-medium text-sm">Optimization Settings</h4>
               
               <div className="space-y-3">
-                <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                <div className="p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
                   <div className="flex items-center space-x-2 mb-2">
-                    <Zap className="h-4 w-4 text-blue-600" />
+                    <Zap className="h-4 w-4 text-orange-600" />
                     <span className="text-sm font-medium">Auto-Optimization</span>
                   </div>
                   <p className="text-xs text-muted-foreground mb-2">
                     Automatically optimize break schedules based on crowd patterns
                   </p>
-                  <Button size="sm" className="w-full">
+                  <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600">
                     Enable Auto-Optimize
                   </Button>
                 </div>
 
-                <div className="p-3 border rounded-lg">
+                <div className="p-3 border rounded-lg border-orange-100 dark:border-orange-900/30">
                   <div className="text-sm font-medium mb-2">Coverage Analysis</div>
                   <div className="space-y-2 text-xs">
                     <div className="flex justify-between">
@@ -637,7 +676,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
                   </div>
                 </div>
 
-                <Button size="sm" variant="outline" className="w-full">
+                <Button size="sm" variant="outline" className="w-full border-orange-200 text-orange-700 hover:bg-orange-50">
                   <RotateCcw className="h-4 w-4 mr-2" />
                   Regenerate Schedule
                 </Button>
@@ -649,10 +688,10 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
 
       {/* Performance Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="border-orange-100 dark:border-orange-900/30">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Activity className="h-4 w-4" />
+              <Activity className="h-4 w-4 text-orange-600" />
               <span>Performance Metrics</span>
             </CardTitle>
           </CardHeader>
@@ -695,10 +734,10 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-orange-100 dark:border-orange-900/30">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Bell className="h-4 w-4" />
+              <Bell className="h-4 w-4 text-orange-600" />
               <span>Alerts & Notifications</span>
             </CardTitle>
           </CardHeader>
