@@ -51,8 +51,9 @@ interface ConversationConfig {
 }
 
 export function FragmentHelp() {
-  const [apiKey, setApiKey] = useState('')
-  const [isApiKeySet, setIsApiKeySet] = useState(false)
+  // Use hardcoded API key from environment
+  const apiKey = process.env.TAVUS_API_KEY || 'f17244051d5540389a480bf2608cec3a'
+  
   const [conversation, setConversation] = useState<TavusConversation | null>(null)
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState('')
@@ -67,21 +68,7 @@ export function FragmentHelp() {
   
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
-  const handleApiKeySubmit = () => {
-    if (apiKey.trim()) {
-      setIsApiKeySet(true)
-      setError('')
-    } else {
-      setError('Please enter a valid API key')
-    }
-  }
-
   const createConversation = async () => {
-    if (!apiKey) {
-      setError('API key is required')
-      return
-    }
-
     setIsCreating(true)
     setError('')
     setConnectionStatus('connecting')
@@ -160,100 +147,6 @@ export function FragmentHelp() {
     if (conversation?.conversation_url) {
       window.open(conversation.conversation_url, '_blank')
     }
-  }
-
-  // API Key Setup Screen
-  if (!isApiKeySet) {
-    return (
-      <div className="flex flex-col h-full p-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-            <HelpCircle className="h-6 w-6 text-blue-600" />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold">RetailX AI Assistant</h2>
-            <p className="text-sm text-muted-foreground">Get help with conversational AI video support</p>
-          </div>
-        </div>
-
-        {/* API Key Setup */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Settings className="h-5 w-5" />
-              <span>Setup Tavus API</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="apiKey">Tavus API Key</Label>
-              <Input
-                id="apiKey"
-                type="password"
-                placeholder="Enter your Tavus API key"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleApiKeySubmit()}
-              />
-              <p className="text-xs text-muted-foreground">
-                Get your API key from the <a href="https://platform.tavus.io" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Tavus Platform</a>
-              </p>
-            </div>
-
-            {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-              </div>
-            )}
-
-            <Button onClick={handleApiKeySubmit} className="w-full">
-              <Video className="h-4 w-4 mr-2" />
-              Connect to Tavus
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Features Overview */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">What you can do:</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-start space-x-3">
-                <MessageCircle className="h-5 w-5 text-blue-600 mt-0.5" />
-                <div>
-                  <h4 className="font-medium">Ask Questions</h4>
-                  <p className="text-sm text-muted-foreground">Get help with RetailX features and functionality</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Video className="h-5 w-5 text-green-600 mt-0.5" />
-                <div>
-                  <h4 className="font-medium">HD Video Calls</h4>
-                  <p className="text-sm text-muted-foreground">High-quality video conversations</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Bot className="h-5 w-5 text-purple-600 mt-0.5" />
-                <div>
-                  <h4 className="font-medium">AI-Powered</h4>
-                  <p className="text-sm text-muted-foreground">Intelligent responses tailored to retail management</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
-                <div>
-                  <h4 className="font-medium">Real-time</h4>
-                  <p className="text-sm text-muted-foreground">Instant responses and interactive conversation</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
   }
 
   // Fullscreen Video View
@@ -363,6 +256,26 @@ export function FragmentHelp() {
         {!conversation ? (
           // Start Conversation
           <div className="space-y-4">
+            {/* API Status */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">Tavus API Connected</h3>
+                      <p className="text-sm text-muted-foreground">Ready to start video conversation</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    Ready
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -483,6 +396,45 @@ export function FragmentHelp() {
                       {topic}
                     </Button>
                   ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Features Overview */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">What you can do:</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-start space-x-3">
+                    <MessageCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">Ask Questions</h4>
+                      <p className="text-sm text-muted-foreground">Get help with RetailX features and functionality</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Video className="h-5 w-5 text-green-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">HD Video Calls</h4>
+                      <p className="text-sm text-muted-foreground">High-quality video conversations</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Bot className="h-5 w-5 text-purple-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">AI-Powered</h4>
+                      <p className="text-sm text-muted-foreground">Intelligent responses tailored to retail management</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">Real-time</h4>
+                      <p className="text-sm text-muted-foreground">Instant responses and interactive conversation</p>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
