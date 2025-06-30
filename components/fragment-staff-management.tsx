@@ -568,7 +568,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Current Break Schedule */}
             <div className="lg:col-span-2 space-y-3">
-              <h4 className="font-medium text-sm">Today's Break Schedule</h4>
+              <h4 className="font-medium text-sm">Today&apos;s Break Schedule</h4>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {breakSchedules.map((breakSched, index) => {
                   const employee = employees.find(emp => emp.id === breakSched.employeeId)
@@ -720,7 +720,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
                   <span className="text-sm font-medium text-yellow-600">Break Reminder</span>
                 </div>
                 <p className="text-xs text-yellow-600 mt-1">
-                  Sarah Johnson's break starts in 15 minutes
+                  Sarah Johnson&apos;s break starts in 15 minutes
                 </p>
               </div>
 

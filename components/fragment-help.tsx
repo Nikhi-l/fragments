@@ -29,7 +29,7 @@ import {
   Maximize2,
   Minimize2
 } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 interface TavusConversation {
   conversation_id: string
@@ -69,12 +69,7 @@ export function FragmentHelp() {
   
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
-  // Auto-start conversation when component mounts
-  useEffect(() => {
-    createConversation()
-  }, [])
-
-  const createConversation = async () => {
+  const createConversation = useCallback(async () => {
     setIsCreating(true)
     setError('')
     setConnectionStatus('connecting')
@@ -124,7 +119,12 @@ export function FragmentHelp() {
     } finally {
       setIsCreating(false)
     }
-  }
+  }, [apiKey, config])
+
+  // Auto-start conversation when component mounts
+  useEffect(() => {
+    createConversation()
+  }, [createConversation])
 
   const endConversation = () => {
     setConversation(null)
