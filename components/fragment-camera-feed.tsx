@@ -37,7 +37,7 @@ import {
   RefreshCw,
   X
 } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 
 interface Store {
   id: string
@@ -73,8 +73,8 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Mock store data - in real app this would come from API
-  const stores: Store[] = [
+  // Memoize store data to prevent useEffect dependency issues
+  const stores: Store[] = useMemo(() => [
     {
       id: 'main',
       name: fragment.store_name || 'Main Store',
@@ -120,7 +120,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
       alerts: 5,
       lastUpdate: '1 hour ago'
     }
-  ]
+  ], [fragment.store_name])
 
   // Set initial store selection
   useEffect(() => {
