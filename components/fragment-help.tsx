@@ -50,33 +50,11 @@ interface ConversationConfig {
   custom_greeting: string
 }
 
-// Daily.co call frame interface
-interface DailyCallFrame {
-  join: (options: { url: string }) => Promise<void>
-  leave: () => Promise<void>
-  destroy: () => void
-  on: (event: string, callback: (event?: any) => void) => void
-  participants: () => any
-  setLocalAudio: (enabled: boolean) => void
-  setLocalVideo: (enabled: boolean) => void
-  startScreenShare: () => void
-  stopScreenShare: () => void
-}
-
-declare global {
-  interface Window {
-    Daily: {
-      createFrame: (element?: HTMLElement, options?: any) => DailyCallFrame
-    }
-  }
-}
-
 export function FragmentHelp() {
   const [apiKey, setApiKey] = useState('')
   const [isApiKeySet, setIsApiKeySet] = useState(false)
   const [conversation, setConversation] = useState<TavusConversation | null>(null)
   const [isCreating, setIsCreating] = useState(false)
-  const [isConnected, setIsConnected] = useState(false)
   const [error, setError] = useState('')
   const [config, setConfig] = useState<ConversationConfig>({
     audio_only: false,
@@ -85,31 +63,9 @@ export function FragmentHelp() {
     custom_greeting: 'Hello! I\'m your RetailX AI assistant. How can I help you today?'
   })
   const [connectionStatus, setConnectionStatus] = useState<'disconnected' | 'connecting' | 'connected' | 'ended'>('disconnected')
-  const [callFrame, setCallFrame] = useState<DailyCallFrame | null>(null)
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true)
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [participantCount, setParticipantCount] = useState(0)
-  const [isDailyLoaded, setIsDailyLoaded] = useState(false)
   
-  const videoContainerRef = useRef<HTMLDivElement>(null)
-
-  // Load Daily.co script
-  useEffect(() => {
-    const script = document.createElement('script')
-    script.src = 'https://unpkg.com/@daily-co/daily-js'
-    script.crossOrigin = 'anonymous'
-    script.onload = () => {
-      setIsDailyLoaded(true)
-    }
-    document.head.appendChild(script)
-
-    return () => {
-      if (callFrame) {
-        callFrame.destroy()
-      }
-    }
-  }, [])
+  const iframeRef = useRef<HTMLIFrameElement>(null)
 
   const handleApiKeySubmit = () => {
     if (apiKey.trim()) {
@@ -126,13 +82,9 @@ export function FragmentHelp() {
       return
     }
 
-    if (!isDailyLoaded) {
-      setError('Video calling system is still loading. Please try again in a moment.')
-      return
-    }
-
     setIsCreating(true)
     setError('')
+    setConnectionStatus('connecting')
 
     try {
       // Build request body, only including optional fields if they have values
@@ -174,91 +126,20 @@ export function FragmentHelp() {
 
       const conversationData: TavusConversation = await response.json()
       setConversation(conversationData)
-      setConnectionStatus('connecting')
-      
-      // Initialize Daily.co call frame
-      await initializeVideoCall(conversationData.conversation_url)
+      setConnectionStatus('connected')
 
     } catch (err: any) {
       setError(`Failed to create conversation: ${err.message}`)
+      setConnectionStatus('disconnected')
       console.error('Error creating conversation:', err)
     } finally {
       setIsCreating(false)
     }
   }
 
-  const initializeVideoCall = async (roomUrl: string) => {
-    try {
-      if (!videoContainerRef.current || !window.Daily) {
-        throw new Error('Video container or Daily.co not available')
-      }
-
-      // Create Daily call frame
-      const frame = window.Daily.createFrame(videoContainerRef.current, {
-        iframeStyle: {
-          width: '100%',
-          height: '100%',
-          border: 'none',
-          borderRadius: '8px'
-        },
-        showLeaveButton: false,
-        showFullscreenButton: false,
-        showLocalVideo: true,
-        showParticipantsBar: true
-      })
-
-      // Set up event listeners
-      frame.on('joined-meeting', () => {
-        setIsConnected(true)
-        setConnectionStatus('connected')
-        setParticipantCount(Object.keys(frame.participants()).length)
-      })
-
-      frame.on('participant-joined', () => {
-        setParticipantCount(Object.keys(frame.participants()).length)
-      })
-
-      frame.on('participant-left', () => {
-        setParticipantCount(Object.keys(frame.participants()).length)
-      })
-
-      frame.on('left-meeting', () => {
-        setIsConnected(false)
-        setConnectionStatus('ended')
-        setParticipantCount(0)
-      })
-
-      frame.on('error', (error: any) => {
-        console.error('Daily.co error:', error)
-        setError(`Video call error: ${error.message || 'Unknown error'}`)
-        setConnectionStatus('disconnected')
-      })
-
-      // Join the meeting
-      await frame.join({ url: roomUrl })
-      setCallFrame(frame)
-
-    } catch (err: any) {
-      setError(`Failed to initialize video call: ${err.message}`)
-      setConnectionStatus('disconnected')
-    }
-  }
-
-  const endConversation = async () => {
-    if (callFrame) {
-      try {
-        await callFrame.leave()
-        callFrame.destroy()
-        setCallFrame(null)
-      } catch (err) {
-        console.error('Error ending call:', err)
-      }
-    }
-    
+  const endConversation = () => {
     setConversation(null)
-    setIsConnected(false)
     setConnectionStatus('ended')
-    setParticipantCount(0)
     
     setTimeout(() => {
       setConnectionStatus('disconnected')
@@ -266,36 +147,19 @@ export function FragmentHelp() {
   }
 
   const resetSession = () => {
-    if (callFrame) {
-      callFrame.destroy()
-      setCallFrame(null)
-    }
-    
     setConversation(null)
-    setIsConnected(false)
     setConnectionStatus('disconnected')
     setError('')
-    setParticipantCount(0)
-  }
-
-  const toggleAudio = () => {
-    if (callFrame) {
-      const newState = !isAudioEnabled
-      callFrame.setLocalAudio(newState)
-      setIsAudioEnabled(newState)
-    }
-  }
-
-  const toggleVideo = () => {
-    if (callFrame) {
-      const newState = !isVideoEnabled
-      callFrame.setLocalVideo(newState)
-      setIsVideoEnabled(newState)
-    }
   }
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen)
+  }
+
+  const openInNewTab = () => {
+    if (conversation?.conversation_url) {
+      window.open(conversation.conversation_url, '_blank')
+    }
   }
 
   // API Key Setup Screen
@@ -343,17 +207,10 @@ export function FragmentHelp() {
               </div>
             )}
 
-            <Button onClick={handleApiKeySubmit} className="w-full" disabled={!isDailyLoaded}>
+            <Button onClick={handleApiKeySubmit} className="w-full">
               <Video className="h-4 w-4 mr-2" />
-              {isDailyLoaded ? 'Connect to Tavus' : 'Loading Video System...'}
+              Connect to Tavus
             </Button>
-
-            {!isDailyLoaded && (
-              <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Loading Daily.co video infrastructure...</span>
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -375,7 +232,7 @@ export function FragmentHelp() {
                 <Video className="h-5 w-5 text-green-600 mt-0.5" />
                 <div>
                   <h4 className="font-medium">HD Video Calls</h4>
-                  <p className="text-sm text-muted-foreground">High-quality video powered by Daily.co</p>
+                  <p className="text-sm text-muted-foreground">High-quality video conversations</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
@@ -411,26 +268,19 @@ export function FragmentHelp() {
               <span className="font-medium">{conversation.conversation_name}</span>
             </div>
             <Badge variant="outline" className="text-white border-white">
-              {participantCount} participant{participantCount !== 1 ? 's' : ''}
+              {connectionStatus}
             </Badge>
           </div>
           
           <div className="flex items-center space-x-2">
             <Button
-              onClick={toggleAudio}
+              onClick={openInNewTab}
               variant="outline"
               size="sm"
-              className={`text-white border-white hover:bg-white/20 ${!isAudioEnabled ? 'bg-red-600' : ''}`}
+              className="text-white border-white hover:bg-white/20"
             >
-              {isAudioEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
-            </Button>
-            <Button
-              onClick={toggleVideo}
-              variant="outline"
-              size="sm"
-              className={`text-white border-white hover:bg-white/20 ${!isVideoEnabled ? 'bg-red-600' : ''}`}
-            >
-              {isVideoEnabled ? <Camera className="h-4 w-4" /> : <CameraOff className="h-4 w-4" />}
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Open in New Tab
             </Button>
             <Button
               onClick={toggleFullscreen}
@@ -452,7 +302,13 @@ export function FragmentHelp() {
 
         {/* Fullscreen Video */}
         <div className="flex-1 bg-black">
-          <div ref={videoContainerRef} className="w-full h-full" />
+          <iframe
+            ref={iframeRef}
+            src={conversation.conversation_url}
+            className="w-full h-full border-none"
+            allow="camera; microphone; fullscreen; display-capture; autoplay"
+            title="Tavus Video Conversation"
+          />
         </div>
       </div>
     )
@@ -538,6 +394,16 @@ export function FragmentHelp() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="personaId">Persona ID (Optional)</Label>
+                  <Input
+                    id="personaId"
+                    value={config.persona_id || ''}
+                    onChange={(e) => setConfig(prev => ({ ...prev, persona_id: e.target.value }))}
+                    placeholder="Enter persona ID"
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="context">Conversation Context</Label>
                   <textarea
                     id="context"
@@ -567,7 +433,7 @@ export function FragmentHelp() {
 
                 <Button 
                   onClick={createConversation} 
-                  disabled={isCreating || !isDailyLoaded}
+                  disabled={isCreating}
                   className="w-full"
                   size="lg"
                 >
@@ -575,11 +441,6 @@ export function FragmentHelp() {
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                       Creating Conversation...
-                    </>
-                  ) : !isDailyLoaded ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Loading Video System...
                     </>
                   ) : (
                     <>
@@ -640,12 +501,21 @@ export function FragmentHelp() {
                     <div>
                       <h3 className="font-medium">{conversation.conversation_name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {participantCount} participant{participantCount !== 1 ? 's' : ''} • Session ID: {conversation.conversation_id}
+                        Session ID: {conversation.conversation_id} • Status: {conversation.status}
                       </p>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-2">
+                    <Button
+                      onClick={openInNewTab}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      New Tab
+                    </Button>
+                    
                     <Button
                       onClick={toggleFullscreen}
                       variant="outline"
@@ -671,7 +541,7 @@ export function FragmentHelp() {
             {/* Video Interface */}
             <Card className="flex-1">
               <CardContent className="p-0">
-                <div className="relative w-full" style={{ height: '500px' }}>
+                <div className="relative w-full" style={{ height: '600px' }}>
                   {connectionStatus === 'connecting' ? (
                     <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg">
                       <div className="text-center space-y-4">
@@ -685,34 +555,22 @@ export function FragmentHelp() {
                       </div>
                     </div>
                   ) : (
-                    <div ref={videoContainerRef} className="w-full h-full rounded-lg overflow-hidden" />
+                    <iframe
+                      ref={iframeRef}
+                      src={conversation.conversation_url}
+                      className="w-full h-full rounded-lg border-none"
+                      allow="camera; microphone; fullscreen; display-capture; autoplay"
+                      title="Tavus Video Conversation"
+                    />
                   )}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Video Controls */}
+            {/* Session Info */}
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      onClick={toggleAudio}
-                      variant={isAudioEnabled ? "outline" : "destructive"}
-                      size="sm"
-                    >
-                      {isAudioEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
-                    </Button>
-                    
-                    <Button
-                      onClick={toggleVideo}
-                      variant={isVideoEnabled ? "outline" : "destructive"}
-                      size="sm"
-                    >
-                      {isVideoEnabled ? <Camera className="h-4 w-4" /> : <CameraOff className="h-4 w-4" />}
-                    </Button>
-                  </div>
-
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <div className="flex items-center space-x-2">
                       <Clock className="h-4 w-4" />
@@ -726,6 +584,10 @@ export function FragmentHelp() {
                       <Bot className="h-4 w-4" />
                       <span>AI Assistant Active</span>
                     </div>
+                  </div>
+
+                  <div className="text-xs text-muted-foreground">
+                    Conversation URL: {conversation.conversation_url}
                   </div>
                 </div>
               </CardContent>
