@@ -12,19 +12,19 @@ export function MarketingLanding() {
       icon: Link,
       title: 'CONNECT',
       description: 'We securely link to your existing camera system in minutes. Our platform is compatible with 99% of modern IP cameras.',
-      color: 'orange-400'
+      colorClass: 'bg-orange-400'
     },
     {
       icon: Eye,
       title: 'ANALYZE',
       description: 'Our AI anonymously analyzes video feeds in real-time, identifying shopper behavior patterns without collecting any personal data.',
-      color: 'orange-500'
+      colorClass: 'bg-orange-500'
     },
     {
       icon: TrendingUp,
       title: 'OPTIMIZE',
       description: 'Access your intuitive dashboard. Visualize heatmaps, analyze departmental performance, and get clear recommendations to improve your store\'s performance.',
-      color: 'orange-600'
+      colorClass: 'bg-orange-600'
     }
   ];
 
@@ -225,7 +225,7 @@ export function MarketingLanding() {
                   <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-orange-300 to-orange-200 dark:from-orange-700 dark:to-orange-800 transform translate-x-4 animate-pulse"></div>
                 )}
                 <div className="bg-white dark:bg-gray-900 border-2 border-orange-100 dark:border-orange-900/30 rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 animate-fade-in-up group" style={{ animationDelay: `${index * 0.2}s` }}>
-                  <div className={`bg-${step.color} w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto lg:mx-0 shadow-lg group-hover:shadow-xl transition-all duration-300 animate-bounce-gentle`}>
+                  <div className={`${step.colorClass} w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto lg:mx-0 shadow-lg group-hover:shadow-xl transition-all duration-300 animate-bounce-gentle`}>
                     <step.icon className="h-8 w-8 text-white" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center lg:text-left group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors duration-300">
