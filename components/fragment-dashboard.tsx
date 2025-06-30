@@ -23,6 +23,31 @@ import {
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
+// Define specific types for each timeframe
+type DailySalesData = {
+  date: string
+  sales: number
+  customers: number
+  transactions: number
+}
+
+type WeeklySalesData = {
+  week: string
+  sales: number
+  customers: number
+  transactions: number
+}
+
+type MonthlySalesData = {
+  month: string
+  sales: number
+  customers: number
+  transactions: number
+}
+
+// Union type for chart data
+type SalesData = DailySalesData | WeeklySalesData | MonthlySalesData
+
 export function FragmentDashboard({ fragment }: { fragment: DashboardFragmentSchema }) {
   const [mockData, setMockData] = useState(generateMockData())
   const [lastUpdated, setLastUpdated] = useState(new Date())
@@ -30,7 +55,7 @@ export function FragmentDashboard({ fragment }: { fragment: DashboardFragmentSch
 
   function generateMockData() {
     // Generate daily sales data for the last 30 days
-    const dailySales = Array.from({ length: 30 }, (_, i) => ({
+    const dailySales: DailySalesData[] = Array.from({ length: 30 }, (_, i) => ({
       date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       sales: Math.floor(Math.random() * 5000) + 1000,
       customers: Math.floor(Math.random() * 200) + 50,
@@ -38,7 +63,7 @@ export function FragmentDashboard({ fragment }: { fragment: DashboardFragmentSch
     }))
 
     // Generate weekly sales data for the last 12 weeks
-    const weeklySales = Array.from({ length: 12 }, (_, i) => ({
+    const weeklySales: WeeklySalesData[] = Array.from({ length: 12 }, (_, i) => ({
       week: `Week ${i + 1}`,
       sales: Math.floor(Math.random() * 30000) + 10000,
       customers: Math.floor(Math.random() * 1200) + 400,
@@ -46,7 +71,7 @@ export function FragmentDashboard({ fragment }: { fragment: DashboardFragmentSch
     }))
 
     // Generate monthly sales data for the last 12 months
-    const monthlySales = Array.from({ length: 12 }, (_, i) => {
+    const monthlySales: MonthlySalesData[] = Array.from({ length: 12 }, (_, i) => {
       const date = new Date()
       date.setMonth(date.getMonth() - (11 - i))
       return {
@@ -134,11 +159,25 @@ export function FragmentDashboard({ fragment }: { fragment: DashboardFragmentSch
     return ((current - previous) / previous * 100).toFixed(1)
   }
 
-  const getCurrentSalesData = () => {
+  const getCurrentSalesData = (): SalesData[] => {
     switch (selectedTimeframe) {
       case 'weekly': return mockData.weeklySales
       case 'monthly': return mockData.monthlySales
       default: return mockData.dailySales
+    }
+  }
+
+  // Helper function to get label from sales data item with type safety
+  const getLabel = (item: SalesData, timeframe: 'daily' | 'weekly' | 'monthly'): string => {
+    switch (timeframe) {
+      case 'daily':
+        return 'date' in item ? item.date : ''
+      case 'weekly':
+        return 'week' in item ? item.week : ''
+      case 'monthly':
+        return 'month' in item ? item.month : ''
+      default:
+        return ''
     }
   }
 
@@ -212,9 +251,7 @@ export function FragmentDashboard({ fragment }: { fragment: DashboardFragmentSch
             <div className="h-64 flex items-end space-x-1">
               {data.slice(-15).map((item, index) => {
                 const height = (item.sales / maxSales) * 100
-                const label = selectedTimeframe === 'daily' ? item.date : 
-                             selectedTimeframe === 'weekly' ? item.week : 
-                             item.month
+                const label = getLabel(item, selectedTimeframe)
                 return (
                   <div key={index} className="flex-1 flex flex-col items-center">
                     <div 
