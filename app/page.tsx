@@ -661,10 +661,10 @@ export default function Home() {
           supabase={supabase}
         />
       )}
-      <div className="flex w-full transition-all duration-500 ease-in-out">
+      <div className="flex w-full">
         {/* Chat Window - Dynamic width based on artifact visibility */}
         <div 
-          className={`flex flex-col overflow-auto transition-all duration-500 ease-in-out ${
+          className={`flex flex-col overflow-auto ${
             showArtifact ? 'w-[25%] px-2' : 'w-full max-w-[800px] mx-auto px-4'
           }`}
         >
@@ -723,10 +723,10 @@ export default function Home() {
 
         {/* Preview/Artifact Window - Fixed 75% width when shown */}
         <div 
-          className={`transition-all duration-500 ease-in-out ${
+          className={`${
             showArtifact 
-              ? 'w-[75%] opacity-100 translate-x-0' 
-              : 'w-0 opacity-0 translate-x-full overflow-hidden'
+              ? 'w-[75%] opacity-100' 
+              : 'w-0 opacity-0 overflow-hidden'
           }`}
         >
           {showArtifact && (
