@@ -135,10 +135,8 @@ export function FragmentHelp() {
     setError('')
 
     try {
-      // Properly handle optional fields - convert empty strings to null
-      const requestBody = {
-        persona_id: config.persona_id && config.persona_id.trim() ? config.persona_id : null,
-        replica_id: config.replica_id && config.replica_id.trim() ? config.replica_id : null,
+      // Build request body, only including optional fields if they have values
+      const requestBody: any = {
         audio_only: config.audio_only,
         conversation_name: config.conversation_name,
         conversational_context: config.conversational_context,
@@ -148,6 +146,16 @@ export function FragmentHelp() {
           participant_absent_timeout: 300,
           enable_recording: false
         }
+      }
+
+      // Only include persona_id if it has a non-empty value
+      if (config.persona_id && config.persona_id.trim()) {
+        requestBody.persona_id = config.persona_id.trim()
+      }
+
+      // Only include replica_id if it has a non-empty value
+      if (config.replica_id && config.replica_id.trim()) {
+        requestBody.replica_id = config.replica_id.trim()
       }
 
       const response = await fetch('https://tavusapi.com/v2/conversations', {
