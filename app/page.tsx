@@ -172,20 +172,6 @@ export default function Home() {
     if (error) stop()
   }, [error, stop])
 
-  // Listen for custom showArtifact events from Chat component
-  useEffect(() => {
-    const handleShowArtifact = (event: CustomEvent) => {
-      setShowArtifact(true)
-      setCurrentTab('fragment')
-    }
-
-    window.addEventListener('showArtifact', handleShowArtifact as EventListener)
-    
-    return () => {
-      window.removeEventListener('showArtifact', handleShowArtifact as EventListener)
-    }
-  }, [])
-
   function setMessage(message: Partial<Message>, index?: number) {
     setMessages((previousMessages) => {
       const updatedMessages = [...previousMessages]
