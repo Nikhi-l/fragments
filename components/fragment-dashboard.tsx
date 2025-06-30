@@ -48,12 +48,69 @@ type MonthlySalesData = {
 // Union type for chart data
 type SalesData = DailySalesData | WeeklySalesData | MonthlySalesData
 
+// Define the mock data interface with proper typing
+interface MockDashboardData {
+  salesRevenue: {
+    current: number
+    previous: number
+    trend: 'up' | 'down'
+  }
+  customerTraffic: {
+    current: number
+    previous: number
+    trend: 'up' | 'down'
+  }
+  inventoryLevels: {
+    inStock: number
+    lowStock: number
+    outOfStock: number
+  }
+  avgTransactionValue: {
+    current: number
+    previous: number
+    trend: 'up' | 'down'
+  }
+  topProducts: Array<{
+    name: string
+    sales: number
+    revenue: number
+  }>
+  employees: Array<{
+    name: string
+    role: string
+    status: 'present' | 'break' | 'absent'
+    shift: string
+    performance: number
+  }>
+  storeComparison: Array<{
+    name: string
+    revenue: number
+    growth: number
+    status: 'excellent' | 'good' | 'needs_attention'
+    customers: number
+  }>
+  dailySales: DailySalesData[]
+  weeklySales: WeeklySalesData[]
+  monthlySales: MonthlySalesData[]
+  peakHours: Array<{
+    hour: string
+    customers: number
+    sales: number
+  }>
+  customerSatisfaction: {
+    rating: number
+    reviews: number
+    complaints: number
+    compliments: number
+  }
+}
+
 export function FragmentDashboard({ fragment }: { fragment: DashboardFragmentSchema }) {
-  const [mockData, setMockData] = useState(generateMockData())
+  const [mockData, setMockData] = useState<MockDashboardData>(generateMockData())
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [selectedTimeframe, setSelectedTimeframe] = useState<'daily' | 'weekly' | 'monthly'>('daily')
 
-  function generateMockData() {
+  function generateMockData(): MockDashboardData {
     // Generate daily sales data for the last 30 days
     const dailySales: DailySalesData[] = Array.from({ length: 30 }, (_, i) => ({
       date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
