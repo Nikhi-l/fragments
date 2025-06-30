@@ -83,25 +83,28 @@ export function FragmentHelp() {
     setError('')
 
     try {
+      // Properly handle optional fields - convert empty strings to null
+      const requestBody = {
+        persona_id: config.persona_id && config.persona_id.trim() ? config.persona_id : null,
+        replica_id: config.replica_id && config.replica_id.trim() ? config.replica_id : null,
+        audio_only: config.audio_only,
+        conversation_name: config.conversation_name,
+        conversational_context: config.conversational_context,
+        custom_greeting: config.custom_greeting,
+        properties: {
+          participant_left_timeout: 60,
+          participant_absent_timeout: 300,
+          enable_recording: false
+        }
+      }
+
       const response = await fetch('https://tavusapi.com/v2/conversations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': apiKey
         },
-        body: JSON.stringify({
-          persona_id: config.persona_id || undefined,
-          replica_id: config.replica_id || undefined,
-          audio_only: config.audio_only,
-          conversation_name: config.conversation_name,
-          conversational_context: config.conversational_context,
-          custom_greeting: config.custom_greeting,
-          properties: {
-            participant_left_timeout: 60,
-            participant_absent_timeout: 300,
-            enable_recording: false
-          }
-        })
+        body: JSON.stringify(requestBody)
       })
 
       if (!response.ok) {
