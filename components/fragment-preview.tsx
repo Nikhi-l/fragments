@@ -18,9 +18,13 @@ export function FragmentPreview({
   result?: ExecutionResult
   fragment?: DeepPartial<FragmentSchema>
 }) {
-  // Handle help fragments
+  // Handle help fragments with special layout
   if (fragment?.type === 'help') {
-    return <FragmentHelp />
+    return (
+      <div className="h-full w-full">
+        <FragmentHelp />
+      </div>
+    )
   }
 
   // Handle camera feed fragments
