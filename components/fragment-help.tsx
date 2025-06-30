@@ -2,6 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { 
   HelpCircle, 
@@ -39,23 +41,32 @@ interface TavusConversation {
   created_at: string
 }
 
+interface ConversationConfig {
+  replica_id?: string
+  persona_id?: string
+  audio_only: boolean
+  conversation_name: string
+  conversational_context: string
+  custom_greeting: string
+}
+
 export function FragmentHelp() {
-  // Use hardcoded API key and replica ID
-  const apiKey = 'f17244051d5540389a480bf2608cec3a'
-  const hardcodedReplicaId = 'r179c5e0-8d0f-4e93-9b2c-8f2d1e5a7b3c' // Hardcoded replica ID
+  // Use hardcoded API key from environment
+  const apiKey = process.env.TAVUS_API_KEY || 'f17244051d5540389a480bf2608cec3a'
   
   const [conversation, setConversation] = useState<TavusConversation | null>(null)
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState('')
+  const [config, setConfig] = useState<ConversationConfig>({
+    audio_only: false,
+    conversation_name: 'RetailX Help Session',
+    conversational_context: 'You are a helpful AI assistant for RetailX, a retail management platform. Help users with questions about store operations, analytics, camera monitoring, inventory management, sales data, and general platform usage. Be friendly, knowledgeable, and provide clear guidance.',
+    custom_greeting: 'Hello! I\'m your RetailX AI assistant. How can I help you today?'
+  })
   const [connectionStatus, setConnectionStatus] = useState<'disconnected' | 'connecting' | 'connected' | 'ended'>('disconnected')
   const [isFullscreen, setIsFullscreen] = useState(false)
   
   const iframeRef = useRef<HTMLIFrameElement>(null)
-
-  // Auto-start the conversation when component mounts
-  useEffect(() => {
-    createConversation()
-  }, [])
 
   const createConversation = async () => {
     setIsCreating(true)
@@ -63,17 +74,27 @@ export function FragmentHelp() {
     setConnectionStatus('connecting')
 
     try {
-      const requestBody = {
-        replica_id: hardcodedReplicaId,
-        audio_only: false,
-        conversation_name: 'RetailX Help Session',
-        conversational_context: 'You are a helpful AI assistant for RetailX, a retail management platform. Help users with questions about store operations, analytics, camera monitoring, inventory management, sales data, and general platform usage. Be friendly, knowledgeable, and provide clear guidance.',
-        custom_greeting: 'Hello! I\'m your RetailX AI assistant. How can I help you today?',
+      // Build request body, only including optional fields if they have values
+      const requestBody: any = {
+        audio_only: config.audio_only,
+        conversation_name: config.conversation_name,
+        conversational_context: config.conversational_context,
+        custom_greeting: config.custom_greeting,
         properties: {
           participant_left_timeout: 60,
           participant_absent_timeout: 300,
           enable_recording: false
         }
+      }
+
+      // Only include persona_id if it has a non-empty value
+      if (config.persona_id && config.persona_id.trim()) {
+        requestBody.persona_id = config.persona_id.trim()
+      }
+
+      // Only include replica_id if it has a non-empty value
+      if (config.replica_id && config.replica_id.trim()) {
+        requestBody.replica_id = config.replica_id.trim()
       }
 
       const response = await fetch('https://tavusapi.com/v2/conversations', {
@@ -116,10 +137,6 @@ export function FragmentHelp() {
     setConversation(null)
     setConnectionStatus('disconnected')
     setError('')
-    // Auto-restart the conversation
-    setTimeout(() => {
-      createConversation()
-    }, 500)
   }
 
   const toggleFullscreen = () => {
@@ -190,7 +207,7 @@ export function FragmentHelp() {
     )
   }
 
-  // Main Help Interface - Full Screen Video
+  // Main Help Interface
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -234,143 +251,300 @@ export function FragmentHelp() {
         </div>
       </div>
 
-      {/* Main Video Interface - Full Height */}
-      <div className="flex-1 flex flex-col">
+      {/* Main Content */}
+      <div className="flex-1 p-4 space-y-4">
         {!conversation ? (
-          // Loading/Error State
-          <div className="flex-1 flex items-center justify-center">
-            {isCreating ? (
-              <div className="text-center space-y-4">
-                <Loader2 className="h-12 w-12 animate-spin mx-auto text-blue-600" />
-                <div>
-                  <h3 className="text-lg font-medium">Connecting to AI Assistant</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Please wait while we establish the video connection...
-                  </p>
-                </div>
-              </div>
-            ) : error ? (
-              <div className="text-center space-y-4">
-                <XCircle className="h-12 w-12 mx-auto text-red-500" />
-                <div>
-                  <h3 className="text-lg font-medium text-red-600">Connection Failed</h3>
-                  <p className="text-sm text-muted-foreground mb-4">{error}</p>
-                  <Button onClick={resetSession} variant="outline">
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Try Again
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center space-y-4">
-                <Video className="h-12 w-12 mx-auto text-blue-600" />
-                <div>
-                  <h3 className="text-lg font-medium">Starting AI Assistant</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Initializing your video help session...
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          // Active Conversation - Full Screen Video
-          <>
-            {/* Session Info Bar */}
-            <div className="p-3 border-b bg-gray-50 dark:bg-gray-900">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-1.5 bg-green-100 dark:bg-green-900 rounded-lg">
-                    <Video className="h-4 w-4 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-sm">{conversation.conversation_name}</h3>
-                    <p className="text-xs text-muted-foreground">
-                      Session ID: {conversation.conversation_id.slice(0, 8)}... • Status: {conversation.status}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Button
-                    onClick={openInNewTab}
-                    variant="outline"
-                    size="sm"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    New Tab
-                  </Button>
-                  
-                  <Button
-                    onClick={toggleFullscreen}
-                    variant="outline"
-                    size="sm"
-                  >
-                    <Maximize2 className="h-4 w-4 mr-1" />
-                    Fullscreen
-                  </Button>
-                  
-                  <Button
-                    onClick={endConversation}
-                    variant="destructive"
-                    size="sm"
-                  >
-                    <PhoneOff className="h-4 w-4 mr-1" />
-                    End
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Full Height Video Interface */}
-            <div className="flex-1 relative bg-black">
-              {connectionStatus === 'connecting' ? (
-                <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-                  <div className="text-center space-y-4">
-                    <Loader2 className="h-12 w-12 animate-spin mx-auto text-blue-600" />
+          // Start Conversation
+          <div className="space-y-4">
+            {/* API Status */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                    </div>
                     <div>
-                      <h3 className="text-lg font-medium">Connecting to AI Assistant</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Please wait while we establish the video connection...
-                      </p>
+                      <h3 className="font-medium">Tavus API Connected</h3>
+                      <p className="text-sm text-muted-foreground">Ready to start video conversation</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    Ready
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Video className="h-5 w-5" />
+                  <span>Start Video Conversation</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="conversationName">Session Name</Label>
+                    <Input
+                      id="conversationName"
+                      value={config.conversation_name}
+                      onChange={(e) => setConfig(prev => ({ ...prev, conversation_name: e.target.value }))}
+                      placeholder="Help Session Name"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="replicaId">Replica ID (Optional)</Label>
+                    <Input
+                      id="replicaId"
+                      value={config.replica_id || ''}
+                      onChange={(e) => setConfig(prev => ({ ...prev, replica_id: e.target.value }))}
+                      placeholder="Enter replica ID"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="personaId">Persona ID (Optional)</Label>
+                  <Input
+                    id="personaId"
+                    value={config.persona_id || ''}
+                    onChange={(e) => setConfig(prev => ({ ...prev, persona_id: e.target.value }))}
+                    placeholder="Enter persona ID"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="context">Conversation Context</Label>
+                  <textarea
+                    id="context"
+                    className="w-full p-3 border rounded-md resize-none"
+                    rows={3}
+                    value={config.conversational_context}
+                    onChange={(e) => setConfig(prev => ({ ...prev, conversational_context: e.target.value }))}
+                    placeholder="Describe what you need help with..."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="greeting">Custom Greeting</Label>
+                  <Input
+                    id="greeting"
+                    value={config.custom_greeting}
+                    onChange={(e) => setConfig(prev => ({ ...prev, custom_greeting: e.target.value }))}
+                    placeholder="How the AI should greet you"
+                  />
+                </div>
+
+                {error && (
+                  <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
+                    <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                  </div>
+                )}
+
+                <Button 
+                  onClick={createConversation} 
+                  disabled={isCreating}
+                  className="w-full"
+                  size="lg"
+                >
+                  {isCreating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Creating Conversation...
+                    </>
+                  ) : (
+                    <>
+                      <Video className="h-4 w-4 mr-2" />
+                      Start Video Help Session
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Quick Help Topics */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Common Help Topics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {[
+                    'Camera Feed Setup',
+                    'Sales Analytics',
+                    'Inventory Management',
+                    'Dashboard Configuration',
+                    'Staff Performance',
+                    'Customer Analytics',
+                    'Store Comparison',
+                    'Report Generation'
+                  ].map((topic, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      size="sm"
+                      className="justify-start"
+                      onClick={() => setConfig(prev => ({ 
+                        ...prev, 
+                        conversational_context: `I need help with ${topic.toLowerCase()} in RetailX. Please guide me through the process and answer any questions I have.`
+                      }))}
+                    >
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      {topic}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Features Overview */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">What you can do:</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-start space-x-3">
+                    <MessageCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">Ask Questions</h4>
+                      <p className="text-sm text-muted-foreground">Get help with RetailX features and functionality</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Video className="h-5 w-5 text-green-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">HD Video Calls</h4>
+                      <p className="text-sm text-muted-foreground">High-quality video conversations</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Bot className="h-5 w-5 text-purple-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">AI-Powered</h4>
+                      <p className="text-sm text-muted-foreground">Intelligent responses tailored to retail management</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">Real-time</h4>
+                      <p className="text-sm text-muted-foreground">Instant responses and interactive conversation</p>
                     </div>
                   </div>
                 </div>
-              ) : (
-                <iframe
-                  ref={iframeRef}
-                  src={conversation.conversation_url}
-                  className="w-full h-full border-none"
-                  allow="camera; microphone; fullscreen; display-capture; autoplay"
-                  title="Tavus Video Conversation"
-                />
-              )}
-            </div>
-
-            {/* Status Footer */}
-            <div className="p-3 border-t bg-gray-50 dark:bg-gray-900">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-1">
-                    <Clock className="h-3 w-3" />
-                    <span>Started: {new Date(conversation.created_at).toLocaleTimeString()}</span>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          // Active Conversation
+          <div className="space-y-4">
+            {/* Conversation Info */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                      <Video className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{conversation.conversation_name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Session ID: {conversation.conversation_id} • Status: {conversation.status}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <CheckCircle className="h-3 w-3 text-green-600" />
-                    <span>HD Quality</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Bot className="h-3 w-3" />
-                    <span>AI Assistant Active</span>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      onClick={openInNewTab}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      New Tab
+                    </Button>
+                    
+                    <Button
+                      onClick={toggleFullscreen}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Maximize2 className="h-4 w-4 mr-2" />
+                      Fullscreen
+                    </Button>
+                    
+                    <Button
+                      onClick={endConversation}
+                      variant="destructive"
+                      size="sm"
+                    >
+                      <PhoneOff className="h-4 w-4 mr-2" />
+                      End Session
+                    </Button>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="text-xs text-muted-foreground">
-                  Replica ID: {hardcodedReplicaId.slice(0, 8)}...
+            {/* Video Interface */}
+            <Card className="flex-1">
+              <CardContent className="p-0">
+                <div className="relative w-full" style={{ height: '600px' }}>
+                  {connectionStatus === 'connecting' ? (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg">
+                      <div className="text-center space-y-4">
+                        <Loader2 className="h-12 w-12 animate-spin mx-auto text-blue-600" />
+                        <div>
+                          <h3 className="text-lg font-medium">Connecting to AI Assistant</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Please wait while we establish the video connection...
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <iframe
+                      ref={iframeRef}
+                      src={conversation.conversation_url}
+                      className="w-full h-full rounded-lg border-none"
+                      allow="camera; microphone; fullscreen; display-capture; autoplay"
+                      title="Tavus Video Conversation"
+                    />
+                  )}
                 </div>
-              </div>
-            </div>
-          </>
+              </CardContent>
+            </Card>
+
+            {/* Session Info */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4" />
+                      <span>Started: {new Date(conversation.created_at).toLocaleTimeString()}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span>HD Quality</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Bot className="h-4 w-4" />
+                      <span>AI Assistant Active</span>
+                    </div>
+                  </div>
+
+                  <div className="text-xs text-muted-foreground">
+                    Conversation URL: {conversation.conversation_url}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
       </div>
     </div>
