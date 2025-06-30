@@ -176,9 +176,9 @@ export function ChatInput({
       )}
       <div className="relative">
         <div
-          className={`shadow-md rounded-2xl relative z-10 bg-background border ${
+          className={`shadow-md rounded-2xl relative z-10 bg-background border-2 border-orange-500/50 focus-within:border-orange-500 transition-colors ${
             dragActive
-              ? 'before:absolute before:inset-0 before:rounded-2xl before:border-2 before:border-dashed before:border-primary'
+              ? 'before:absolute before:inset-0 before:rounded-2xl before:border-2 before:border-dashed before:border-orange-500'
               : ''
           }`}
         >
@@ -238,7 +238,7 @@ export function ChatInput({
                         variant="default"
                         size="icon"
                         type="submit"
-                        className="rounded-xl h-10 w-10"
+                        className="rounded-xl h-10 w-10 bg-orange-500 hover:bg-orange-600"
                       >
                         <ArrowUp className="h-5 w-5" />
                       </Button>

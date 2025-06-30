@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import Logo from '@/components/logo'
-import { Zap, Play, Link, Eye, TrendingUp, Camera, BarChart3, Star, CheckCircle } from 'lucide-react'
+import { Zap, Play, Link, Eye, TrendingUp, Camera, BarChart3, CheckCircle } from 'lucide-react'
 import NextLink from 'next/link'
 
 export function MarketingLanding() {
@@ -48,8 +48,6 @@ export function MarketingLanding() {
     }
   ];
 
-  const clients = ['Veridian Apparel', 'OAK & PINE HOME', 'FutureTech Electronics'];
-
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Hero Section */}
@@ -79,9 +77,6 @@ export function MarketingLanding() {
               </a>
               <a href="#solution" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
                 Solution
-              </a>
-              <a href="#testimonials" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
-                Testimonials
               </a>
               <a href="https://calendly.com/gnikhil335/30min" target="_blank" rel="noopener noreferrer">
                 <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold">
@@ -113,10 +108,12 @@ export function MarketingLanding() {
                     Book a Demo
                   </button>
                 </a>
-                <button className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 shadow-lg">
-                  <Play className="h-5 w-5" />
-                  Watch Demo
-                </button>
+                <NextLink href="/chat">
+                  <button className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 shadow-lg">
+                    <Play className="h-5 w-5" />
+                    Try Demo
+                  </button>
+                </NextLink>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center gap-6 text-gray-500 dark:text-gray-400 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
@@ -280,52 +277,6 @@ export function MarketingLanding() {
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
                   {feature.description}
                 </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 bg-gray-50 dark:bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 animate-fade-in-up">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              Trusted by Innovative Retail Leaders
-            </h2>
-          </div>
-
-          <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 lg:p-12 border border-orange-100 dark:border-orange-900/30 shadow-2xl hover:shadow-3xl transition-all duration-500 animate-scale-in">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="flex justify-center mb-6 animate-fade-in">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-6 w-6 text-orange-400 fill-current animate-bounce-gentle" style={{ animationDelay: `${i * 0.1}s` }} />
-                ))}
-              </div>
-              
-              <blockquote className="text-2xl lg:text-3xl font-medium text-gray-900 dark:text-white mb-8 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                &quot;RetailX gave us the &apos;why&apos; behind our sales numbers. We rearranged our flagship store based on their heatmap data and saw a{' '}
-                <span className="text-orange-600 dark:text-orange-400 font-bold animate-pulse">15% increase in cross-sells</span>{' '}
-                in the first month alone. It&apos;s a complete game-changer.&quot;
-              </blockquote>
-              
-              <div className="flex items-center justify-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-                <div className="text-center">
-                  <div className="font-bold text-gray-900 dark:text-white text-lg">Jessica Chen</div>
-                  <div className="text-gray-600 dark:text-gray-400">Director of Retail Operations, Veridian Apparel</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-12 flex flex-wrap justify-center items-center gap-8 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-            {clients.map((client, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-gray-900 px-6 py-3 rounded-xl text-gray-600 dark:text-gray-400 font-semibold hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400 transition-all duration-300 transform hover:scale-105 border border-orange-100 dark:border-orange-900/30 shadow-lg animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                {client}
               </div>
             ))}
           </div>

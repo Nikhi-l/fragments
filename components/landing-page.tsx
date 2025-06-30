@@ -54,6 +54,13 @@ export function LandingPage() {
       // Trigger input event to update React state
       const event = new Event('input', { bubbles: true })
       chatInput.dispatchEvent(event)
+      
+      // Trigger form submission
+      const form = chatInput.closest('form')
+      if (form) {
+        const submitEvent = new Event('submit', { bubbles: true, cancelable: true })
+        form.dispatchEvent(submitEvent)
+      }
     }
   }
 
@@ -84,28 +91,28 @@ export function LandingPage() {
               return (
                 <Card 
                   key={index} 
-                  className="cursor-pointer hover:shadow-md transition-all duration-200 hover:border-primary/50"
+                  className="cursor-pointer hover:shadow-md transition-all duration-200 hover:border-orange-500/50 border-2 border-transparent"
                   onClick={() => handlePromptClick(sample.prompt)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start space-x-3">
-                      <div className="flex-shrink-0 p-2 bg-primary/10 rounded-lg">
-                        <IconComponent className="h-5 w-5 text-primary" />
+                      <div className="flex-shrink-0 p-2 bg-orange-500/10 rounded-lg">
+                        <IconComponent className="h-5 w-5 text-orange-500" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2 mb-1">
                           <h3 className="text-sm font-semibold text-foreground">
                             {sample.title}
                           </h3>
-                          <span className="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded-full">
+                          <span className="text-xs px-2 py-0.5 bg-orange-500 text-white rounded-full">
                             {sample.category}
                           </span>
                         </div>
                         <p className="text-xs text-muted-foreground mb-2">
                           {sample.description}
                         </p>
-                        <div className="text-xs text-primary font-medium">
-                          &quot;{sample.prompt}&quot;
+                        <div className="text-xs text-orange-600 font-medium">
+                          "{sample.prompt}"
                         </div>
                       </div>
                     </div>
