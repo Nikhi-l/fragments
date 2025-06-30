@@ -143,7 +143,7 @@ export function ChatInput({
     if (!isMultiModal) {
       handleFileChange([])
     }
-  }, [isMultiModal])
+  }, [isMultiModal, handleFileChange])
 
   return (
     <form

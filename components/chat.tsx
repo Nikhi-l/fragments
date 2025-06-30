@@ -4,6 +4,7 @@ import { FragmentSchema } from '@/lib/schema'
 import { ExecutionResult } from '@/lib/types'
 import { DeepPartial } from 'ai'
 import { LoaderIcon, Terminal } from 'lucide-react'
+import Image from 'next/image'
 import { useEffect } from 'react'
 
 export function Chat({
@@ -23,7 +24,7 @@ export function Chat({
     if (chatContainer) {
       chatContainer.scrollTop = chatContainer.scrollHeight
     }
-  }, [JSON.stringify(messages)])
+  }, [messages])
 
   // Show landing page when there are no messages
   if (messages.length === 0 && !isLoading) {
@@ -53,10 +54,12 @@ export function Chat({
             }
             if (content.type === 'image') {
               return (
-                <img
+                <Image
                   key={id}
                   src={content.image}
                   alt="fragment"
+                  width={48}
+                  height={48}
                   className="mr-2 inline-block w-12 h-12 object-cover rounded-lg bg-white mb-2"
                 />
               )
