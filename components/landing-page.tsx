@@ -55,12 +55,15 @@ export function LandingPage() {
       const event = new Event('input', { bubbles: true })
       chatInput.dispatchEvent(event)
       
-      // Trigger form submission
-      const form = chatInput.closest('form')
-      if (form) {
-        const submitEvent = new Event('submit', { bubbles: true, cancelable: true })
-        form.dispatchEvent(submitEvent)
-      }
+      // Add a small delay before triggering form submission to ensure state is updated
+      setTimeout(() => {
+        // Trigger form submission
+        const form = chatInput.closest('form')
+        if (form) {
+          const submitEvent = new Event('submit', { bubbles: true, cancelable: true })
+          form.dispatchEvent(submitEvent)
+        }
+      }, 100) // 100ms delay to ensure state update
     }
   }
 
@@ -112,7 +115,7 @@ export function LandingPage() {
                           {sample.description}
                         </p>
                         <div className="text-xs text-orange-600 font-medium">
-                          &quot;{sample.prompt}&quot;
+                          "{sample.prompt}"
                         </div>
                       </div>
                     </div>
