@@ -49,6 +49,7 @@ export default function Home() {
   const [isCameraLoading, setIsCameraLoading] = useState(false)
   const [isAnalyticsLoading, setIsAnalyticsLoading] = useState(false)
   const [isSalesDataLoading, setIsSalesDataLoading] = useState(false)
+  const [isHelpLoading, setIsHelpLoading] = useState(false)
   const [showArtifact, setShowArtifact] = useState(false)
   const { session, userTeam } = useAuth(setAuthDialog, setAuthView)
 
@@ -86,8 +87,8 @@ export default function Home() {
         // Show artifact window when fragment is generated
         setShowArtifact(true)
         
-        // Handle non-code fragments (camera feeds, dashboards, and sales data)
-        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard' || fragment.type === 'sales_data') {
+        // Handle non-code fragments (camera feeds, dashboards, sales data, and help)
+        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard' || fragment.type === 'sales_data' || fragment.type === 'help') {
           setCurrentPreview({ fragment, result: undefined })
           setMessage({ result: undefined })
           setCurrentTab('fragment')
@@ -269,6 +270,16 @@ export default function Home() {
     }
   }
 
+  // Function to create hardcoded help fragment
+  function createHelpFragment(): DeepPartial<FragmentSchema> {
+    return {
+      type: 'help',
+      commentary: `Opening the RetailX AI Video Assistant powered by Tavus. This conversational AI interface allows you to have a face-to-face video conversation with an intelligent assistant that can help you with all aspects of RetailX, including store operations, analytics, camera monitoring, inventory management, sales data analysis, and general platform usage. The AI assistant provides personalized guidance and can answer questions in real-time through natural conversation.`,
+      title: 'AI Assistant',
+      description: 'Conversational video help with AI assistant',
+    }
+  }
+
   async function handleSubmitAuth(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -276,11 +287,12 @@ export default function Home() {
       return setAuthDialog(true)
     }
 
-    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading) {
+    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isHelpLoading) {
       stop()
       setIsCameraLoading(false)
       setIsAnalyticsLoading(false)
       setIsSalesDataLoading(false)
+      setIsHelpLoading(false)
     }
 
     const content: Message['content'] = [{ type: 'text', text: chatInput }]
@@ -299,8 +311,39 @@ export default function Home() {
 
     const inputLower = chatInput.toLowerCase()
 
+    // Check if user input contains "help" keyword
+    if (inputLower.includes('help')) {
+      // Set loading state to simulate LLM processing
+      setIsHelpLoading(true)
+      
+      // Add a 2-second delay to simulate LLM call
+      setTimeout(() => {
+        // Create hardcoded help fragment
+        const helpFragment = createHelpFragment()
+        
+        // Set the fragment directly without LLM call
+        setFragment(helpFragment)
+        setCurrentPreview({ fragment: helpFragment, result: undefined })
+        setCurrentTab('fragment')
+        setShowArtifact(true)
+        
+        // Add assistant response
+        addMessage({
+          role: 'assistant',
+          content: [{ type: 'text', text: helpFragment.commentary || '' }],
+          object: helpFragment,
+        })
+
+        // Stop loading state
+        setIsHelpLoading(false)
+
+        posthog.capture('help_triggered', {
+          trigger: 'hardcoded'
+        })
+      }, 2000) // 2-second delay
+    }
     // Check if user input contains "camera" keyword
-    if (inputLower.includes('camera')) {
+    else if (inputLower.includes('camera')) {
       // Set loading state to simulate LLM processing
       setIsCameraLoading(true)
       
@@ -489,6 +532,7 @@ export default function Home() {
     setIsCameraLoading(false)
     setIsAnalyticsLoading(false)
     setIsSalesDataLoading(false)
+    setIsHelpLoading(false)
     setChatInput('')
     setFiles([])
     setMessages([])
@@ -519,7 +563,7 @@ export default function Home() {
   }
 
   // Combine loading states for UI
-  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading
+  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isHelpLoading
 
   return (
     <main className="flex min-h-screen max-h-screen">
@@ -564,6 +608,7 @@ export default function Home() {
               setIsCameraLoading(false)
               setIsAnalyticsLoading(false)
               setIsSalesDataLoading(false)
+              setIsHelpLoading(false)
             }}
             input={chatInput}
             handleInputChange={handleSaveInputChange}
