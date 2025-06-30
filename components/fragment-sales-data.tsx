@@ -34,6 +34,42 @@ import {
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
+// Define specific types for each timeframe
+type DailySalesData = {
+  date: string
+  revenue: number
+  transactions: number
+  customers: number
+  avgOrderValue: number
+}
+
+type WeeklySalesData = {
+  week: string
+  revenue: number
+  transactions: number
+  customers: number
+  avgOrderValue: number
+}
+
+type MonthlySalesData = {
+  month: string
+  revenue: number
+  transactions: number
+  customers: number
+  avgOrderValue: number
+}
+
+type QuarterlySalesData = {
+  quarter: string
+  revenue: number
+  transactions: number
+  customers: number
+  avgOrderValue: number
+}
+
+// Union type for chart data
+type SalesData = DailySalesData | WeeklySalesData | MonthlySalesData | QuarterlySalesData
+
 export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSchema }) {
   const [mockData, setMockData] = useState(generateMockSalesData())
   const [lastUpdated, setLastUpdated] = useState(new Date())
@@ -49,7 +85,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
     ]
 
     // Generate sales data for different time periods
-    const dailySales = Array.from({ length: 30 }, (_, i) => {
+    const dailySales: DailySalesData[] = Array.from({ length: 30 }, (_, i) => {
       const date = new Date()
       date.setDate(date.getDate() - (29 - i))
       return {
@@ -61,7 +97,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
       }
     })
 
-    const weeklySales = Array.from({ length: 12 }, (_, i) => ({
+    const weeklySales: WeeklySalesData[] = Array.from({ length: 12 }, (_, i) => ({
       week: `Week ${i + 1}`,
       revenue: Math.floor(Math.random() * 45000) + 15000,
       transactions: Math.floor(Math.random() * 800) + 300,
@@ -69,7 +105,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
       avgOrderValue: Math.floor(Math.random() * 90) + 40
     }))
 
-    const monthlySales = Array.from({ length: 12 }, (_, i) => {
+    const monthlySales: MonthlySalesData[] = Array.from({ length: 12 }, (_, i) => {
       const date = new Date()
       date.setMonth(date.getMonth() - (11 - i))
       return {
@@ -81,7 +117,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
       }
     })
 
-    const quarterlySales = Array.from({ length: 8 }, (_, i) => ({
+    const quarterlySales: QuarterlySalesData[] = Array.from({ length: 8 }, (_, i) => ({
       quarter: `Q${(i % 4) + 1} '${24 - Math.floor(i / 4)}`,
       revenue: Math.floor(Math.random() * 500000) + 200000,
       transactions: Math.floor(Math.random() * 10000) + 4000,
@@ -154,12 +190,28 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
     return ((current - previous) / previous * 100).toFixed(1)
   }
 
-  const getCurrentSalesData = () => {
+  const getCurrentSalesData = (): SalesData[] => {
     switch (selectedTimeframe) {
       case 'weekly': return mockData.weeklySales
       case 'monthly': return mockData.monthlySales
       case 'quarterly': return mockData.quarterlySales
       default: return mockData.dailySales
+    }
+  }
+
+  // Helper function to get label from sales data item with type safety
+  const getLabel = (item: SalesData, timeframe: 'daily' | 'weekly' | 'monthly' | 'quarterly'): string => {
+    switch (timeframe) {
+      case 'daily':
+        return 'date' in item ? item.date : ''
+      case 'weekly':
+        return 'week' in item ? item.week : ''
+      case 'monthly':
+        return 'month' in item ? item.month : ''
+      case 'quarterly':
+        return 'quarter' in item ? item.quarter : ''
+      default:
+        return ''
     }
   }
 
@@ -246,10 +298,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
             <div className="h-64 flex items-end space-x-1">
               {data.slice(-15).map((item, index) => {
                 const height = (item.revenue / maxRevenue) * 100
-                const label = selectedTimeframe === 'daily' ? item.date : 
-                             selectedTimeframe === 'weekly' ? item.week : 
-                             selectedTimeframe === 'monthly' ? item.month :
-                             item.quarter
+                const label = getLabel(item, selectedTimeframe)
                 return (
                   <div key={index} className="flex-1 flex flex-col items-center">
                     <div 
