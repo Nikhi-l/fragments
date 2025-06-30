@@ -19,7 +19,7 @@ import { ExecutionResult } from '@/lib/types'
 import { DeepPartial } from 'ai'
 import { experimental_useObject as useObject } from 'ai/react'
 import { usePostHog } from 'posthog-js/react'
-import { SetStateAction, useEffect, useState } from 'react'
+import { SetStateAction, useCallback, useEffect, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 
 export default function Home() {
@@ -129,6 +129,11 @@ export default function Home() {
     },
   })
 
+  const addMessage = useCallback((message: Message) => {
+    setMessages((previousMessages) => [...previousMessages, message])
+    return [...messages, message]
+  }, [messages])
+
   useEffect(() => {
     if (object) {
       setFragment(object)
@@ -156,11 +161,11 @@ export default function Home() {
         })
       }
     }
-  }, [object])
+  }, [object, addMessage, lastMessage])
 
   useEffect(() => {
     if (error) stop()
-  }, [error])
+  }, [error, stop])
 
   function setMessage(message: Partial<Message>, index?: number) {
     setMessages((previousMessages) => {
@@ -490,11 +495,6 @@ export default function Home() {
       model: currentModel,
       config: languageModel,
     })
-  }
-
-  function addMessage(message: Message) {
-    setMessages((previousMessages) => [...previousMessages, message])
-    return [...messages, message]
   }
 
   function handleSaveInputChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
