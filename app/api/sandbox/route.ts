@@ -22,11 +22,20 @@ export async function POST(req: Request) {
   console.log('userID', userID)
   // console.log('apiKey', apiKey)
 
-  // Check if fragment type is 'code' before accessing template property
+  // Handle non-code fragments that don't need sandbox execution
   if (fragment.type !== 'code') {
+    // Return a mock result for non-code fragments
     return new Response(
-      JSON.stringify({ error: 'This endpoint only handles code fragments' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        sbxId: 'mock-sandbox-id',
+        template: 'non-code-fragment',
+        type: fragment.type,
+        fragment: fragment,
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
     )
   }
 
