@@ -56,8 +56,12 @@ export function Preview({
     }
   }
 
+  // Special layout for help fragment - use only 50% width
+  const isHelpFragment = fragment.type === 'help'
+  const containerWidth = isHelpFragment ? 'w-1/2' : 'w-full'
+
   return (
-    <div className="absolute md:relative z-10 top-0 left-0 shadow-2xl md:rounded-tl-3xl md:rounded-bl-3xl md:border-l md:border-y bg-popover h-full w-full overflow-auto border-l-2 border-orange-500/30">
+    <div className={`absolute md:relative z-10 top-0 left-0 shadow-2xl md:rounded-tl-3xl md:rounded-bl-3xl md:border-l md:border-y bg-popover h-full ${containerWidth} overflow-auto border-l-2 border-orange-500/30`}>
       <Tabs
         value={selectedTab}
         onValueChange={(value) =>

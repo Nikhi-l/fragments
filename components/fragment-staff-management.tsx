@@ -398,8 +398,8 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Current Staff Status - Full Height */}
-        <Card className="lg:col-span-2 border-orange-100 dark:border-orange-900/30 flex flex-col">
+        {/* Current Staff Status - Scrollable with Fixed Height */}
+        <Card className="lg:col-span-2 border-orange-100 dark:border-orange-900/30">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center space-x-2">
@@ -422,8 +422,9 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
               </div>
             </div>
           </CardHeader>
-          <CardContent className="flex-1 overflow-hidden">
-            <div className="space-y-3 h-full overflow-y-auto">
+          <CardContent>
+            {/* Fixed height container with scrolling */}
+            <div className="h-96 overflow-y-auto space-y-3 pr-2">
               {employees.map((employee) => (
                 <div key={employee.id} className="flex items-center justify-between p-3 border rounded-lg border-orange-100 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors">
                   <div className="flex items-center space-x-3">
