@@ -71,118 +71,104 @@ type QuarterlySalesData = {
 type SalesData = DailySalesData | WeeklySalesData | MonthlySalesData | QuarterlySalesData
 
 export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSchema }) {
-  const [mockData, setMockData] = useState(generateMockSalesData())
-  const [lastUpdated, setLastUpdated] = useState(new Date())
+  const [lastUpdated, setLastUpdated] = useState(new Date('2025-02-02'))
   const [selectedTimeframe, setSelectedTimeframe] = useState<'daily' | 'weekly' | 'monthly' | 'quarterly'>('daily')
-  const [selectedStore, setSelectedStore] = useState('main')
+  const [selectedStore, setSelectedStore] = useState('mall')
 
-  function generateMockSalesData() {
-    const stores = [
-      { id: 'main', name: fragment.store_name || 'Main Store' },
+  // Use the specific data provided by the user
+  const mockData = {
+    stores: [
+      { id: 'mall', name: 'Mall of India Store' },
       { id: 'downtown', name: 'Downtown Branch' },
-      { id: 'mall', name: 'Mall Location' },
+      { id: 'main', name: 'Main Store' },
       { id: 'suburban', name: 'Suburban Store' }
-    ]
-
-    // Generate sales data for different time periods
-    const dailySales: DailySalesData[] = Array.from({ length: 30 }, (_, i) => {
-      const date = new Date()
+    ],
+    currentMetrics: {
+      totalRevenue: 1838638,
+      previousRevenue: 1495000, // Calculated to give +23.1%
+      totalTransactions: 705,
+      previousTransactions: 593, // Calculated to give +18.9%
+      avgOrderValue: 2608,
+      previousAvgOrderValue: 2752, // Calculated to give -5.2%
+      totalCustomers: 658,
+      previousCustomers: 650,
+      conversionRate: "6.6",
+      previousConversionRate: "5.4", // Calculated to give +1.2%
+      returnCustomers: "6.6",
+      previousReturnCustomers: "5.4"
+    },
+    topProducts: [
+      { name: 'Begum Wing Chair - Monkies', revenue: 35238.35, units: 2, growth: "18.5" },
+      { name: 'Marigold Steel Digital Print Bottle', revenue: 18814.5, units: 13, growth: "12.3" },
+      { name: 'Quirky India Steel Sipper Bottle', revenue: 18309, units: 13, growth: "8.7" },
+      { name: 'Travel Patches Tote Bag', revenue: 17578, units: 7, growth: "15.2" },
+      { name: 'Olive Palm Quilted Crossbody Bag', revenue: 16987.25, units: 7, growth: "-3.4" }
+    ],
+    salesByCategory: [
+      { category: 'Sippers & Bottles', revenue: 176500, percentage: 9.6 },
+      { category: 'Tote Bags', revenue: 143414, percentage: 7.8 },
+      { category: 'Fridge Magnets', revenue: 119511, percentage: 6.5 },
+      { category: 'Mugs & Cups', revenue: 117633, percentage: 6.4 },
+      { category: 'Crossbody Bags', revenue: 108480, percentage: 5.9 }
+    ],
+    paymentMethods: [
+      { method: 'Credit Card', percentage: 45, transactions: 317 },
+      { method: 'Debit Card', percentage: 30, transactions: 212 },
+      { method: 'Cash', percentage: 15, transactions: 106 },
+      { method: 'Mobile Pay', percentage: 8, transactions: 56 },
+      { method: 'Gift Card', percentage: 2, transactions: 14 }
+    ],
+    hourlyTrends: Array.from({ length: 24 }, (_, hour) => ({
+      hour: `${hour.toString().padStart(2, '0')}:00`,
+      revenue: Math.floor(Math.random() * 2000) + (hour >= 9 && hour <= 21 ? 500 : 100),
+      transactions: Math.floor(Math.random() * 50) + (hour >= 9 && hour <= 21 ? 20 : 5)
+    })),
+    dailySales: Array.from({ length: 30 }, (_, i) => {
+      const date = new Date('2025-02-02')
       date.setDate(date.getDate() - (29 - i))
       return {
         date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        revenue: Math.floor(Math.random() * 8000) + 2000,
-        transactions: Math.floor(Math.random() * 150) + 50,
-        customers: Math.floor(Math.random() * 200) + 80,
-        avgOrderValue: Math.floor(Math.random() * 80) + 30
+        revenue: Math.floor(Math.random() * 80000) + 40000,
+        transactions: Math.floor(Math.random() * 30) + 15,
+        customers: Math.floor(Math.random() * 40) + 20,
+        avgOrderValue: Math.floor(Math.random() * 1000) + 2000
       }
-    })
-
-    const weeklySales: WeeklySalesData[] = Array.from({ length: 12 }, (_, i) => ({
+    }) as DailySalesData[],
+    weeklySales: Array.from({ length: 12 }, (_, i) => ({
       week: `Week ${i + 1}`,
-      revenue: Math.floor(Math.random() * 45000) + 15000,
-      transactions: Math.floor(Math.random() * 800) + 300,
-      customers: Math.floor(Math.random() * 1200) + 500,
-      avgOrderValue: Math.floor(Math.random() * 90) + 40
-    }))
-
-    const monthlySales: MonthlySalesData[] = Array.from({ length: 12 }, (_, i) => {
-      const date = new Date()
+      revenue: Math.floor(Math.random() * 500000) + 300000,
+      transactions: Math.floor(Math.random() * 200) + 100,
+      customers: Math.floor(Math.random() * 300) + 150,
+      avgOrderValue: Math.floor(Math.random() * 1000) + 2000
+    })) as WeeklySalesData[],
+    monthlySales: Array.from({ length: 12 }, (_, i) => {
+      const date = new Date('2025-02-02')
       date.setMonth(date.getMonth() - (11 - i))
       return {
         month: date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
-        revenue: Math.floor(Math.random() * 180000) + 60000,
-        transactions: Math.floor(Math.random() * 3500) + 1200,
-        customers: Math.floor(Math.random() * 5000) + 2000,
-        avgOrderValue: Math.floor(Math.random() * 100) + 45
+        revenue: Math.floor(Math.random() * 2000000) + 1000000,
+        transactions: Math.floor(Math.random() * 800) + 400,
+        customers: Math.floor(Math.random() * 1200) + 600,
+        avgOrderValue: Math.floor(Math.random() * 1000) + 2000
       }
-    })
-
-    const quarterlySales: QuarterlySalesData[] = Array.from({ length: 8 }, (_, i) => ({
+    }) as MonthlySalesData[],
+    quarterlySales: Array.from({ length: 8 }, (_, i) => ({
       quarter: `Q${(i % 4) + 1} '${24 - Math.floor(i / 4)}`,
-      revenue: Math.floor(Math.random() * 500000) + 200000,
-      transactions: Math.floor(Math.random() * 10000) + 4000,
-      customers: Math.floor(Math.random() * 15000) + 6000,
-      avgOrderValue: Math.floor(Math.random() * 120) + 50
-    }))
-
-    return {
-      stores,
-      currentMetrics: {
-        totalRevenue: Math.floor(Math.random() * 85000) + 25000,
-        previousRevenue: Math.floor(Math.random() * 80000) + 20000,
-        totalTransactions: Math.floor(Math.random() * 1500) + 500,
-        previousTransactions: Math.floor(Math.random() * 1400) + 450,
-        avgOrderValue: Math.floor(Math.random() * 90) + 45,
-        previousAvgOrderValue: Math.floor(Math.random() * 85) + 40,
-        totalCustomers: Math.floor(Math.random() * 2000) + 800,
-        previousCustomers: Math.floor(Math.random() * 1900) + 750,
-        conversionRate: (Math.random() * 15 + 10).toFixed(1),
-        previousConversionRate: (Math.random() * 14 + 9).toFixed(1),
-        returnCustomers: (Math.random() * 40 + 30).toFixed(1),
-        previousReturnCustomers: (Math.random() * 38 + 28).toFixed(1)
-      },
-      topProducts: [
-        { name: 'Premium Coffee Beans', revenue: Math.floor(Math.random() * 8000) + 2000, units: Math.floor(Math.random() * 300) + 100, growth: (Math.random() * 30 + 5).toFixed(1) },
-        { name: 'Organic Milk', revenue: Math.floor(Math.random() * 6000) + 1500, units: Math.floor(Math.random() * 250) + 80, growth: (Math.random() * 25 + 3).toFixed(1) },
-        { name: 'Fresh Bread', revenue: Math.floor(Math.random() * 4000) + 1000, units: Math.floor(Math.random() * 200) + 60, growth: (Math.random() * 20 + 2).toFixed(1) },
-        { name: 'Energy Drinks', revenue: Math.floor(Math.random() * 7000) + 1800, units: Math.floor(Math.random() * 180) + 50, growth: (Math.random() * 35 + 8).toFixed(1) },
-        { name: 'Snack Mix', revenue: Math.floor(Math.random() * 3000) + 800, units: Math.floor(Math.random() * 150) + 40, growth: (Math.random() * 15 + 1).toFixed(1) }
-      ],
-      salesByCategory: [
-        { category: 'Food & Beverages', revenue: Math.floor(Math.random() * 25000) + 10000, percentage: 35 },
-        { category: 'Electronics', revenue: Math.floor(Math.random() * 20000) + 8000, percentage: 28 },
-        { category: 'Clothing', revenue: Math.floor(Math.random() * 15000) + 6000, percentage: 20 },
-        { category: 'Home & Garden', revenue: Math.floor(Math.random() * 8000) + 3000, percentage: 12 },
-        { category: 'Health & Beauty', revenue: Math.floor(Math.random() * 5000) + 2000, percentage: 5 }
-      ],
-      paymentMethods: [
-        { method: 'Credit Card', percentage: 45, transactions: Math.floor(Math.random() * 600) + 200 },
-        { method: 'Debit Card', percentage: 30, transactions: Math.floor(Math.random() * 400) + 150 },
-        { method: 'Cash', percentage: 15, transactions: Math.floor(Math.random() * 200) + 75 },
-        { method: 'Mobile Pay', percentage: 8, transactions: Math.floor(Math.random() * 100) + 40 },
-        { method: 'Gift Card', percentage: 2, transactions: Math.floor(Math.random() * 30) + 10 }
-      ],
-      hourlyTrends: Array.from({ length: 24 }, (_, hour) => ({
-        hour: `${hour.toString().padStart(2, '0')}:00`,
-        revenue: Math.floor(Math.random() * 2000) + (hour >= 9 && hour <= 21 ? 500 : 100),
-        transactions: Math.floor(Math.random() * 50) + (hour >= 9 && hour <= 21 ? 20 : 5)
-      })),
-      dailySales,
-      weeklySales,
-      monthlySales,
-      quarterlySales
-    }
+      revenue: Math.floor(Math.random() * 6000000) + 3000000,
+      transactions: Math.floor(Math.random() * 2500) + 1500,
+      customers: Math.floor(Math.random() * 4000) + 2000,
+      avgOrderValue: Math.floor(Math.random() * 1000) + 2000
+    })) as QuarterlySalesData[]
   }
 
   function refreshData() {
-    setMockData(generateMockSalesData())
     setLastUpdated(new Date())
   }
 
   function formatCurrency(amount: number) {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(amount)
   }
 
@@ -224,7 +210,8 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
     icon: Icon, 
     formatter = (val: number) => val.toLocaleString(),
     suffix = '',
-    trend
+    trend,
+    isPercentage = false
   }: {
     title: string
     value: number | string
@@ -233,6 +220,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
     formatter?: (val: number) => string
     suffix?: string
     trend?: 'up' | 'down'
+    isPercentage?: boolean
   }) => {
     const numValue = typeof value === 'string' ? parseFloat(value) : value
     const numPrevValue = typeof previousValue === 'string' ? parseFloat(previousValue as string) : previousValue
@@ -258,7 +246,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
               ) : (
                 <ArrowDownRight className="h-3 w-3" />
               )}
-              <span>{Math.abs(Number(percentChange))}% from last period</span>
+              <span>{isPositive ? '+' : ''}{percentChange}% from last period</span>
             </div>
           )}
         </CardContent>
@@ -344,7 +332,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
         <div className="flex items-center space-x-2">
           <DollarSign className="h-5 w-5 text-green-600" />
           <h2 className="text-xl font-semibold">Sales Data - {currentStore.name}</h2>
-          <Badge variant="outline">{fragment.time_period}</Badge>
+          <Badge variant="outline">This Month</Badge>
         </div>
         <div className="flex items-center space-x-2">
           <Select value={selectedStore} onValueChange={setSelectedStore}>
@@ -360,7 +348,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
             </SelectContent>
           </Select>
           <span className="text-sm text-muted-foreground">
-            Updated: {lastUpdated.toLocaleTimeString()}
+            Updated: Feb 02, 2025
           </span>
           <Button
             onClick={refreshData}
@@ -374,7 +362,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
       </div>
 
       {/* Key Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           title="Total Revenue"
           value={mockData.currentMetrics.totalRevenue}
@@ -396,19 +384,6 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
           formatter={formatCurrency}
         />
         <MetricCard
-          title="Total Customers"
-          value={mockData.currentMetrics.totalCustomers}
-          previousValue={mockData.currentMetrics.previousCustomers}
-          icon={Users}
-        />
-        <MetricCard
-          title="Conversion Rate"
-          value={mockData.currentMetrics.conversionRate}
-          previousValue={mockData.currentMetrics.previousConversionRate}
-          icon={Percent}
-          suffix="%"
-        />
-        <MetricCard
           title="Return Customers"
           value={mockData.currentMetrics.returnCustomers}
           previousValue={mockData.currentMetrics.previousReturnCustomers}
@@ -421,32 +396,6 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <SalesChart />
         
-        {/* Hourly Trends */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Clock className="h-4 w-4" />
-              <span>Hourly Trends</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {mockData.hourlyTrends.filter((_, index) => index % 2 === 0).map((hour, index) => (
-                <div key={index} className="flex justify-between items-center text-sm">
-                  <span className="font-medium">{hour.hour}</span>
-                  <div className="text-right">
-                    <div className="font-medium">{formatCurrency(hour.revenue)}</div>
-                    <div className="text-xs text-muted-foreground">{hour.transactions} transactions</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Top Products and Categories */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Products */}
         <Card>
           <CardHeader>
@@ -470,9 +419,15 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-medium">{formatCurrency(product.revenue)}</div>
-                    <div className="text-xs text-green-600 flex items-center">
-                      <TrendingUp className="h-3 w-3 mr-1" />
-                      +{product.growth}%
+                    <div className={`text-xs flex items-center ${
+                      product.growth.startsWith('-') ? 'text-red-600' : 'text-green-600'
+                    }`}>
+                      {product.growth.startsWith('-') ? (
+                        <TrendingDown className="h-3 w-3 mr-1" />
+                      ) : (
+                        <TrendingUp className="h-3 w-3 mr-1" />
+                      )}
+                      {product.growth}%
                     </div>
                   </div>
                 </div>
@@ -480,7 +435,10 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
             </div>
           </CardContent>
         </Card>
+      </div>
 
+      {/* Sales by Category and Payment Methods */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales by Category */}
         <Card>
           <CardHeader>
@@ -511,30 +469,40 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
             </div>
           </CardContent>
         </Card>
+
+        {/* Payment Methods */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <CreditCard className="h-4 w-4" />
+              <span>Payment Methods Distribution</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {mockData.paymentMethods.map((method, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <div className="flex items-center space-x-3">
+                    <div className="text-lg font-bold text-blue-600">{method.percentage}%</div>
+                    <div>
+                      <div className="text-sm font-medium">{method.method}</div>
+                      <div className="text-xs text-muted-foreground">{method.transactions} transactions</div>
+                    </div>
+                  </div>
+                  <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-green-600 h-2 rounded-full"
+                      style={{ width: `${method.percentage}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Payment Methods */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <CreditCard className="h-4 w-4" />
-            <span>Payment Methods Distribution</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            {mockData.paymentMethods.map((method, index) => (
-              <div key={index} className="text-center p-4 border rounded-lg">
-                <div className="text-2xl font-bold">{method.percentage}%</div>
-                <div className="text-sm font-medium">{method.method}</div>
-                <div className="text-xs text-muted-foreground">{method.transactions} transactions</div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Summary Insights */}
+      {/* Key Insights */}
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -543,18 +511,34 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
             <div className="flex items-center space-x-2">
               <TrendingUp className="h-4 w-4 text-green-600" />
-              <span>Revenue up {calculatePercentageChange(mockData.currentMetrics.totalRevenue, mockData.currentMetrics.previousRevenue)}% vs last period</span>
+              <span>Revenue up 23.1% vs last period</span>
             </div>
             <div className="flex items-center space-x-2">
               <Users className="h-4 w-4 text-blue-600" />
-              <span>Customer retention at {mockData.currentMetrics.returnCustomers}%</span>
+              <span>Strong performance across all categories</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Award className="h-4 w-4 text-purple-600" />
+              <span>Customer retention at 6.6%</span>
             </div>
             <div className="flex items-center space-x-2">
               <Star className="h-4 w-4 text-yellow-600" />
-              <span>Top product: {mockData.topProducts[0].name}</span>
+              <span>Top product: Begum Wing Chair</span>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="font-medium mb-2">34 returning customers driving repeat sales</div>
+                <div className="text-muted-foreground">High-value furniture items driving revenue</div>
+              </div>
+              <div>
+                <div className="font-medium mb-2">Sippers & Bottles leading category</div>
+                <div className="text-muted-foreground">9.6% of total revenue from this category</div>
+              </div>
             </div>
           </div>
         </CardContent>
