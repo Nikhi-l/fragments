@@ -134,6 +134,10 @@ export default function Home() {
     return [...messages, message]
   }, [messages])
 
+  const handleFileChange = useCallback((change: SetStateAction<File[]>) => {
+    setFiles(change)
+  }, [])
+
   useEffect(() => {
     if (object) {
       setFragment(object)
@@ -499,10 +503,6 @@ export default function Home() {
 
   function handleSaveInputChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setChatInput(e.target.value)
-  }
-
-  function handleFileChange(change: SetStateAction<File[]>) {
-    setFiles(change)
   }
 
   function logout() {
