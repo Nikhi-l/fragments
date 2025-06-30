@@ -45,12 +45,18 @@ const salesDataFragmentSchema = baseFragmentSchema.extend({
   comparison_period: z.string().optional().describe('Previous period for comparison (e.g., "Last Week", "Last Month", "Same Period Last Year").'),
 })
 
+// Help fragment schema
+const helpFragmentSchema = baseFragmentSchema.extend({
+  type: z.literal('help'),
+})
+
 // Union of all fragment types
 export const fragmentSchema = z.discriminatedUnion('type', [
   codeFragmentSchema,
   cameraFeedFragmentSchema,
   dashboardFragmentSchema,
   salesDataFragmentSchema,
+  helpFragmentSchema,
 ])
 
 export type FragmentSchema = z.infer<typeof fragmentSchema>
@@ -58,3 +64,4 @@ export type CodeFragmentSchema = z.infer<typeof codeFragmentSchema>
 export type CameraFeedFragmentSchema = z.infer<typeof cameraFeedFragmentSchema>
 export type DashboardFragmentSchema = z.infer<typeof dashboardFragmentSchema>
 export type SalesDataFragmentSchema = z.infer<typeof salesDataFragmentSchema>
+export type HelpFragmentSchema = z.infer<typeof helpFragmentSchema>

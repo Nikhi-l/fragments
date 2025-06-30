@@ -50,6 +50,7 @@ export function Preview({
       case 'camera_feed': return 'Camera Feed'
       case 'dashboard': return 'Dashboard'
       case 'sales_data': return 'Sales Data'
+      case 'help': return 'AI Assistant'
       default: return 'Preview'
     }
   }

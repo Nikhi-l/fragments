@@ -5,6 +5,7 @@ import { FragmentWeb } from './fragment-web'
 import { FragmentCameraFeed } from './fragment-camera-feed'
 import { FragmentDashboard } from './fragment-dashboard'
 import { FragmentSalesData } from './fragment-sales-data'
+import { FragmentHelp } from './fragment-help'
 import { ExecutionResult } from '@/lib/types'
 import { FragmentSchema } from '@/lib/schema'
 import { DeepPartial } from 'ai'
@@ -16,6 +17,11 @@ export function FragmentPreview({
   result?: ExecutionResult
   fragment?: DeepPartial<FragmentSchema>
 }) {
+  // Handle help fragments
+  if (fragment?.type === 'help') {
+    return <FragmentHelp />
+  }
+
   // Handle camera feed fragments
   if (fragment?.type === 'camera_feed') {
     return <FragmentCameraFeed fragment={fragment as any} />
