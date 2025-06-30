@@ -12,7 +12,7 @@ import { useAuth } from '@/lib/auth'
 import { Message, toAISDKMessages, toMessageImage } from '@/lib/messages'
 import { LLMModelConfig } from '@/lib/models'
 import modelsList from '@/lib/models.json'
-import { FragmentSchema, fragmentSchema as schema, CameraFeedFragmentSchema, DashboardFragmentSchema, SalesDataFragmentSchema, HelpFragmentSchema } from '@/lib/schema'
+import { FragmentSchema, fragmentSchema as schema, CameraFeedFragmentSchema, DashboardFragmentSchema, SalesDataFragmentSchema, StaffManagementFragmentSchema, HelpFragmentSchema } from '@/lib/schema'
 import { supabase } from '@/lib/supabase'
 import templates, { TemplateId } from '@/lib/templates'
 import { ExecutionResult } from '@/lib/types'
@@ -49,6 +49,7 @@ export default function Home() {
   const [isCameraLoading, setIsCameraLoading] = useState(false)
   const [isAnalyticsLoading, setIsAnalyticsLoading] = useState(false)
   const [isSalesDataLoading, setIsSalesDataLoading] = useState(false)
+  const [isStaffManagementLoading, setIsStaffManagementLoading] = useState(false)
   const [isHelpLoading, setIsHelpLoading] = useState(false)
   const [showArtifact, setShowArtifact] = useState(false)
   const { session, userTeam } = useAuth(setAuthDialog, setAuthView)
@@ -87,8 +88,8 @@ export default function Home() {
         // Show artifact window when fragment is generated
         setShowArtifact(true)
         
-        // Handle non-code fragments (camera feeds, dashboards, sales data, and help)
-        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard' || fragment.type === 'sales_data' || fragment.type === 'help') {
+        // Handle non-code fragments (camera feeds, dashboards, sales data, staff management, and help)
+        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard' || fragment.type === 'sales_data' || fragment.type === 'staff_management' || fragment.type === 'help') {
           setCurrentPreview({ fragment, result: undefined })
           setMessage({ result: undefined })
           setCurrentTab('fragment')
@@ -279,6 +280,39 @@ export default function Home() {
     }
   }
 
+  // Function to create hardcoded staff management fragment
+  function createStaffManagementFragment(userInput: string): StaffManagementFragmentSchema {
+    // Extract store name from user input or use default
+    const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
+    const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
+
+    // Determine shift period from user input
+    let shiftPeriod = 'Current Shift'
+    if (userInput.toLowerCase().includes('morning')) shiftPeriod = 'Morning Shift'
+    else if (userInput.toLowerCase().includes('afternoon')) shiftPeriod = 'Afternoon Shift'
+    else if (userInput.toLowerCase().includes('evening')) shiftPeriod = 'Evening Shift'
+    else if (userInput.toLowerCase().includes('night')) shiftPeriod = 'Night Shift'
+
+    return {
+      type: 'staff_management',
+      commentary: `Displaying comprehensive staff management system for ${storeName}. This interface shows current staff status, task assignments, break schedule optimization, and automated staff allocation for high-traffic areas. The system includes real-time monitoring of employee performance, task tracking, break scheduling optimization, and intelligent staff assignment based on crowd patterns and store needs. You can view who's currently working, assign tasks, manage breaks, and optimize staff deployment for maximum efficiency.`,
+      title: 'Staff Management',
+      description: `Complete staff management and task assignment system for ${storeName}`,
+      store_name: storeName,
+      management_features: [
+        'Current Staff Status',
+        'Task Assignment',
+        'Break Scheduling',
+        'Performance Tracking',
+        'Crowd-based Assignment',
+        'Schedule Optimization',
+        'Real-time Monitoring',
+        'Automated Alerts'
+      ],
+      shift_period: shiftPeriod
+    }
+  }
+
   // Function to create hardcoded help fragment
   function createHelpFragment(): HelpFragmentSchema {
     return {
@@ -296,11 +330,12 @@ export default function Home() {
       return setAuthDialog(true)
     }
 
-    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isHelpLoading) {
+    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isHelpLoading) {
       stop()
       setIsCameraLoading(false)
       setIsAnalyticsLoading(false)
       setIsSalesDataLoading(false)
+      setIsStaffManagementLoading(false)
       setIsHelpLoading(false)
     }
 
@@ -467,6 +502,56 @@ export default function Home() {
           trigger: 'hardcoded'
         })
       }, 2000) // 2-second delay
+    }
+    // Check if user input contains staff management keywords
+    else if (
+      inputLower.includes('staff') || 
+      inputLower.includes('employee') || 
+      inputLower.includes('team') || 
+      inputLower.includes('worker') ||
+      inputLower.includes('task') ||
+      inputLower.includes('assignment') ||
+      inputLower.includes('break') ||
+      inputLower.includes('schedule') ||
+      inputLower.includes('shift') ||
+      inputLower.includes('management') ||
+      inputLower.includes('who is working') ||
+      inputLower.includes('staff status') ||
+      inputLower.includes('task assignment') ||
+      inputLower.includes('break schedule') ||
+      inputLower.includes('crowd') ||
+      inputLower.includes('optimization')
+    ) {
+      // Set loading state to simulate LLM processing
+      setIsStaffManagementLoading(true)
+      
+      // Add a 2-second delay to simulate LLM call
+      setTimeout(() => {
+        // Create hardcoded staff management fragment
+        const staffManagementFragment = createStaffManagementFragment(chatInput)
+        
+        // Set the fragment directly without LLM call
+        setFragment(staffManagementFragment)
+        setCurrentPreview({ fragment: staffManagementFragment, result: undefined })
+        setCurrentTab('fragment')
+        setShowArtifact(true)
+        
+        // Add assistant response
+        addMessage({
+          role: 'assistant',
+          content: [{ type: 'text', text: staffManagementFragment.commentary || '' }],
+          object: staffManagementFragment,
+        })
+
+        // Stop loading state
+        setIsStaffManagementLoading(false)
+
+        posthog.capture('staff_management_triggered', {
+          store_name: staffManagementFragment.store_name,
+          shift_period: staffManagementFragment.shift_period,
+          trigger: 'hardcoded'
+        })
+      }, 2000) // 2-second delay
     } 
     else {
       // Normal LLM processing for other requests
@@ -532,6 +617,7 @@ export default function Home() {
     setIsCameraLoading(false)
     setIsAnalyticsLoading(false)
     setIsSalesDataLoading(false)
+    setIsStaffManagementLoading(false)
     setIsHelpLoading(false)
     setChatInput('')
     setFiles([])
@@ -563,7 +649,7 @@ export default function Home() {
   }
 
   // Combine loading states for UI
-  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isHelpLoading
+  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isHelpLoading
 
   return (
     <main className="flex min-h-screen max-h-screen">
@@ -608,6 +694,7 @@ export default function Home() {
               setIsCameraLoading(false)
               setIsAnalyticsLoading(false)
               setIsSalesDataLoading(false)
+              setIsStaffManagementLoading(false)
               setIsHelpLoading(false)
             }}
             input={chatInput}

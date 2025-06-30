@@ -45,6 +45,14 @@ const salesDataFragmentSchema = baseFragmentSchema.extend({
   comparison_period: z.string().optional().describe('Previous period for comparison (e.g., "Last Week", "Last Month", "Same Period Last Year").'),
 })
 
+// Staff management fragment schema
+const staffManagementFragmentSchema = baseFragmentSchema.extend({
+  type: z.literal('staff_management'),
+  store_name: z.string().describe('Name of the store for which staff management is being displayed.'),
+  management_features: z.array(z.string()).describe('List of staff management features (e.g., "Current Staff", "Task Assignment", "Break Scheduling", "Performance Tracking").'),
+  shift_period: z.string().describe('Current shift period being managed (e.g., "Morning Shift", "Afternoon Shift", "Evening Shift").'),
+})
+
 // Help fragment schema
 const helpFragmentSchema = baseFragmentSchema.extend({
   type: z.literal('help'),
@@ -56,6 +64,7 @@ export const fragmentSchema = z.discriminatedUnion('type', [
   cameraFeedFragmentSchema,
   dashboardFragmentSchema,
   salesDataFragmentSchema,
+  staffManagementFragmentSchema,
   helpFragmentSchema,
 ])
 
@@ -64,4 +73,5 @@ export type CodeFragmentSchema = z.infer<typeof codeFragmentSchema>
 export type CameraFeedFragmentSchema = z.infer<typeof cameraFeedFragmentSchema>
 export type DashboardFragmentSchema = z.infer<typeof dashboardFragmentSchema>
 export type SalesDataFragmentSchema = z.infer<typeof salesDataFragmentSchema>
+export type StaffManagementFragmentSchema = z.infer<typeof staffManagementFragmentSchema>
 export type HelpFragmentSchema = z.infer<typeof helpFragmentSchema>

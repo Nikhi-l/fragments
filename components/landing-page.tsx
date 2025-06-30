@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { BarChart3, Camera, MessageCircle } from 'lucide-react'
+import { BarChart3, Camera, MessageCircle, Users } from 'lucide-react'
 
 interface SamplePrompt {
   icon: React.ComponentType<{ className?: string }>
@@ -33,6 +33,13 @@ const samplePrompts: SamplePrompt[] = [
     description: "Get comprehensive dashboard insights",
     prompt: "How is my store performing today?",
     category: "Dashboard"
+  },
+  {
+    icon: Users,
+    title: "Staff Management",
+    description: "Manage staff, tasks, and schedules efficiently",
+    prompt: "Show me current staff status and task assignments",
+    category: "Staff"
   }
 ]
 
@@ -98,7 +105,7 @@ export function LandingPage() {
                           {sample.description}
                         </p>
                         <div className="text-xs text-primary font-medium">
-                          &quot;{sample.prompt}&quot;
+                          "{sample.prompt}"
                         </div>
                       </div>
                     </div>
@@ -113,7 +120,7 @@ export function LandingPage() {
         <div className="text-sm text-muted-foreground w-full max-w-2xl">
           <p className="text-left">
             I can help you with store analytics, camera monitoring, inventory management, 
-            staff performance, and much more. Just ask me in plain English!
+            staff performance, task assignments, break scheduling, and much more. Just ask me in plain English!
           </p>
         </div>
       </div>
