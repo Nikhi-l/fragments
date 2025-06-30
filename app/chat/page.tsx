@@ -666,7 +666,7 @@ export default function ChatPage() {
   const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isHelpLoading
 
   return (
-    <main className="flex min-h-screen max-h-screen border-2 border-orange-500/30">
+    <main className="flex min-h-screen max-h-screen">
       {supabase && (
         <AuthDialog
           open={isAuthDialogOpen}

@@ -228,7 +228,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
     const isPositive = percentChange ? parseFloat(percentChange) > 0 : trend === 'up'
     
     return (
-      <Card>
+      <Card className="border-orange-100 dark:border-orange-900/30">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
           <Icon className="h-4 w-4 text-muted-foreground" />
@@ -259,11 +259,11 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
     const maxRevenue = Math.max(...data.map(d => d.revenue))
     
     return (
-      <Card className="col-span-2">
+      <Card className="col-span-2 border-orange-100 dark:border-orange-900/30">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center space-x-2">
-              <BarChart3 className="h-4 w-4" />
+              <BarChart3 className="h-4 w-4 text-orange-600" />
               <span>Sales Revenue Trends</span>
             </CardTitle>
             <div className="flex space-x-1">
@@ -273,7 +273,11 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
                   variant={selectedTimeframe === timeframe ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSelectedTimeframe(timeframe)}
-                  className="text-xs"
+                  className={`text-xs ${
+                    selectedTimeframe === timeframe 
+                      ? 'bg-orange-500 hover:bg-orange-600 text-white' 
+                      : 'border-orange-200 text-orange-700 hover:bg-orange-50'
+                  }`}
                 >
                   {timeframe.charAt(0).toUpperCase() + timeframe.slice(1)}
                 </Button>
@@ -283,14 +287,14 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="h-64 flex items-end space-x-1">
+            <div className="h-64 flex items-end space-x-1 bg-gradient-to-t from-orange-50/30 to-transparent rounded-lg p-4">
               {data.slice(-15).map((item, index) => {
                 const height = (item.revenue / maxRevenue) * 100
                 const label = getLabel(item, selectedTimeframe)
                 return (
                   <div key={index} className="flex-1 flex flex-col items-center">
                     <div 
-                      className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-sm hover:from-blue-700 hover:to-blue-500 transition-colors cursor-pointer"
+                      className="w-full bg-gradient-to-t from-orange-600 to-orange-400 rounded-t-sm hover:from-orange-700 hover:to-orange-500 transition-colors cursor-pointer shadow-sm"
                       style={{ height: `${height}%` }}
                       title={`${label}: ${formatCurrency(item.revenue)}`}
                     />
@@ -330,9 +334,9 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <DollarSign className="h-5 w-5 text-green-600" />
+          <DollarSign className="h-5 w-5 text-orange-600" />
           <h2 className="text-xl font-semibold">Sales Data - {currentStore.name}</h2>
-          <Badge variant="outline">This Month</Badge>
+          <Badge variant="outline" className="border-orange-200 text-orange-700">This Month</Badge>
         </div>
         <div className="flex items-center space-x-2">
           <Select value={selectedStore} onValueChange={setSelectedStore}>
@@ -397,10 +401,10 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
         <SalesChart />
         
         {/* Top Products */}
-        <Card>
+        <Card className="border-orange-100 dark:border-orange-900/30">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Star className="h-4 w-4" />
+              <Star className="h-4 w-4 text-orange-600" />
               <span>Top Selling Products</span>
             </CardTitle>
           </CardHeader>
@@ -440,10 +444,10 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
       {/* Sales by Category and Payment Methods */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales by Category */}
-        <Card>
+        <Card className="border-orange-100 dark:border-orange-900/30">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <PieChart className="h-4 w-4" />
+              <PieChart className="h-4 w-4 text-orange-600" />
               <span>Sales by Category</span>
             </CardTitle>
           </CardHeader>
@@ -460,7 +464,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      className="bg-gradient-to-r from-orange-500 to-orange-400 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${category.percentage}%` }}
                     />
                   </div>
@@ -471,10 +475,10 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
         </Card>
 
         {/* Payment Methods */}
-        <Card>
+        <Card className="border-orange-100 dark:border-orange-900/30">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <CreditCard className="h-4 w-4" />
+              <CreditCard className="h-4 w-4 text-orange-600" />
               <span>Payment Methods Distribution</span>
             </CardTitle>
           </CardHeader>
@@ -483,7 +487,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
               {mockData.paymentMethods.map((method, index) => (
                 <div key={index} className="flex justify-between items-center">
                   <div className="flex items-center space-x-3">
-                    <div className="text-lg font-bold text-blue-600">{method.percentage}%</div>
+                    <div className="text-lg font-bold text-orange-600">{method.percentage}%</div>
                     <div>
                       <div className="text-sm font-medium">{method.method}</div>
                       <div className="text-xs text-muted-foreground">{method.transactions} transactions</div>
@@ -491,7 +495,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
                   </div>
                   <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div 
-                      className="bg-green-600 h-2 rounded-full"
+                      className="bg-gradient-to-r from-green-500 to-green-400 h-2 rounded-full"
                       style={{ width: `${method.percentage}%` }}
                     />
                   </div>
@@ -503,10 +507,10 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
       </div>
 
       {/* Key Insights */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
+      <Card className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950 dark:to-amber-950 border-orange-200 dark:border-orange-800">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Activity className="h-4 w-4" />
+            <Activity className="h-4 w-4 text-orange-600" />
             <span>Key Insights</span>
           </CardTitle>
         </CardHeader>
@@ -529,7 +533,7 @@ export function FragmentSalesData({ fragment }: { fragment: SalesDataFragmentSch
               <span>Top product: Begum Wing Chair</span>
             </div>
           </div>
-          <div className="mt-4 pt-4 border-t">
+          <div className="mt-4 pt-4 border-t border-orange-200 dark:border-orange-800">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="font-medium mb-2">34 returning customers driving repeat sales</div>
