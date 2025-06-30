@@ -213,11 +213,11 @@ export function FragmentHelp() {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
+      <div className="p-4 border-b bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950 dark:to-amber-950 border-orange-200 dark:border-orange-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-              <HelpCircle className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
+              <HelpCircle className="h-5 w-5 text-orange-600" />
             </div>
             <div>
               <h2 className="text-lg font-semibold">AI Video Assistant</h2>
@@ -246,6 +246,7 @@ export function FragmentHelp() {
               onClick={resetSession}
               variant="outline"
               size="sm"
+              className="border-orange-200 text-orange-700 hover:bg-orange-50"
             >
               <RefreshCw className="h-4 w-4" />
             </Button>
@@ -259,7 +260,7 @@ export function FragmentHelp() {
           // Loading or Error State
           <div className="space-y-4">
             {/* API Status */}
-            <Card>
+            <Card className="border-orange-100 dark:border-orange-900/30">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -279,10 +280,10 @@ export function FragmentHelp() {
             </Card>
 
             {isCreating && (
-              <Card>
+              <Card className="border-orange-100 dark:border-orange-900/30">
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
-                    <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+                    <Loader2 className="h-5 w-5 animate-spin text-orange-600" />
                     <div>
                       <h3 className="font-medium">Creating Video Session</h3>
                       <p className="text-sm text-muted-foreground">Please wait while we connect you to your AI assistant...</p>
@@ -293,13 +294,13 @@ export function FragmentHelp() {
             )}
 
             {error && (
-              <Card>
+              <Card className="border-orange-100 dark:border-orange-900/30">
                 <CardContent className="p-4">
                   <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
                     <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
                     <Button 
                       onClick={createConversation} 
-                      className="mt-2"
+                      className="mt-2 bg-orange-500 hover:bg-orange-600"
                       size="sm"
                     >
                       Try Again
@@ -310,7 +311,7 @@ export function FragmentHelp() {
             )}
 
             {/* Quick Help Topics */}
-            <Card>
+            <Card className="border-orange-100 dark:border-orange-900/30">
               <CardHeader>
                 <CardTitle className="text-lg">What I can help you with:</CardTitle>
               </CardHeader>
@@ -328,9 +329,9 @@ export function FragmentHelp() {
                   ].map((topic, index) => (
                     <div
                       key={index}
-                      className="flex items-center space-x-2 p-2 border rounded-lg"
+                      className="flex items-center space-x-2 p-2 border rounded-lg border-orange-100 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
                     >
-                      <MessageCircle className="h-4 w-4 text-blue-600" />
+                      <MessageCircle className="h-4 w-4 text-orange-600" />
                       <span className="text-sm">{topic}</span>
                     </div>
                   ))}
@@ -339,14 +340,14 @@ export function FragmentHelp() {
             </Card>
 
             {/* Features Overview */}
-            <Card>
+            <Card className="border-orange-100 dark:border-orange-900/30">
               <CardHeader>
                 <CardTitle className="text-lg">Features:</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-start space-x-3">
-                    <MessageCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <MessageCircle className="h-5 w-5 text-orange-600 mt-0.5" />
                     <div>
                       <h4 className="font-medium">Ask Questions</h4>
                       <p className="text-sm text-muted-foreground">Get help with RetailX features and functionality</p>
@@ -381,7 +382,7 @@ export function FragmentHelp() {
           // Active Conversation
           <div className="space-y-4">
             {/* Conversation Info */}
-            <Card>
+            <Card className="border-orange-100 dark:border-orange-900/30">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -401,6 +402,7 @@ export function FragmentHelp() {
                       onClick={openInNewTab}
                       variant="outline"
                       size="sm"
+                      className="border-orange-200 text-orange-700 hover:bg-orange-50"
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       New Tab
@@ -410,6 +412,7 @@ export function FragmentHelp() {
                       onClick={toggleFullscreen}
                       variant="outline"
                       size="sm"
+                      className="border-orange-200 text-orange-700 hover:bg-orange-50"
                     >
                       <Maximize2 className="h-4 w-4 mr-2" />
                       Fullscreen
@@ -429,13 +432,13 @@ export function FragmentHelp() {
             </Card>
 
             {/* Video Interface */}
-            <Card className="flex-1">
+            <Card className="flex-1 border-orange-100 dark:border-orange-900/30">
               <CardContent className="p-0">
                 <div className="relative w-full" style={{ height: '600px' }}>
                   {connectionStatus === 'connecting' ? (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg">
+                    <div className="w-full h-full flex items-center justify-center bg-orange-50 dark:bg-orange-950 rounded-lg">
                       <div className="text-center space-y-4">
-                        <Loader2 className="h-12 w-12 animate-spin mx-auto text-blue-600" />
+                        <Loader2 className="h-12 w-12 animate-spin mx-auto text-orange-600" />
                         <div>
                           <h3 className="text-lg font-medium">Connecting to AI Assistant</h3>
                           <p className="text-sm text-muted-foreground">
@@ -458,7 +461,7 @@ export function FragmentHelp() {
             </Card>
 
             {/* Session Info */}
-            <Card>
+            <Card className="border-orange-100 dark:border-orange-900/30">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
