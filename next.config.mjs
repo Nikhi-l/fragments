@@ -2,6 +2,9 @@
 const nextConfig = {
   experimental: {
     swcMinify: true
+  },
+  images: {
+    domains: ['images.pexels.com']
   }
 }
 
