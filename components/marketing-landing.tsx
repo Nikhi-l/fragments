@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import Logo from '@/components/logo'
 import { Zap, Play, Link, Eye, TrendingUp, Camera, BarChart3, CheckCircle } from 'lucide-react'
 import NextLink from 'next/link'
+import Image from 'next/image'
 
 export function MarketingLanding() {
   const steps = [
@@ -128,9 +129,11 @@ export function MarketingLanding() {
               {/* Dashboard Preview */}
               <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-4 border border-orange-100 dark:border-orange-900/30 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105">
                 <div className="relative overflow-hidden rounded-2xl">
-                  <img 
+                  <Image 
                     src="https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&fit=crop"
                     alt="RetailX Dashboard - Staff Performance and Store Analytics"
+                    width={1200}
+                    height={800}
                     className="w-full h-auto object-cover rounded-2xl shadow-lg"
                     style={{ aspectRatio: '16/10' }}
                   />
