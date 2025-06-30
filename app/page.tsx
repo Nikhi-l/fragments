@@ -12,7 +12,7 @@ import { useAuth } from '@/lib/auth'
 import { Message, toAISDKMessages, toMessageImage } from '@/lib/messages'
 import { LLMModelConfig } from '@/lib/models'
 import modelsList from '@/lib/models.json'
-import { FragmentSchema, fragmentSchema as schema } from '@/lib/schema'
+import { FragmentSchema, fragmentSchema as schema, CameraFeedFragmentSchema, DashboardFragmentSchema, SalesDataFragmentSchema, HelpFragmentSchema } from '@/lib/schema'
 import { supabase } from '@/lib/supabase'
 import templates, { TemplateId } from '@/lib/templates'
 import { ExecutionResult } from '@/lib/types'
@@ -184,7 +184,7 @@ export default function Home() {
   }
 
   // Function to create hardcoded camera feed fragment
-  function createCameraFeedFragment(userInput: string): DeepPartial<FragmentSchema> {
+  function createCameraFeedFragment(userInput: string): CameraFeedFragmentSchema {
     // Extract store name from user input or use default
     const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
     const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
@@ -201,7 +201,7 @@ export default function Home() {
   }
 
   // Function to create hardcoded analytics dashboard fragment
-  function createAnalyticsDashboardFragment(userInput: string): DeepPartial<FragmentSchema> {
+  function createAnalyticsDashboardFragment(userInput: string): DashboardFragmentSchema {
     // Extract store name from user input or use default
     const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
     const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
@@ -237,7 +237,7 @@ export default function Home() {
   }
 
   // Function to create hardcoded sales data fragment
-  function createSalesDataFragment(userInput: string): DeepPartial<FragmentSchema> {
+  function createSalesDataFragment(userInput: string): SalesDataFragmentSchema {
     // Extract store name from user input or use default
     const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
     const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
@@ -280,7 +280,7 @@ export default function Home() {
   }
 
   // Function to create hardcoded help fragment
-  function createHelpFragment(): DeepPartial<FragmentSchema> {
+  function createHelpFragment(): HelpFragmentSchema {
     return {
       type: 'help',
       commentary: `Opening the RetailX AI Video Assistant powered by Tavus. This conversational AI interface allows you to have a face-to-face video conversation with an intelligent assistant that can help you with all aspects of RetailX, including store operations, analytics, camera monitoring, inventory management, sales data analysis, and general platform usage. The AI assistant provides personalized guidance and can answer questions in real-time through natural conversation.`,
