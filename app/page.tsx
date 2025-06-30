@@ -6,7 +6,6 @@ import { Chat } from '@/components/chat'
 import { ChatInput } from '@/components/chat-input'
 import { ChatPicker } from '@/components/chat-picker'
 import { ChatSettings } from '@/components/chat-settings'
-import { FloatingParticles } from '@/components/floating-particles'
 import { NavBar } from '@/components/navbar'
 import { Preview } from '@/components/preview'
 import { useAuth } from '@/lib/auth'
@@ -523,10 +522,7 @@ export default function Home() {
   const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading
 
   return (
-    <main className="flex min-h-screen max-h-screen relative">
-      {/* Floating Particles Background */}
-      <FloatingParticles />
-      
+    <main className="flex min-h-screen max-h-screen">
       {supabase && (
         <AuthDialog
           open={isAuthDialogOpen}
@@ -535,7 +531,7 @@ export default function Home() {
           supabase={supabase}
         />
       )}
-      <div className="flex w-full transition-all duration-500 ease-in-out relative z-10">
+      <div className="flex w-full transition-all duration-500 ease-in-out">
         {/* Chat Window - Dynamic width based on artifact visibility */}
         <div 
           className={`flex flex-col overflow-auto transition-all duration-500 ease-in-out ${
