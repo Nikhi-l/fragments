@@ -48,6 +48,7 @@ export function LandingPage() {
     // Find the chat input and set its value
     const chatInput = document.querySelector('textarea[placeholder*="Ask me about"]') as HTMLTextAreaElement
     if (chatInput) {
+      // Set the input value
       chatInput.value = prompt
       chatInput.focus()
       
@@ -55,15 +56,8 @@ export function LandingPage() {
       const event = new Event('input', { bubbles: true })
       chatInput.dispatchEvent(event)
       
-      // Add a small delay before triggering form submission to ensure state is updated
-      setTimeout(() => {
-        // Trigger form submission
-        const form = chatInput.closest('form')
-        if (form) {
-          const submitEvent = new Event('submit', { bubbles: true, cancelable: true })
-          form.dispatchEvent(submitEvent)
-        }
-      }, 100) // 100ms delay to ensure state update
+      // Don't auto-submit - let the user press enter when ready
+      // The form submission will be handled by the existing onEnter handler
     }
   }
 
