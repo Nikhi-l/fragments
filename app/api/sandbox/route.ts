@@ -22,6 +22,14 @@ export async function POST(req: Request) {
   console.log('userID', userID)
   // console.log('apiKey', apiKey)
 
+  // Check if fragment type is 'code' before accessing template property
+  if (fragment.type !== 'code') {
+    return new Response(
+      JSON.stringify({ error: 'This endpoint only handles code fragments' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
   // Create an interpreter or a sandbox
   const sbx = await Sandbox.create(fragment.template, {
     metadata: {
