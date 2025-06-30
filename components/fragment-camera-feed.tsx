@@ -73,6 +73,17 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
+  // YouTube video URLs converted to embed format
+  const youtubeVideos = [
+    'https://www.youtube.com/embed/lEddHr7oq98?autoplay=1&mute=1&loop=1&playlist=lEddHr7oq98',
+    'https://www.youtube.com/embed/9BTrF3YiqTI?autoplay=1&mute=1&loop=1&playlist=9BTrF3YiqTI',
+    'https://www.youtube.com/embed/eSuGpBjRaxw?autoplay=1&mute=1&loop=1&playlist=eSuGpBjRaxw',
+    'https://www.youtube.com/embed/E_2esIdzQxw?autoplay=1&mute=1&loop=1&playlist=E_2esIdzQxw',
+    'https://www.youtube.com/embed/R_2IAJOYdQE?autoplay=1&mute=1&loop=1&playlist=R_2IAJOYdQE',
+    'https://www.youtube.com/embed/KOVd1IwZoMk?autoplay=1&mute=1&loop=1&playlist=KOVd1IwZoMk',
+    'https://www.youtube.com/embed/k5enOLJbjgQ?autoplay=1&mute=1&loop=1&playlist=k5enOLJbjgQ'
+  ]
+
   // Memoize store data to prevent useEffect dependency issues
   const stores: Store[] = useMemo(() => [
     {
@@ -139,21 +150,10 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
       'Loading Dock', 'Customer Service', 'Electronics Section', 'Pharmacy'
     ]
     
-    const videoUrls = [
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4'
-    ]
-
     return Array.from({ length: store.cameras }, (_, index) => ({
       id: `cam-${store.id}-${index + 1}`,
       location: baseLocations[index] || `Camera ${index + 1}`,
-      url: videoUrls[index % videoUrls.length],
+      url: youtubeVideos[index % youtubeVideos.length],
       status: store.status === 'offline' ? 'offline' : 
               store.status === 'maintenance' ? 'maintenance' :
               Math.random() > 0.1 ? 'recording' : 'online',
@@ -272,58 +272,15 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
               </div>
             </div>
           ) : (
-            <video
-              ref={videoRef}
+            <iframe
               key={`${selectedStore}-${selectedCamera}-fullscreen`}
-              className="w-full h-full object-contain"
-              controls={false}
-              autoPlay={isPlaying}
-              muted={isMuted}
-              loop
+              className="w-full h-full"
               src={currentCamera?.url}
-            >
-              Your browser does not support the video tag.
-            </video>
-          )}
-
-          {/* Fullscreen Overlays */}
-          {currentCamera?.status !== 'offline' && currentCamera?.status !== 'maintenance' && (
-            <>
-              {/* Camera Info Overlay */}
-              <div className="absolute top-4 left-4 bg-black/70 text-white px-4 py-3 rounded-md space-y-1">
-                <div className="font-medium text-lg">{currentStore.name}</div>
-                <div className="text-sm opacity-80">{currentCamera?.location}</div>
-                <div className="text-xs opacity-60">
-                  Recording: {currentCamera?.recordingTime} • {currentCamera?.viewerCount} viewers
-                </div>
-              </div>
-              
-              {/* Motion Detection Alert */}
-              {currentCamera?.lastMotion && (
-                <div className="absolute bottom-4 left-4 bg-orange-600 text-white px-4 py-3 rounded-md flex items-center space-x-2">
-                  <Zap className="h-5 w-5" />
-                  <span>Motion detected {currentCamera.lastMotion}</span>
-                </div>
-              )}
-
-              {/* Audio Indicator */}
-              {currentCamera?.hasAudio && !isMuted && (
-                <div className="absolute top-1/2 left-8 transform -translate-y-1/2">
-                  <div className="flex items-center space-x-1">
-                    {Array.from({ length: 5 }, (_, i) => (
-                      <div
-                        key={i}
-                        className="w-2 bg-green-500 rounded-full animate-pulse"
-                        style={{
-                          height: `${Math.random() * 30 + 15}px`,
-                          animationDelay: `${i * 0.1}s`
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
+              title="Camera Feed"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           )}
         </div>
 
@@ -348,12 +305,12 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                       )}
                     </div>
                   ) : (
-                    <video
-                      className="w-full h-full object-cover"
-                      muted
-                      autoPlay
-                      loop
+                    <iframe
+                      className="w-full h-full object-cover scale-150"
                       src={camera.url}
+                      title={camera.location}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     />
                   )}
                   <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white px-1 py-0.5">
@@ -373,9 +330,9 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
 
   // Regular view
   return (
-    <div className="flex flex-col h-full p-4 space-y-4">
+    <div className="flex flex-col h-full">
       {/* Header with Store Selection */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <Camera className="h-5 w-5 text-blue-600" />
@@ -419,54 +376,55 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
       </div>
 
       {/* Store Information Panel */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="flex items-center space-x-2">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <div className="font-medium text-sm">{currentStore.name}</div>
-                <div className="text-xs text-muted-foreground">{currentStore.location}</div>
+      <div className="p-4 border-b">
+        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
+          <CardContent className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="flex items-center space-x-2">
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <div className="font-medium text-sm">{currentStore.name}</div>
+                  <div className="text-xs text-muted-foreground">{currentStore.location}</div>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Camera className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <div className="font-medium text-sm">{currentStore.cameras} Cameras</div>
+                  <div className="text-xs text-muted-foreground">Active monitoring</div>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <div className="font-medium text-sm">{currentStore.alerts} Alerts</div>
+                  <div className="text-xs text-muted-foreground">Require attention</div>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <div className="font-medium text-sm">Last Update</div>
+                  <div className="text-xs text-muted-foreground">{currentStore.lastUpdate}</div>
+                </div>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Camera className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <div className="font-medium text-sm">{currentStore.cameras} Cameras</div>
-                <div className="text-xs text-muted-foreground">Active monitoring</div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <div className="font-medium text-sm">{currentStore.alerts} Alerts</div>
-                <div className="text-xs text-muted-foreground">Require attention</div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <div className="font-medium text-sm">Last Update</div>
-                <div className="text-xs text-muted-foreground">{currentStore.lastUpdate}</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
-      {/* Main Content Area with Fixed Layout */}
-      <div className="flex-1 flex gap-4">
-        {/* Camera Selection Panel - Fixed Width to Match Video */}
-        <div className="flex flex-col space-y-4" style={{ width: '400px' }}>
-          <div className="flex items-center justify-between">
+      {/* Main Content Area - Improved Layout */}
+      <div className="flex-1 flex">
+        {/* Camera Selection Panel - Fixed Width */}
+        <div className="w-80 border-r bg-gray-50 dark:bg-gray-900 p-4 overflow-y-auto">
+          <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium text-sm text-muted-foreground">Camera Locations</h3>
             <Badge variant="outline" className="text-xs">
               {cameraFeeds.length} cameras
             </Badge>
           </div>
           
-          {/* Camera List with Fixed Height */}
-          <div className="space-y-2 overflow-y-auto" style={{ height: '360px' }}>
+          <div className="space-y-2">
             {cameraFeeds.map((camera, index) => (
               <Card 
                 key={camera.id}
@@ -514,9 +472,9 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
           </div>
         </div>
 
-        {/* Main Camera Feed - Fixed Width */}
-        <div className="flex flex-col" style={{ width: '600px' }}>
-          <Card className="flex flex-col">
+        {/* Main Camera Feed - Takes Remaining Space */}
+        <div className="flex-1 flex flex-col">
+          <Card className="flex-1 m-4 flex flex-col">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center space-x-2">
@@ -560,12 +518,9 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-0 flex flex-col">
-              {/* Video Container with Fixed Dimensions */}
-              <div 
-                className="relative bg-black rounded-b-lg overflow-hidden"
-                style={{ width: '600px', height: '337px' }}
-              >
+            <CardContent className="p-0 flex-1 flex flex-col">
+              {/* Video Container - Takes Full Available Space */}
+              <div className="flex-1 relative bg-black rounded-b-lg overflow-hidden min-h-[500px]">
                 {currentCamera?.status === 'offline' ? (
                   <div className="w-full h-full flex items-center justify-center text-white">
                     <div className="text-center">
@@ -583,19 +538,15 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                     </div>
                   </div>
                 ) : (
-                  <video
-                    ref={videoRef}
+                  <iframe
                     key={`${selectedStore}-${selectedCamera}`}
-                    className="w-full h-full object-cover"
-                    controls={false}
-                    autoPlay={isPlaying}
-                    muted={isMuted}
-                    loop
+                    className="w-full h-full"
                     src={currentCamera?.url}
-                    style={{ width: '600px', height: '337px' }}
-                  >
-                    Your browser does not support the video tag.
-                  </video>
+                    title="Camera Feed"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
                 )}
                 
                 {/* Video Overlays */}
@@ -628,24 +579,6 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                       <Users className="h-4 w-4" />
                       <span>{currentCamera?.viewerCount} viewing</span>
                     </div>
-
-                    {/* Audio Indicator */}
-                    {currentCamera?.hasAudio && !isMuted && (
-                      <div className="absolute top-1/2 left-4 transform -translate-y-1/2">
-                        <div className="flex items-center space-x-1">
-                          {Array.from({ length: 4 }, (_, i) => (
-                            <div
-                              key={i}
-                              className="w-1 bg-green-500 rounded-full animate-pulse"
-                              style={{
-                                height: `${Math.random() * 20 + 10}px`,
-                                animationDelay: `${i * 0.1}s`
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </>
                 )}
               </div>
@@ -693,87 +626,91 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
         </div>
       </div>
 
-      {/* Camera Grid View - Always Visible */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">All Cameras - {currentStore.name}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-            {cameraFeeds.map((camera, index) => (
-              <Card 
-                key={camera.id} 
-                className="overflow-hidden cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
-                onClick={() => setSelectedCamera(index)}
-              >
-                <div className="relative bg-black" style={{ aspectRatio: '16/9' }}>
-                  {camera.status === 'offline' || camera.status === 'maintenance' ? (
-                    <div className="w-full h-full flex items-center justify-center text-white">
-                      <div className="text-center">
-                        {camera.status === 'offline' ? (
-                          <WifiOff className="h-6 w-6 mx-auto text-red-500" />
-                        ) : (
-                          <Settings className="h-6 w-6 mx-auto text-yellow-500" />
-                        )}
-                        <div className="text-xs mt-1">{camera.status}</div>
+      {/* Camera Grid View - Bottom Section */}
+      <div className="border-t p-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">All Cameras - {currentStore.name}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+              {cameraFeeds.map((camera, index) => (
+                <Card 
+                  key={camera.id} 
+                  className="overflow-hidden cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
+                  onClick={() => setSelectedCamera(index)}
+                >
+                  <div className="relative bg-black" style={{ aspectRatio: '16/9' }}>
+                    {camera.status === 'offline' || camera.status === 'maintenance' ? (
+                      <div className="w-full h-full flex items-center justify-center text-white">
+                        <div className="text-center">
+                          {camera.status === 'offline' ? (
+                            <WifiOff className="h-6 w-6 mx-auto text-red-500" />
+                          ) : (
+                            <Settings className="h-6 w-6 mx-auto text-yellow-500" />
+                          )}
+                          <div className="text-xs mt-1">{camera.status}</div>
+                        </div>
                       </div>
+                    ) : (
+                      <iframe
+                        className="w-full h-full object-cover"
+                        src={camera.url}
+                        title={camera.location}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        style={{ aspectRatio: '16/9' }}
+                      />
+                    )}
+                    <div className="absolute bottom-1 left-1 bg-black/70 text-white px-2 py-0.5 rounded text-xs">
+                      {camera.location}
                     </div>
-                  ) : (
-                    <video
-                      className="w-full h-full object-cover"
-                      muted
-                      autoPlay
-                      loop
-                      src={camera.url}
-                      style={{ aspectRatio: '16/9' }}
-                    />
-                  )}
-                  <div className="absolute bottom-1 left-1 bg-black/70 text-white px-2 py-0.5 rounded text-xs">
-                    {camera.location}
+                    {camera.status === 'recording' && (
+                      <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    )}
+                    {camera.lastMotion && (
+                      <div className="absolute top-1 left-1 w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                    )}
+                    {selectedCamera === index && (
+                      <div className="absolute inset-0 ring-2 ring-blue-500 ring-inset" />
+                    )}
                   </div>
-                  {camera.status === 'recording' && (
-                    <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                  )}
-                  {camera.lastMotion && (
-                    <div className="absolute top-1 left-1 w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
-                  )}
-                  {selectedCamera === index && (
-                    <div className="absolute inset-0 ring-2 ring-blue-500 ring-inset" />
-                  )}
-                </div>
-              </Card>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* System Status Footer */}
-      <Card className="bg-gray-50 dark:bg-gray-900">
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full" />
-              <span>System Online</span>
+      <div className="border-t p-4">
+        <Card className="bg-gray-50 dark:bg-gray-900">
+          <CardContent className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full" />
+                <span>System Online</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Shield className="h-4 w-4 text-blue-600" />
+                <span>Secure Connection</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Camera className="h-4 w-4 text-green-600" />
+                <span>{cameraFeeds.filter(c => c.status === 'recording').length} Recording</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className="h-4 w-4 text-orange-600" />
+                <span>{currentStore.alerts} Active Alerts</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                <span>24/7 Monitoring</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Shield className="h-4 w-4 text-blue-600" />
-              <span>Secure Connection</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Camera className="h-4 w-4 text-green-600" />
-              <span>{cameraFeeds.filter(c => c.status === 'recording').length} Recording</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <AlertTriangle className="h-4 w-4 text-orange-600" />
-              <span>{currentStore.alerts} Active Alerts</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="h-4 w-4 text-muted-foreground" />
-              <span>24/7 Monitoring</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
