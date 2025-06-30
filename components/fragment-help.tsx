@@ -58,6 +58,7 @@ export function FragmentHelp() {
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState('')
   const [config, setConfig] = useState<ConversationConfig>({
+    replica_id: 'rf4703150052', // Hardcoded replica ID
     audio_only: false,
     conversation_name: 'RetailX Help Session',
     conversational_context: 'You are a helpful AI assistant for RetailX, a retail management platform. Help users with questions about store operations, analytics, camera monitoring, inventory management, sales data, and general platform usage. Be friendly, knowledgeable, and provide clear guidance.',
@@ -68,6 +69,11 @@ export function FragmentHelp() {
   
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
+  // Auto-start conversation when component mounts
+  useEffect(() => {
+    createConversation()
+  }, [])
+
   const createConversation = async () => {
     setIsCreating(true)
     setError('')
@@ -76,6 +82,7 @@ export function FragmentHelp() {
     try {
       // Build request body, only including optional fields if they have values
       const requestBody: any = {
+        replica_id: config.replica_id, // Always include the hardcoded replica ID
         audio_only: config.audio_only,
         conversation_name: config.conversation_name,
         conversational_context: config.conversational_context,
@@ -90,11 +97,6 @@ export function FragmentHelp() {
       // Only include persona_id if it has a non-empty value
       if (config.persona_id && config.persona_id.trim()) {
         requestBody.persona_id = config.persona_id.trim()
-      }
-
-      // Only include replica_id if it has a non-empty value
-      if (config.replica_id && config.replica_id.trim()) {
-        requestBody.replica_id = config.replica_id.trim()
       }
 
       const response = await fetch('https://tavusapi.com/v2/conversations', {
@@ -254,7 +256,7 @@ export function FragmentHelp() {
       {/* Main Content */}
       <div className="flex-1 p-4 space-y-4">
         {!conversation ? (
-          // Start Conversation
+          // Loading or Error State
           <div className="space-y-4">
             {/* API Status */}
             <Card>
@@ -266,109 +268,51 @@ export function FragmentHelp() {
                     </div>
                     <div>
                       <h3 className="font-medium">Tavus API Connected</h3>
-                      <p className="text-sm text-muted-foreground">Ready to start video conversation</p>
+                      <p className="text-sm text-muted-foreground">Starting video conversation automatically...</p>
                     </div>
                   </div>
                   <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                    Ready
+                    Auto-Starting
                   </Badge>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Video className="h-5 w-5" />
-                  <span>Start Video Conversation</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="conversationName">Session Name</Label>
-                    <Input
-                      id="conversationName"
-                      value={config.conversation_name}
-                      onChange={(e) => setConfig(prev => ({ ...prev, conversation_name: e.target.value }))}
-                      placeholder="Help Session Name"
-                    />
+            {isCreating && (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center space-x-3">
+                    <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+                    <div>
+                      <h3 className="font-medium">Creating Video Session</h3>
+                      <p className="text-sm text-muted-foreground">Please wait while we connect you to your AI assistant...</p>
+                    </div>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="replicaId">Replica ID (Optional)</Label>
-                    <Input
-                      id="replicaId"
-                      value={config.replica_id || ''}
-                      onChange={(e) => setConfig(prev => ({ ...prev, replica_id: e.target.value }))}
-                      placeholder="Enter replica ID"
-                    />
-                  </div>
-                </div>
+                </CardContent>
+              </Card>
+            )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="personaId">Persona ID (Optional)</Label>
-                  <Input
-                    id="personaId"
-                    value={config.persona_id || ''}
-                    onChange={(e) => setConfig(prev => ({ ...prev, persona_id: e.target.value }))}
-                    placeholder="Enter persona ID"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="context">Conversation Context</Label>
-                  <textarea
-                    id="context"
-                    className="w-full p-3 border rounded-md resize-none"
-                    rows={3}
-                    value={config.conversational_context}
-                    onChange={(e) => setConfig(prev => ({ ...prev, conversational_context: e.target.value }))}
-                    placeholder="Describe what you need help with..."
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="greeting">Custom Greeting</Label>
-                  <Input
-                    id="greeting"
-                    value={config.custom_greeting}
-                    onChange={(e) => setConfig(prev => ({ ...prev, custom_greeting: e.target.value }))}
-                    placeholder="How the AI should greet you"
-                  />
-                </div>
-
-                {error && (
+            {error && (
+              <Card>
+                <CardContent className="p-4">
                   <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
                     <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                    <Button 
+                      onClick={createConversation} 
+                      className="mt-2"
+                      size="sm"
+                    >
+                      Try Again
+                    </Button>
                   </div>
-                )}
-
-                <Button 
-                  onClick={createConversation} 
-                  disabled={isCreating}
-                  className="w-full"
-                  size="lg"
-                >
-                  {isCreating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Creating Conversation...
-                    </>
-                  ) : (
-                    <>
-                      <Video className="h-4 w-4 mr-2" />
-                      Start Video Help Session
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Quick Help Topics */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Common Help Topics</CardTitle>
+                <CardTitle className="text-lg">What I can help you with:</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -382,19 +326,13 @@ export function FragmentHelp() {
                     'Store Comparison',
                     'Report Generation'
                   ].map((topic, index) => (
-                    <Button
+                    <div
                       key={index}
-                      variant="outline"
-                      size="sm"
-                      className="justify-start"
-                      onClick={() => setConfig(prev => ({ 
-                        ...prev, 
-                        conversational_context: `I need help with ${topic.toLowerCase()} in RetailX. Please guide me through the process and answer any questions I have.`
-                      }))}
+                      className="flex items-center space-x-2 p-2 border rounded-lg"
                     >
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      {topic}
-                    </Button>
+                      <MessageCircle className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm">{topic}</span>
+                    </div>
                   ))}
                 </div>
               </CardContent>
@@ -403,7 +341,7 @@ export function FragmentHelp() {
             {/* Features Overview */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">What you can do:</CardTitle>
+                <CardTitle className="text-lg">Features:</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -539,7 +477,7 @@ export function FragmentHelp() {
                   </div>
 
                   <div className="text-xs text-muted-foreground">
-                    Conversation URL: {conversation.conversation_url}
+                    Replica ID: {conversation.replica_id}
                   </div>
                 </div>
               </CardContent>
