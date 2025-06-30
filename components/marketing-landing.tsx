@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import Logo from '@/components/logo'
-import { Shield, Zap, Play } from 'lucide-react'
+import { Zap, Play } from 'lucide-react'
 import Link from 'next/link'
 
 export function MarketingLanding() {
@@ -37,11 +37,11 @@ export function MarketingLanding() {
             <Link href="#faq" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
               FAQ
             </Link>
-            <Link href="/chat">
+            <a href="https://calendly.com/gnikhil335/30min" target="_blank" rel="noopener noreferrer">
               <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold">
                 Book Demo
               </Button>
-            </Link>
+            </a>
           </div>
         </nav>
       </header>
@@ -62,11 +62,11 @@ export function MarketingLanding() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-8 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-              <Link href="/chat">
+              <a href="https://calendly.com/gnikhil335/30min" target="_blank" rel="noopener noreferrer">
                 <button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl animate-pulse-glow">
                   Book a Demo
                 </button>
-              </Link>
+              </a>
               <button className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 shadow-lg">
                 <Play className="h-5 w-5" />
                 Watch Demo
@@ -77,10 +77,6 @@ export function MarketingLanding() {
               <div className="flex items-center gap-2 hover:text-orange-500 dark:hover:text-orange-400 transition-colors">
                 <Zap className="h-5 w-5 text-orange-500" />
                 <span>No new hardware required</span>
-              </div>
-              <div className="flex items-center gap-2 hover:text-orange-500 dark:hover:text-orange-400 transition-colors">
-                <Shield className="h-5 w-5 text-orange-500" />
-                <span>GDPR & CCPA compliant</span>
               </div>
             </div>
           </div>
