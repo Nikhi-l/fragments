@@ -130,7 +130,7 @@ export function LandingPage() {
                           {sample.description}
                         </p>
                         <div className="text-xs text-orange-600 font-medium">
-                          "{sample.prompt}"
+                          &quot;{sample.prompt}&quot;
                         </div>
                       </div>
                     </div>

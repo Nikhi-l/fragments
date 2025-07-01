@@ -484,7 +484,7 @@ export function FragmentForecast({ fragment }: { fragment: ForecastFragmentSchem
                   <span className="text-sm font-medium text-blue-800 dark:text-blue-300">Inventory Recommendation</span>
                 </div>
                 <p className="text-xs text-blue-700 dark:text-blue-400 mt-1">
-                  Stock up 20% more inventory for Valentine's Day and Winter Festival periods
+                  Stock up 20% more inventory for Valentine&apos;s Day and Winter Festival periods
                 </p>
               </div>
 
