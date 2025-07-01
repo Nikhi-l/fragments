@@ -392,7 +392,7 @@ export function FragmentHelp() {
                     <div>
                       <h3 className="font-medium">{conversation.conversation_name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Session ID: {conversation.conversation_id.substring(0, 8)}... • Status: {conversation.status}
+                        Session ID: {conversation.conversation_id?.substring(0, 8) || 'N/A'}... • Status: {conversation.status}
                       </p>
                     </div>
                   </div>
@@ -480,7 +480,7 @@ export function FragmentHelp() {
                   </div>
 
                   <div className="text-xs text-muted-foreground">
-                    Replica ID: {conversation.replica_id.substring(0, 8)}...
+                    Replica ID: {conversation.replica_id?.substring(0, 8) || 'N/A'}...
                   </div>
                 </div>
               </CardContent>
