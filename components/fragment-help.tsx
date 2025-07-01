@@ -213,7 +213,7 @@ export function FragmentHelp() {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950 dark:to-amber-950 border-orange-200 dark:border-orange-800">
+      <div className="p-6 border-b bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950 dark:to-amber-950 border-orange-200 dark:border-orange-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
@@ -255,13 +255,13 @@ export function FragmentHelp() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-4 space-y-4">
+      <div className="flex-1 p-6 space-y-6">
         {!conversation ? (
           // Loading or Error State
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* API Status */}
             <Card className="border-orange-100 dark:border-orange-900/30">
-              <CardContent className="p-4">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
@@ -281,7 +281,7 @@ export function FragmentHelp() {
 
             {isCreating && (
               <Card className="border-orange-100 dark:border-orange-900/30">
-                <CardContent className="p-4">
+                <CardContent className="p-6">
                   <div className="flex items-center space-x-3">
                     <Loader2 className="h-5 w-5 animate-spin text-orange-600" />
                     <div>
@@ -295,7 +295,7 @@ export function FragmentHelp() {
 
             {error && (
               <Card className="border-orange-100 dark:border-orange-900/30">
-                <CardContent className="p-4">
+                <CardContent className="p-6">
                   <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
                     <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
                     <Button 
@@ -329,7 +329,7 @@ export function FragmentHelp() {
                   ].map((topic, index) => (
                     <div
                       key={index}
-                      className="flex items-center space-x-2 p-2 border rounded-lg border-orange-100 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
+                      className="flex items-center space-x-2 p-3 border rounded-lg border-orange-100 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
                     >
                       <MessageCircle className="h-4 w-4 text-orange-600" />
                       <span className="text-sm">{topic}</span>
@@ -345,7 +345,7 @@ export function FragmentHelp() {
                 <CardTitle className="text-lg">Features:</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex items-start space-x-3">
                     <MessageCircle className="h-5 w-5 text-orange-600 mt-0.5" />
                     <div>
@@ -380,10 +380,10 @@ export function FragmentHelp() {
           </div>
         ) : (
           // Active Conversation
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Conversation Info */}
             <Card className="border-orange-100 dark:border-orange-900/30">
-              <CardContent className="p-4">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
@@ -462,7 +462,7 @@ export function FragmentHelp() {
 
             {/* Session Info */}
             <Card className="border-orange-100 dark:border-orange-900/30">
-              <CardContent className="p-4">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <div className="flex items-center space-x-2">

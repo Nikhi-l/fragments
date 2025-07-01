@@ -6,7 +6,7 @@ export function toPrompt(template: Templates) {
     You do not make mistakes.
     Generate a fragment based on the user's request.
 
-    You can generate five types of fragments:
+    You can generate seven types of fragments:
 
     1. CODE FRAGMENTS (type: "code"):
        - For programming tasks, web applications, data analysis, etc.
@@ -63,6 +63,39 @@ export function toPrompt(template: Templates) {
        - Determine shift period from context (Morning Shift, Afternoon Shift, Evening Shift, Current Shift)
        - Common management features: "Current Staff Status", "Task Assignment", "Break Scheduling", "Performance Tracking", "Crowd-based Assignment", "Schedule Optimization"
 
+    6. INVENTORY MANAGEMENT FRAGMENTS (type: "inventory_management"):
+       - When user asks about "inventory", "stock", "products", "items", "reorder", "supplier", "warehouse", "SKU", "out of stock", "low stock", "stock levels", "inventory management", etc.
+       - Provides comprehensive inventory management including:
+         * Real-time stock levels and tracking
+         * Low stock alerts and reorder points
+         * Product categories and supplier management
+         * Inventory movement and trend analysis
+         * Cost analysis and valuation
+         * Automated reordering systems
+         * Stock optimization recommendations
+         * Supplier performance tracking
+       - Extract store name from user query or use "Main Store" as default
+       - Common inventory features: "Stock Levels", "Low Stock Alerts", "Reorder Points", "Product Categories", "Supplier Management", "Movement Tracking", "Cost Analysis", "Automated Reordering"
+
+    7. COST ANALYTICS FRAGMENTS (type: "cost_analytics"):
+       - When user asks about "cost", "expenses", "budget", "spending", "operational costs", "running costs", "cost analysis", "cost breakdown", "utilities", "rent", "overhead", etc.
+       - Provides comprehensive cost analysis including:
+         * Detailed cost breakdowns by category
+         * Budget vs actual spending comparisons
+         * Cost trends and optimization opportunities
+         * Store-wise cost comparisons
+         * Cost per employee and per square foot metrics
+         * Expense forecasting and planning
+         * Cost control recommendations
+         * ROI analysis for different cost categories
+       - Extract store name from user query or use "Main Store" as default
+       - Determine appropriate time period from context (This Month, This Quarter, This Year)
+       - Common cost categories: "Staff Costs", "Utilities", "Rent & Facilities", "Inventory Costs", "Marketing", "Logistics", "Equipment", "Insurance"
+
+    8. HELP FRAGMENTS (type: "help"):
+       - When user asks for "help" or assistance with the platform
+       - Opens the AI video assistant powered by Tavus for face-to-face conversation
+
     IMPORTANT RULES:
     - If the user mentions specific store names, use those exact names
     - If no store is mentioned, default to "Main Store"
@@ -70,10 +103,14 @@ export function toPrompt(template: Templates) {
     - For dashboards, always include relevant business metrics
     - For sales data, always include comprehensive sales analytics and trends
     - For staff management, always include current staff status, task management, and optimization features
+    - For inventory management, always include stock tracking, alerts, and supplier information
+    - For cost analytics, always include detailed cost breakdowns and optimization insights
     - Choose the fragment type based on the user's intent, not just keywords
     - Provide detailed commentary explaining what you're showing and why it's useful
     - Sales data fragments should focus specifically on sales metrics, revenue, and transaction analysis
     - Dashboard fragments should provide broader operational insights beyond just sales
     - Staff management fragments should focus on employee management, task assignment, and workforce optimization
+    - Inventory management fragments should focus on stock tracking, supplier management, and inventory optimization
+    - Cost analytics fragments should focus on expense tracking, budget management, and cost optimization
   `
 }

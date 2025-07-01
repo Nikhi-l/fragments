@@ -12,7 +12,7 @@ import { useAuth } from '@/lib/auth'
 import { Message, toAISDKMessages, toMessageImage } from '@/lib/messages'
 import { LLMModelConfig } from '@/lib/models'
 import modelsList from '@/lib/models.json'
-import { FragmentSchema, fragmentSchema as schema, CameraFeedFragmentSchema, DashboardFragmentSchema, SalesDataFragmentSchema, StaffManagementFragmentSchema, HelpFragmentSchema } from '@/lib/schema'
+import { FragmentSchema, fragmentSchema as schema, CameraFeedFragmentSchema, DashboardFragmentSchema, SalesDataFragmentSchema, StaffManagementFragmentSchema, InventoryManagementFragmentSchema, CostAnalyticsFragmentSchema, HelpFragmentSchema } from '@/lib/schema'
 import { supabase } from '@/lib/supabase'
 import templates, { TemplateId } from '@/lib/templates'
 import { ExecutionResult } from '@/lib/types'
@@ -50,6 +50,8 @@ export default function ChatPage() {
   const [isAnalyticsLoading, setIsAnalyticsLoading] = useState(false)
   const [isSalesDataLoading, setIsSalesDataLoading] = useState(false)
   const [isStaffManagementLoading, setIsStaffManagementLoading] = useState(false)
+  const [isInventoryLoading, setIsInventoryLoading] = useState(false)
+  const [isCostAnalyticsLoading, setIsCostAnalyticsLoading] = useState(false)
   const [isHelpLoading, setIsHelpLoading] = useState(false)
   const [showArtifact, setShowArtifact] = useState(false)
   const { session, userTeam } = useAuth(setAuthDialog, setAuthView)
@@ -88,8 +90,8 @@ export default function ChatPage() {
         // Show artifact window when fragment is generated
         setShowArtifact(true)
         
-        // Handle non-code fragments (camera feeds, dashboards, sales data, staff management, and help)
-        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard' || fragment.type === 'sales_data' || fragment.type === 'staff_management' || fragment.type === 'help') {
+        // Handle non-code fragments (camera feeds, dashboards, sales data, staff management, inventory, cost analytics, and help)
+        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard' || fragment.type === 'sales_data' || fragment.type === 'staff_management' || fragment.type === 'inventory_management' || fragment.type === 'cost_analytics' || fragment.type === 'help') {
           setCurrentPreview({ fragment, result: undefined })
           setMessage({ result: undefined })
           setCurrentTab('fragment')
@@ -327,6 +329,63 @@ export default function ChatPage() {
     }
   }
 
+  // Function to create hardcoded inventory management fragment
+  function createInventoryManagementFragment(userInput: string): InventoryManagementFragmentSchema {
+    // Extract store name from user input or use default
+    const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
+    const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
+
+    return {
+      type: 'inventory_management',
+      commentary: `Displaying comprehensive inventory management system for ${storeName}. This interface provides real-time stock levels, low stock alerts, reorder points, product categories, supplier information, and inventory movement tracking. You can monitor current stock levels, identify items that need reordering, track inventory trends, manage product categories, and optimize stock levels to prevent stockouts while minimizing carrying costs.`,
+      title: 'Inventory Management',
+      description: `Complete inventory tracking and management system for ${storeName}`,
+      store_name: storeName,
+      inventory_features: [
+        'Stock Levels',
+        'Low Stock Alerts',
+        'Reorder Points',
+        'Product Categories',
+        'Supplier Management',
+        'Movement Tracking',
+        'Cost Analysis',
+        'Automated Reordering'
+      ],
+      time_period: 'Current'
+    }
+  }
+
+  // Function to create hardcoded cost analytics fragment
+  function createCostAnalyticsFragment(userInput: string): CostAnalyticsFragmentSchema {
+    // Extract store name from user input or use default
+    const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
+    const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
+
+    // Determine time period from user input
+    let timePeriod = 'This Month'
+    if (userInput.toLowerCase().includes('quarter')) timePeriod = 'This Quarter'
+    else if (userInput.toLowerCase().includes('year')) timePeriod = 'This Year'
+
+    return {
+      type: 'cost_analytics',
+      commentary: `Displaying comprehensive cost analytics for ${storeName}. This dashboard provides detailed breakdown of operational costs including staff costs, utilities, rent, inventory costs, marketing expenses, and logistics. You can analyze cost trends, compare against budget allocations, identify cost optimization opportunities, and track key cost metrics like cost per employee and cost per square foot. The analysis helps you understand where your money is going and identify areas for potential savings.`,
+      title: 'Cost Analytics',
+      description: `Detailed cost analysis and budget tracking for ${storeName}`,
+      store_name: storeName,
+      cost_categories: [
+        'Staff Costs',
+        'Utilities',
+        'Rent & Facilities',
+        'Inventory Costs',
+        'Marketing',
+        'Logistics',
+        'Equipment',
+        'Insurance'
+      ],
+      time_period: timePeriod
+    }
+  }
+
   // Function to create hardcoded help fragment
   function createHelpFragment(): HelpFragmentSchema {
     return {
@@ -344,12 +403,14 @@ export default function ChatPage() {
       return setAuthDialog(true)
     }
 
-    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isHelpLoading) {
+    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isHelpLoading) {
       stop()
       setIsCameraLoading(false)
       setIsAnalyticsLoading(false)
       setIsSalesDataLoading(false)
       setIsStaffManagementLoading(false)
+      setIsInventoryLoading(false)
+      setIsCostAnalyticsLoading(false)
       setIsHelpLoading(false)
     }
 
@@ -566,6 +627,96 @@ export default function ChatPage() {
           trigger: 'hardcoded'
         })
       }, 2000) // 2-second delay
+    }
+    // Check if user input contains inventory keywords
+    else if (
+      inputLower.includes('inventory') || 
+      inputLower.includes('stock') || 
+      inputLower.includes('product') || 
+      inputLower.includes('item') ||
+      inputLower.includes('reorder') ||
+      inputLower.includes('supplier') ||
+      inputLower.includes('warehouse') ||
+      inputLower.includes('sku') ||
+      inputLower.includes('out of stock') ||
+      inputLower.includes('low stock') ||
+      inputLower.includes('stock level') ||
+      inputLower.includes('inventory management')
+    ) {
+      // Set loading state to simulate LLM processing
+      setIsInventoryLoading(true)
+      
+      // Add a 2-second delay to simulate LLM call
+      setTimeout(() => {
+        // Create hardcoded inventory management fragment
+        const inventoryFragment = createInventoryManagementFragment(chatInput)
+        
+        // Set the fragment directly without LLM call
+        setFragment(inventoryFragment)
+        setCurrentPreview({ fragment: inventoryFragment, result: undefined })
+        setCurrentTab('fragment')
+        setShowArtifact(true)
+        
+        // Add assistant response
+        addMessage({
+          role: 'assistant',
+          content: [{ type: 'text', text: inventoryFragment.commentary || '' }],
+          object: inventoryFragment,
+        })
+
+        // Stop loading state
+        setIsInventoryLoading(false)
+
+        posthog.capture('inventory_management_triggered', {
+          store_name: inventoryFragment.store_name,
+          trigger: 'hardcoded'
+        })
+      }, 2000) // 2-second delay
+    }
+    // Check if user input contains cost analytics keywords
+    else if (
+      inputLower.includes('cost') || 
+      inputLower.includes('expense') || 
+      inputLower.includes('budget') || 
+      inputLower.includes('spending') ||
+      inputLower.includes('operational cost') ||
+      inputLower.includes('running cost') ||
+      inputLower.includes('cost analysis') ||
+      inputLower.includes('cost breakdown') ||
+      inputLower.includes('utilities') ||
+      inputLower.includes('rent') ||
+      inputLower.includes('overhead')
+    ) {
+      // Set loading state to simulate LLM processing
+      setIsCostAnalyticsLoading(true)
+      
+      // Add a 2-second delay to simulate LLM call
+      setTimeout(() => {
+        // Create hardcoded cost analytics fragment
+        const costAnalyticsFragment = createCostAnalyticsFragment(chatInput)
+        
+        // Set the fragment directly without LLM call
+        setFragment(costAnalyticsFragment)
+        setCurrentPreview({ fragment: costAnalyticsFragment, result: undefined })
+        setCurrentTab('fragment')
+        setShowArtifact(true)
+        
+        // Add assistant response
+        addMessage({
+          role: 'assistant',
+          content: [{ type: 'text', text: costAnalyticsFragment.commentary || '' }],
+          object: costAnalyticsFragment,
+        })
+
+        // Stop loading state
+        setIsCostAnalyticsLoading(false)
+
+        posthog.capture('cost_analytics_triggered', {
+          store_name: costAnalyticsFragment.store_name,
+          time_period: costAnalyticsFragment.time_period,
+          trigger: 'hardcoded'
+        })
+      }, 2000) // 2-second delay
     } 
     else {
       // Normal LLM processing for other requests
@@ -632,6 +783,8 @@ export default function ChatPage() {
     setIsAnalyticsLoading(false)
     setIsSalesDataLoading(false)
     setIsStaffManagementLoading(false)
+    setIsInventoryLoading(false)
+    setIsCostAnalyticsLoading(false)
     setIsHelpLoading(false)
     setChatInput('')
     setFiles([])
@@ -663,7 +816,7 @@ export default function ChatPage() {
   }
 
   // Combine loading states for UI
-  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isHelpLoading
+  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isHelpLoading
 
   // Determine layout based on fragment type
   const isHelpFragment = fragment?.type === 'help'
@@ -714,6 +867,8 @@ export default function ChatPage() {
               setIsAnalyticsLoading(false)
               setIsSalesDataLoading(false)
               setIsStaffManagementLoading(false)
+              setIsInventoryLoading(false)
+              setIsCostAnalyticsLoading(false)
               setIsHelpLoading(false)
             }}
             input={chatInput}

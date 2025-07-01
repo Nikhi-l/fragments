@@ -53,6 +53,22 @@ const staffManagementFragmentSchema = baseFragmentSchema.extend({
   shift_period: z.string().describe('Current shift period being managed (e.g., "Morning Shift", "Afternoon Shift", "Evening Shift").'),
 })
 
+// Inventory management fragment schema
+const inventoryManagementFragmentSchema = baseFragmentSchema.extend({
+  type: z.literal('inventory_management'),
+  store_name: z.string().describe('Name of the store for which inventory management is being displayed.'),
+  inventory_features: z.array(z.string()).describe('List of inventory management features (e.g., "Stock Levels", "Low Stock Alerts", "Reorder Points", "Product Categories").'),
+  time_period: z.string().describe('Time period for inventory data (e.g., "Current", "This Week", "This Month").'),
+})
+
+// Cost analytics fragment schema
+const costAnalyticsFragmentSchema = baseFragmentSchema.extend({
+  type: z.literal('cost_analytics'),
+  store_name: z.string().describe('Name of the store for which cost analytics is being displayed.'),
+  cost_categories: z.array(z.string()).describe('List of cost categories to analyze (e.g., "Staff Costs", "Utilities", "Rent", "Inventory Costs", "Marketing").'),
+  time_period: z.string().describe('Time period for cost analysis (e.g., "This Month", "This Quarter", "This Year").'),
+})
+
 // Help fragment schema
 const helpFragmentSchema = baseFragmentSchema.extend({
   type: z.literal('help'),
@@ -65,6 +81,8 @@ export const fragmentSchema = z.discriminatedUnion('type', [
   dashboardFragmentSchema,
   salesDataFragmentSchema,
   staffManagementFragmentSchema,
+  inventoryManagementFragmentSchema,
+  costAnalyticsFragmentSchema,
   helpFragmentSchema,
 ])
 
@@ -74,4 +92,6 @@ export type CameraFeedFragmentSchema = z.infer<typeof cameraFeedFragmentSchema>
 export type DashboardFragmentSchema = z.infer<typeof dashboardFragmentSchema>
 export type SalesDataFragmentSchema = z.infer<typeof salesDataFragmentSchema>
 export type StaffManagementFragmentSchema = z.infer<typeof staffManagementFragmentSchema>
+export type InventoryManagementFragmentSchema = z.infer<typeof inventoryManagementFragmentSchema>
+export type CostAnalyticsFragmentSchema = z.infer<typeof costAnalyticsFragmentSchema>
 export type HelpFragmentSchema = z.infer<typeof helpFragmentSchema>
