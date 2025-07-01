@@ -431,10 +431,10 @@ export function FragmentHelp() {
               </CardContent>
             </Card>
 
-            {/* Video Interface */}
+            {/* Video Interface - Increased height by 25% from 600px to 750px */}
             <Card className="flex-1 border-orange-100 dark:border-orange-900/30">
               <CardContent className="p-0">
-                <div className="relative w-full" style={{ height: '600px' }}>
+                <div className="relative w-full" style={{ height: '750px' }}>
                   {connectionStatus === 'connecting' ? (
                     <div className="w-full h-full flex items-center justify-center bg-orange-50 dark:bg-orange-950 rounded-lg">
                       <div className="text-center space-y-4">
