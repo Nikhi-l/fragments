@@ -422,9 +422,9 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            {/* Fixed height container with scrolling */}
-            <div className="h-96 overflow-y-auto space-y-3 pr-2">
+          <CardContent className="h-full">
+            {/* Fixed height container with scrolling - This div will expand to fill its parent */}
+            <div className="h-full overflow-y-auto space-y-3 pr-2">
               {employees.map((employee) => (
                 <div key={employee.id} className="flex items-center justify-between p-3 border rounded-lg border-orange-100 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors">
                   <div className="flex items-center space-x-3">
@@ -608,7 +608,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Current Break Schedule */}
             <div className="lg:col-span-2 space-y-3">
-              <h4 className="font-medium text-sm">Today&apos;s Break Schedule</h4>
+              <h4 className="font-medium text-sm">Today's Break Schedule</h4>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {breakSchedules.map((breakSched, index) => {
                   const employee = employees.find(emp => emp.id === breakSched.employeeId)
@@ -760,7 +760,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
                   <span className="text-sm font-medium text-yellow-600">Break Reminder</span>
                 </div>
                 <p className="text-xs text-yellow-600 mt-1">
-                  Sarah Johnson&apos;s break starts in 15 minutes
+                  Sarah Johnson's break starts in 15 minutes
                 </p>
               </div>
 

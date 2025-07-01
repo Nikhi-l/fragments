@@ -902,11 +902,6 @@ export default function ChatPage() {
   // Combine loading states for UI
   const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isForecastLoading || isHelpLoading
 
-  // Determine layout based on fragment type
-  const isHelpFragment = fragment?.type === 'help'
-  const chatWidth = showArtifact ? (isHelpFragment ? 'w-1/2' : 'w-[25%]') : 'w-full'
-  const previewWidth = showArtifact ? (isHelpFragment ? 'w-1/2' : 'w-[75%]') : 'w-0'
-
   return (
     <main className="flex min-h-screen max-h-screen">
       {supabase && (
@@ -918,10 +913,10 @@ export default function ChatPage() {
         />
       )}
       <div className="flex w-full">
-        {/* Chat Window - Dynamic width based on artifact visibility and type */}
+        {/* Chat Window - Dynamic width based on artifact visibility */}
         <div 
-          className={`flex flex-col overflow-auto ${chatWidth} ${
-            showArtifact && !isHelpFragment ? 'px-2' : showArtifact && isHelpFragment ? 'px-4' : 'max-w-[800px] mx-auto px-4'
+          className={`flex flex-col overflow-auto ${
+            showArtifact ? 'w-[25%] px-2' : 'w-full max-w-[800px] mx-auto px-4'
           }`}
         >
           <NavBar
@@ -980,10 +975,12 @@ export default function ChatPage() {
           </ChatInput>
         </div>
 
-        {/* Preview/Artifact Window - Dynamic width based on fragment type */}
+        {/* Preview/Artifact Window - Fixed 75% width when shown */}
         <div 
-          className={`${previewWidth} ${
-            showArtifact ? 'opacity-100' : 'opacity-0 overflow-hidden'
+          className={`${
+            showArtifact 
+              ? 'w-[75%] opacity-100' 
+              : 'w-0 opacity-0 overflow-hidden'
           }`}
         >
           {showArtifact && (
