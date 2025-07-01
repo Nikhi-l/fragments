@@ -54,6 +54,7 @@ import {
   EyeOff
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 interface Employee {
   id: string
@@ -429,9 +430,11 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
                 <div key={employee.id} className="flex items-center justify-between p-3 border rounded-lg border-orange-100 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors">
                   <div className="flex items-center space-x-3">
                     <div className="relative">
-                      <img
+                      <Image
                         src={employee.avatar}
                         alt={employee.name}
+                        width={48}
+                        height={48}
                         className="w-12 h-12 rounded-full object-cover border-2 border-orange-200"
                       />
                       <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${getStatusColor(employee.status)}`} />
@@ -608,7 +611,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Current Break Schedule */}
             <div className="lg:col-span-2 space-y-3">
-              <h4 className="font-medium text-sm">Today's Break Schedule</h4>
+              <h4 className="font-medium text-sm">Today&apos;s Break Schedule</h4>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {breakSchedules.map((breakSched, index) => {
                   const employee = employees.find(emp => emp.id === breakSched.employeeId)
@@ -760,7 +763,7 @@ export function FragmentStaffManagement({ fragment }: { fragment: StaffManagemen
                   <span className="text-sm font-medium text-yellow-600">Break Reminder</span>
                 </div>
                 <p className="text-xs text-yellow-600 mt-1">
-                  Sarah Johnson's break starts in 15 minutes
+                  Sarah Johnson&apos;s break starts in 15 minutes
                 </p>
               </div>
 
