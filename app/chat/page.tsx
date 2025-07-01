@@ -12,7 +12,7 @@ import { useAuth } from '@/lib/auth'
 import { Message, toAISDKMessages, toMessageImage } from '@/lib/messages'
 import { LLMModelConfig } from '@/lib/models'
 import modelsList from '@/lib/models.json'
-import { FragmentSchema, fragmentSchema as schema, CameraFeedFragmentSchema, DashboardFragmentSchema, SalesDataFragmentSchema, StaffManagementFragmentSchema, InventoryManagementFragmentSchema, CostAnalyticsFragmentSchema, HelpFragmentSchema } from '@/lib/schema'
+import { FragmentSchema, fragmentSchema as schema, CameraFeedFragmentSchema, DashboardFragmentSchema, SalesDataFragmentSchema, StaffManagementFragmentSchema, InventoryManagementFragmentSchema, CostAnalyticsFragmentSchema, ForecastFragmentSchema, HelpFragmentSchema } from '@/lib/schema'
 import { supabase } from '@/lib/supabase'
 import templates, { TemplateId } from '@/lib/templates'
 import { ExecutionResult } from '@/lib/types'
@@ -52,6 +52,7 @@ export default function ChatPage() {
   const [isStaffManagementLoading, setIsStaffManagementLoading] = useState(false)
   const [isInventoryLoading, setIsInventoryLoading] = useState(false)
   const [isCostAnalyticsLoading, setIsCostAnalyticsLoading] = useState(false)
+  const [isForecastLoading, setIsForecastLoading] = useState(false)
   const [isHelpLoading, setIsHelpLoading] = useState(false)
   const [showArtifact, setShowArtifact] = useState(false)
   const { session, userTeam } = useAuth(setAuthDialog, setAuthView)
@@ -90,8 +91,8 @@ export default function ChatPage() {
         // Show artifact window when fragment is generated
         setShowArtifact(true)
         
-        // Handle non-code fragments (camera feeds, dashboards, sales data, staff management, inventory, cost analytics, and help)
-        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard' || fragment.type === 'sales_data' || fragment.type === 'staff_management' || fragment.type === 'inventory_management' || fragment.type === 'cost_analytics' || fragment.type === 'help') {
+        // Handle non-code fragments (camera feeds, dashboards, sales data, staff management, inventory, cost analytics, forecast, and help)
+        if (fragment.type === 'camera_feed' || fragment.type === 'dashboard' || fragment.type === 'sales_data' || fragment.type === 'staff_management' || fragment.type === 'inventory_management' || fragment.type === 'cost_analytics' || fragment.type === 'forecast' || fragment.type === 'help') {
           setCurrentPreview({ fragment, result: undefined })
           setMessage({ result: undefined })
           setCurrentTab('fragment')
@@ -386,6 +387,38 @@ export default function ChatPage() {
     }
   }
 
+  // Function to create hardcoded forecast fragment
+  function createForecastFragment(userInput: string): ForecastFragmentSchema {
+    // Extract store name from user input or use default
+    const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
+    const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
+
+    // Determine forecast period from user input
+    let forecastPeriod = 'Next 30 Days'
+    if (userInput.toLowerCase().includes('quarter')) forecastPeriod = 'Next Quarter'
+    else if (userInput.toLowerCase().includes('year')) forecastPeriod = 'Next Year'
+    else if (userInput.toLowerCase().includes('6 month') || userInput.toLowerCase().includes('six month')) forecastPeriod = 'Next 6 Months'
+
+    return {
+      type: 'forecast',
+      commentary: `Displaying comprehensive sales and demand forecast for ${storeName}. This forecast provides day-by-day predictions for the ${forecastPeriod.toLowerCase()}, highlighting high-demand days, special events, and seasonal patterns that will impact your business. The calendar view shows expected sales, customer traffic, and staffing requirements for each day, with detailed insights about upcoming events like holidays, festivals, and local activities that will affect store performance. Use this forecast to optimize inventory levels, staff scheduling, and marketing efforts.`,
+      title: 'Sales Forecast',
+      description: `Detailed sales and demand forecast for ${storeName}`,
+      store_name: storeName,
+      forecast_period: forecastPeriod,
+      forecast_metrics: [
+        'Sales Revenue',
+        'Customer Traffic',
+        'Demand Patterns',
+        'Staff Requirements',
+        'Inventory Needs',
+        'Special Events',
+        'Seasonal Trends',
+        'Peak Days'
+      ]
+    }
+  }
+
   // Function to create hardcoded help fragment
   function createHelpFragment(): HelpFragmentSchema {
     return {
@@ -403,7 +436,7 @@ export default function ChatPage() {
       return setAuthDialog(true)
     }
 
-    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isHelpLoading) {
+    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isForecastLoading || isHelpLoading) {
       stop()
       setIsCameraLoading(false)
       setIsAnalyticsLoading(false)
@@ -411,6 +444,7 @@ export default function ChatPage() {
       setIsStaffManagementLoading(false)
       setIsInventoryLoading(false)
       setIsCostAnalyticsLoading(false)
+      setIsForecastLoading(false)
       setIsHelpLoading(false)
     }
 
@@ -717,7 +751,56 @@ export default function ChatPage() {
           trigger: 'hardcoded'
         })
       }, 2000) // 2-second delay
-    } 
+    }
+    // Check if user input contains forecast keywords
+    else if (
+      inputLower.includes('forecast') || 
+      inputLower.includes('predict') || 
+      inputLower.includes('future sales') || 
+      inputLower.includes('projection') ||
+      inputLower.includes('upcoming') ||
+      inputLower.includes('next month') ||
+      inputLower.includes('next quarter') ||
+      inputLower.includes('next year') ||
+      inputLower.includes('demand') ||
+      inputLower.includes('trend') ||
+      inputLower.includes('calendar') ||
+      inputLower.includes('high demand days') ||
+      inputLower.includes('low demand days') ||
+      inputLower.includes('busy days') ||
+      inputLower.includes('slow days')
+    ) {
+      // Set loading state to simulate LLM processing
+      setIsForecastLoading(true)
+      
+      // Add a 2-second delay to simulate LLM call
+      setTimeout(() => {
+        // Create hardcoded forecast fragment
+        const forecastFragment = createForecastFragment(chatInput)
+        
+        // Set the fragment directly without LLM call
+        setFragment(forecastFragment)
+        setCurrentPreview({ fragment: forecastFragment, result: undefined })
+        setCurrentTab('fragment')
+        setShowArtifact(true)
+        
+        // Add assistant response
+        addMessage({
+          role: 'assistant',
+          content: [{ type: 'text', text: forecastFragment.commentary || '' }],
+          object: forecastFragment,
+        })
+
+        // Stop loading state
+        setIsForecastLoading(false)
+
+        posthog.capture('forecast_triggered', {
+          store_name: forecastFragment.store_name,
+          forecast_period: forecastFragment.forecast_period,
+          trigger: 'hardcoded'
+        })
+      }, 2000) // 2-second delay
+    }
     else {
       // Normal LLM processing for other requests
       submit({
@@ -785,6 +868,7 @@ export default function ChatPage() {
     setIsStaffManagementLoading(false)
     setIsInventoryLoading(false)
     setIsCostAnalyticsLoading(false)
+    setIsForecastLoading(false)
     setIsHelpLoading(false)
     setChatInput('')
     setFiles([])
@@ -816,7 +900,7 @@ export default function ChatPage() {
   }
 
   // Combine loading states for UI
-  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isHelpLoading
+  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isForecastLoading || isHelpLoading
 
   // Determine layout based on fragment type
   const isHelpFragment = fragment?.type === 'help'
@@ -869,6 +953,7 @@ export default function ChatPage() {
               setIsStaffManagementLoading(false)
               setIsInventoryLoading(false)
               setIsCostAnalyticsLoading(false)
+              setIsForecastLoading(false)
               setIsHelpLoading(false)
             }}
             input={chatInput}

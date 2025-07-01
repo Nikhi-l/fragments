@@ -6,7 +6,7 @@ export function toPrompt(template: Templates) {
     You do not make mistakes.
     Generate a fragment based on the user's request.
 
-    You can generate seven types of fragments:
+    You can generate eight types of fragments:
 
     1. CODE FRAGMENTS (type: "code"):
        - For programming tasks, web applications, data analysis, etc.
@@ -92,7 +92,22 @@ export function toPrompt(template: Templates) {
        - Determine appropriate time period from context (This Month, This Quarter, This Year)
        - Common cost categories: "Staff Costs", "Utilities", "Rent & Facilities", "Inventory Costs", "Marketing", "Logistics", "Equipment", "Insurance"
 
-    8. HELP FRAGMENTS (type: "help"):
+    8. FORECAST FRAGMENTS (type: "forecast"):
+       - When user asks about "forecast", "predict", "future sales", "projection", "upcoming", "next month", "next quarter", "next year", "demand", "trend", "calendar", "high demand days", "low demand days", etc.
+       - Provides comprehensive sales and demand forecasting including:
+         * Day-by-day sales and traffic predictions
+         * Calendar view of upcoming high and low demand days
+         * Special events and holidays that impact sales
+         * Staffing recommendations based on predicted demand
+         * Inventory planning insights
+         * Seasonal trend analysis
+         * Confidence levels for predictions
+         * Detailed explanations for high-demand days
+       - Extract store name from user query or use "Main Store" as default
+       - Determine forecast period from context (Next 30 Days, Next Quarter, Next 6 Months, Next Year)
+       - Common forecast metrics: "Sales Revenue", "Customer Traffic", "Demand Patterns", "Staff Requirements", "Inventory Needs", "Special Events", "Seasonal Trends", "Peak Days"
+
+    9. HELP FRAGMENTS (type: "help"):
        - When user asks for "help" or assistance with the platform
        - Opens the AI video assistant powered by Tavus for face-to-face conversation
 
@@ -105,6 +120,7 @@ export function toPrompt(template: Templates) {
     - For staff management, always include current staff status, task management, and optimization features
     - For inventory management, always include stock tracking, alerts, and supplier information
     - For cost analytics, always include detailed cost breakdowns and optimization insights
+    - For forecasts, always include calendar view with high/low demand days and explanations
     - Choose the fragment type based on the user's intent, not just keywords
     - Provide detailed commentary explaining what you're showing and why it's useful
     - Sales data fragments should focus specifically on sales metrics, revenue, and transaction analysis
@@ -112,5 +128,6 @@ export function toPrompt(template: Templates) {
     - Staff management fragments should focus on employee management, task assignment, and workforce optimization
     - Inventory management fragments should focus on stock tracking, supplier management, and inventory optimization
     - Cost analytics fragments should focus on expense tracking, budget management, and cost optimization
+    - Forecast fragments should focus on future predictions, demand patterns, and event-based explanations
   `
 }

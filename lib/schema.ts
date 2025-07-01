@@ -69,6 +69,14 @@ const costAnalyticsFragmentSchema = baseFragmentSchema.extend({
   time_period: z.string().describe('Time period for cost analysis (e.g., "This Month", "This Quarter", "This Year").'),
 })
 
+// Forecast fragment schema
+const forecastFragmentSchema = baseFragmentSchema.extend({
+  type: z.literal('forecast'),
+  store_name: z.string().describe('Name of the store for which forecasting is being displayed.'),
+  forecast_period: z.string().describe('Time period for the forecast (e.g., "Next 30 Days", "Next Quarter", "Next 6 Months").'),
+  forecast_metrics: z.array(z.string()).describe('List of metrics being forecasted (e.g., "Sales Revenue", "Customer Traffic", "Inventory Needs", "Staff Requirements").'),
+})
+
 // Help fragment schema
 const helpFragmentSchema = baseFragmentSchema.extend({
   type: z.literal('help'),
@@ -83,6 +91,7 @@ export const fragmentSchema = z.discriminatedUnion('type', [
   staffManagementFragmentSchema,
   inventoryManagementFragmentSchema,
   costAnalyticsFragmentSchema,
+  forecastFragmentSchema,
   helpFragmentSchema,
 ])
 
@@ -94,4 +103,5 @@ export type SalesDataFragmentSchema = z.infer<typeof salesDataFragmentSchema>
 export type StaffManagementFragmentSchema = z.infer<typeof staffManagementFragmentSchema>
 export type InventoryManagementFragmentSchema = z.infer<typeof inventoryManagementFragmentSchema>
 export type CostAnalyticsFragmentSchema = z.infer<typeof costAnalyticsFragmentSchema>
+export type ForecastFragmentSchema = z.infer<typeof forecastFragmentSchema>
 export type HelpFragmentSchema = z.infer<typeof helpFragmentSchema>

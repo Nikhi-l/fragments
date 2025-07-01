@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { BarChart3, Camera, MessageCircle, Users, Package, Calculator } from 'lucide-react'
+import { BarChart3, Camera, MessageCircle, Users, Package, Calculator, Calendar } from 'lucide-react'
 
 interface SamplePrompt {
   icon: React.ComponentType<{ className?: string }>
@@ -54,6 +54,13 @@ const samplePrompts: SamplePrompt[] = [
     description: "Analyze operational costs and budget performance",
     prompt: "Show me the cost breakdown for this month",
     category: "Costs"
+  },
+  {
+    icon: Calendar,
+    title: "Sales Forecast",
+    description: "View predicted sales and high-demand days",
+    prompt: "Show me the sales forecast for next month",
+    category: "Forecast"
   }
 ]
 
@@ -138,7 +145,7 @@ export function LandingPage() {
         <div className="text-sm text-muted-foreground w-full max-w-2xl">
           <p className="text-left">
             I can help you with store analytics, camera monitoring, inventory management, 
-            staff performance, task assignments, break scheduling, cost analysis, and much more. Just ask me in plain English!
+            staff performance, task assignments, break scheduling, cost analysis, sales forecasting, and much more. Just ask me in plain English!
           </p>
         </div>
       </div>

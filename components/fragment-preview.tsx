@@ -8,6 +8,7 @@ import { FragmentSalesData } from './fragment-sales-data'
 import { FragmentStaffManagement } from './fragment-staff-management'
 import { FragmentInventoryManagement } from './fragment-inventory-management'
 import { FragmentCostAnalytics } from './fragment-cost-analytics'
+import { FragmentForecast } from './fragment-forecast'
 import { FragmentHelp } from './fragment-help'
 import { ExecutionResult } from '@/lib/types'
 import { FragmentSchema } from '@/lib/schema'
@@ -57,6 +58,11 @@ export function FragmentPreview({
   // Handle cost analytics fragments
   if (fragment?.type === 'cost_analytics') {
     return <FragmentCostAnalytics fragment={fragment as any} />
+  }
+
+  // Handle forecast fragments
+  if (fragment?.type === 'forecast') {
+    return <FragmentForecast fragment={fragment as any} />
   }
 
   // Handle code fragments (original functionality)

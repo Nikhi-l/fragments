@@ -33,7 +33,9 @@ import {
   Calendar,
   Building,
   CreditCard,
-  Receipt
+  Receipt,
+  Activity,
+  Percent
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -62,6 +64,8 @@ interface Store {
   totalCosts: number
   profitMargin: number
   efficiency: number
+  costPerSqFt: number
+  costPerEmployee: number
 }
 
 export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFragmentSchema }) {
@@ -69,13 +73,46 @@ export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFra
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [selectedTimeframe, setSelectedTimeframe] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly')
   const [selectedStore, setSelectedStore] = useState('main')
+  const [comparisonStore, setComparisonStore] = useState('downtown')
 
   function generateMockCostData() {
     const stores: Store[] = [
-      { id: 'main', name: fragment.store_name || 'Main Store', totalCosts: 125000, profitMargin: 18.5, efficiency: 87 },
-      { id: 'downtown', name: 'Downtown Branch', totalCosts: 98000, profitMargin: 22.1, efficiency: 92 },
-      { id: 'mall', name: 'Mall Location', totalCosts: 145000, profitMargin: 15.8, efficiency: 83 },
-      { id: 'suburban', name: 'Suburban Store', totalCosts: 89000, profitMargin: 25.3, efficiency: 95 }
+      { 
+        id: 'main', 
+        name: fragment.store_name || 'Main Store', 
+        totalCosts: 125000, 
+        profitMargin: 18.5, 
+        efficiency: 87,
+        costPerSqFt: 50,
+        costPerEmployee: 10416
+      },
+      { 
+        id: 'downtown', 
+        name: 'Downtown Branch', 
+        totalCosts: 98000, 
+        profitMargin: 22.1, 
+        efficiency: 92,
+        costPerSqFt: 45,
+        costPerEmployee: 8166
+      },
+      { 
+        id: 'mall', 
+        name: 'Mall Location', 
+        totalCosts: 145000, 
+        profitMargin: 15.8, 
+        efficiency: 83,
+        costPerSqFt: 58,
+        costPerEmployee: 12083
+      },
+      { 
+        id: 'suburban', 
+        name: 'Suburban Store', 
+        totalCosts: 89000, 
+        profitMargin: 25.3, 
+        efficiency: 95,
+        costPerSqFt: 35,
+        costPerEmployee: 7416
+      }
     ]
 
     const costCategories: CostCategory[] = [
@@ -232,6 +269,7 @@ export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFra
   }
 
   const currentStore = costData.stores.find(store => store.id === selectedStore) || costData.stores[0]
+  const comparisonStoreData = costData.stores.find(store => store.id === comparisonStore) || costData.stores[1]
 
   const MetricCard = ({ 
     title, 
@@ -303,7 +341,7 @@ export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFra
                   className={`text-xs ${
                     selectedTimeframe === timeframe 
                       ? 'bg-orange-500 hover:bg-orange-600 text-white' 
-                      : 'border-orange-200 text-orange-700 hover:bg-orange-50'
+                      : 'border-orange-200 text-orange-700 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-300 dark:hover:bg-orange-950/30'
                   }`}
                 >
                   {timeframe.charAt(0).toUpperCase() + timeframe.slice(1)}
@@ -314,7 +352,7 @@ export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFra
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="h-64 flex items-end space-x-1 bg-gradient-to-t from-orange-50/30 to-transparent rounded-lg p-4">
+            <div className="h-64 flex items-end space-x-1 bg-gradient-to-t from-orange-50/30 to-transparent dark:from-orange-950/30 rounded-lg p-4">
               {data.slice(-12).map((item, index) => {
                 const height = (item.totalCosts / maxCost) * 100
                 return (
@@ -356,17 +394,17 @@ export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFra
   }
 
   return (
-    <div className="flex flex-col h-full p-4 space-y-6 overflow-y-auto">
+    <div className="flex flex-col h-full p-4 space-y-6 overflow-y-auto bg-background">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Calculator className="h-5 w-5 text-orange-600" />
           <h2 className="text-xl font-semibold">Cost Analytics - {currentStore.name}</h2>
-          <Badge variant="outline" className="border-orange-200 text-orange-700">{fragment.time_period}</Badge>
+          <Badge variant="outline" className="border-orange-200 text-orange-700 dark:border-orange-800 dark:text-orange-300">{fragment.time_period}</Badge>
         </div>
         <div className="flex items-center space-x-2">
           <Select value={selectedStore} onValueChange={setSelectedStore}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-48 border-orange-200 dark:border-orange-800">
               <SelectValue placeholder="Select store" />
             </SelectTrigger>
             <SelectContent>
@@ -384,7 +422,7 @@ export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFra
             onClick={refreshData}
             variant="outline"
             size="sm"
-            className="h-8 border-orange-200 text-orange-700 hover:bg-orange-50"
+            className="h-8 border-orange-200 text-orange-700 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-300 dark:hover:bg-orange-950/30"
           >
             <RefreshCw className="h-4 w-4" />
           </Button>
@@ -414,8 +452,8 @@ export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFra
           color="text-green-600"
         />
         <MetricCard
-          title="Profit Margin"
-          value={currentStore.profitMargin}
+          title="Efficiency Score"
+          value={currentStore.efficiency}
           icon={TrendingUp}
           suffix="%"
           color="text-purple-600"
@@ -461,86 +499,119 @@ export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFra
         </Card>
       </div>
 
-      {/* Detailed Cost Categories */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {costData.costCategories.map((category) => (
-          <Card key={category.id} className="border-orange-100 dark:border-orange-900/30">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center space-x-2">
-                  <category.icon className={`h-4 w-4 ${category.color}`} />
-                  <span>{category.name}</span>
-                </CardTitle>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className={`text-xs ${
-                    category.trend === 'up' ? 'text-red-600 border-red-600' :
-                    category.trend === 'down' ? 'text-green-600 border-green-600' :
-                    'text-blue-600 border-blue-600'
-                  }`}>
-                    {category.trend === 'up' ? <TrendingUp className="h-3 w-3 mr-1" /> :
-                     category.trend === 'down' ? <TrendingDown className="h-3 w-3 mr-1" /> :
-                     <BarChart3 className="h-3 w-3 mr-1" />}
-                    {category.trend}
-                  </Badge>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Current Cost:</span>
-                  <span className="font-medium">{formatCurrency(category.currentCost)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Budget:</span>
-                  <span className="font-medium">{formatCurrency(category.budgetAllocated)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Variance:</span>
-                  <span className={`font-medium ${
-                    category.currentCost > category.budgetAllocated ? 'text-red-600' : 'text-green-600'
-                  }`}>
-                    {category.currentCost > category.budgetAllocated ? '+' : ''}
-                    {formatCurrency(category.currentCost - category.budgetAllocated)}
-                  </span>
-                </div>
-                
-                <div className="pt-3 border-t">
-                  <h5 className="text-sm font-medium mb-2">Breakdown:</h5>
-                  <div className="space-y-2">
-                    {category.subcategories.map((sub, index) => (
-                      <div key={index} className="flex justify-between items-center text-sm">
-                        <span className="text-muted-foreground">{sub.name}</span>
-                        <div className="text-right">
-                          <span className="font-medium">{formatCurrency(sub.cost)}</span>
-                          <span className="text-xs text-muted-foreground ml-2">({sub.percentage}%)</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
       {/* Store Comparison */}
       <Card className="border-orange-100 dark:border-orange-900/30">
         <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center space-x-2">
+              <Building className="h-4 w-4 text-orange-600" />
+              <span>Store Comparison</span>
+            </CardTitle>
+            <Select value={comparisonStore} onValueChange={setComparisonStore}>
+              <SelectTrigger className="w-48 border-orange-200 dark:border-orange-800">
+                <SelectValue placeholder="Compare with" />
+              </SelectTrigger>
+              <SelectContent>
+                {costData.stores.filter(store => store.id !== selectedStore).map((store) => (
+                  <SelectItem key={store.id} value={store.id}>
+                    {store.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Current Store */}
+            <div className="p-4 border rounded-lg border-orange-500 bg-orange-50 dark:bg-orange-950/30 dark:border-orange-800">
+              <div className="text-center">
+                <div className="font-medium text-lg mb-4">{currentStore.name}</div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="text-2xl font-bold text-orange-600">{formatCurrency(currentStore.totalCosts)}</div>
+                    <div className="text-muted-foreground">Total Costs</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-green-600">{currentStore.profitMargin}%</div>
+                    <div className="text-muted-foreground">Profit Margin</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-blue-600">{formatCurrency(currentStore.costPerSqFt)}</div>
+                    <div className="text-muted-foreground">Cost per Sq Ft</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-purple-600">{currentStore.efficiency}%</div>
+                    <div className="text-muted-foreground">Efficiency</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Comparison Store */}
+            <div className="p-4 border rounded-lg border-gray-300 dark:border-gray-700">
+              <div className="text-center">
+                <div className="font-medium text-lg mb-4">{comparisonStoreData.name}</div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="text-2xl font-bold text-orange-600">{formatCurrency(comparisonStoreData.totalCosts)}</div>
+                    <div className="text-muted-foreground">Total Costs</div>
+                    <div className={`text-xs ${
+                      comparisonStoreData.totalCosts < currentStore.totalCosts ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {comparisonStoreData.totalCosts < currentStore.totalCosts ? 'Lower' : 'Higher'} by {formatCurrency(Math.abs(comparisonStoreData.totalCosts - currentStore.totalCosts))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-green-600">{comparisonStoreData.profitMargin}%</div>
+                    <div className="text-muted-foreground">Profit Margin</div>
+                    <div className={`text-xs ${
+                      comparisonStoreData.profitMargin > currentStore.profitMargin ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {comparisonStoreData.profitMargin > currentStore.profitMargin ? 'Higher' : 'Lower'} by {Math.abs(comparisonStoreData.profitMargin - currentStore.profitMargin).toFixed(1)}%
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-blue-600">{formatCurrency(comparisonStoreData.costPerSqFt)}</div>
+                    <div className="text-muted-foreground">Cost per Sq Ft</div>
+                    <div className={`text-xs ${
+                      comparisonStoreData.costPerSqFt < currentStore.costPerSqFt ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {comparisonStoreData.costPerSqFt < currentStore.costPerSqFt ? 'Lower' : 'Higher'} by {formatCurrency(Math.abs(comparisonStoreData.costPerSqFt - currentStore.costPerSqFt))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-purple-600">{comparisonStoreData.efficiency}%</div>
+                    <div className="text-muted-foreground">Efficiency</div>
+                    <div className={`text-xs ${
+                      comparisonStoreData.efficiency > currentStore.efficiency ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {comparisonStoreData.efficiency > currentStore.efficiency ? 'Higher' : 'Lower'} by {Math.abs(comparisonStoreData.efficiency - currentStore.efficiency)}%
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* All Stores Overview */}
+      <Card className="border-orange-100 dark:border-orange-900/30">
+        <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Building className="h-4 w-4 text-orange-600" />
-            <span>Store Cost Comparison</span>
+            <BarChart3 className="h-4 w-4 text-orange-600" />
+            <span>All Stores Overview</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {costData.stores.map((store) => (
-              <div key={store.id} className={`p-4 border rounded-lg transition-colors ${
+              <div key={store.id} className={`p-4 border rounded-lg transition-colors cursor-pointer ${
                 store.id === selectedStore 
-                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30' 
+                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 dark:border-orange-800' 
                   : 'border-orange-100 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-950/30'
-              }`}>
+              }`} onClick={() => setSelectedStore(store.id)}>
                 <div className="text-center">
                   <div className="font-medium text-sm mb-2">{store.name}</div>
                   <div className="text-lg font-bold text-orange-600">{formatCurrency(store.totalCosts)}</div>
@@ -548,7 +619,7 @@ export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFra
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
                       <div className="font-medium text-green-600">{store.profitMargin}%</div>
-                      <div className="text-muted-foreground">Profit Margin</div>
+                      <div className="text-muted-foreground">Profit</div>
                     </div>
                     <div>
                       <div className="font-medium text-blue-600">{store.efficiency}%</div>
@@ -592,20 +663,24 @@ export function FragmentCostAnalytics({ fragment }: { fragment: CostAnalyticsFra
           <div className="mt-4 pt-4 border-t border-orange-200 dark:border-orange-800">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <div className="font-medium mb-2">Optimization Opportunities:</div>
-                <ul className="text-muted-foreground space-y-1">
-                  <li>• Negotiate better utility rates (potential 10% savings)</li>
-                  <li>• Optimize staff scheduling during low-traffic hours</li>
-                  <li>• Consolidate marketing spend for better ROI</li>
-                </ul>
+                <div className="font-medium mb-2">Best Performing Store:</div>
+                <div className="text-muted-foreground">
+                  {costData.stores.reduce((best, store) => 
+                    store.efficiency > best.efficiency ? store : best
+                  ).name} with {costData.stores.reduce((best, store) => 
+                    store.efficiency > best.efficiency ? store : best
+                  ).efficiency}% efficiency
+                </div>
               </div>
               <div>
-                <div className="font-medium mb-2">Cost Control Measures:</div>
-                <ul className="text-muted-foreground space-y-1">
-                  <li>• Implement energy-efficient lighting systems</li>
-                  <li>• Review and renegotiate supplier contracts</li>
-                  <li>• Automate routine tasks to reduce labor costs</li>
-                </ul>
+                <div className="font-medium mb-2">Cost Leader:</div>
+                <div className="text-muted-foreground">
+                  {costData.stores.reduce((lowest, store) => 
+                    store.costPerSqFt < lowest.costPerSqFt ? store : lowest
+                  ).name} at {formatCurrency(costData.stores.reduce((lowest, store) => 
+                    store.costPerSqFt < lowest.costPerSqFt ? store : lowest
+                  ).costPerSqFt)}/sq ft
+                </div>
               </div>
             </div>
           </div>

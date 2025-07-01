@@ -53,6 +53,7 @@ export function Preview({
       case 'staff_management': return 'Staff Management'
       case 'inventory_management': return 'Inventory'
       case 'cost_analytics': return 'Cost Analytics'
+      case 'forecast': return 'Forecast'
       case 'help': return 'AI Assistant'
       default: return 'Preview'
     }
