@@ -51,6 +51,18 @@ export function MarketingLanding() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
+      {/* Floating Bolt Badge */}
+      <div className="fixed z-50 bottom-6 right-6 animate-float pointer-events-none select-none">
+        <Image
+          src="/bolt_badge.svg"
+          alt="Bolt Badge"
+          width={80}
+          height={80}
+          className="drop-shadow-xl"
+          style={{ pointerEvents: 'none', userSelect: 'none' }}
+        />
+      </div>
+
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center bg-gradient-to-br from-gray-50 via-orange-50 to-orange-100 dark:from-gray-900 dark:via-orange-950 dark:to-gray-900 overflow-hidden">
         {/* Animated Background Elements */}
