@@ -6,6 +6,8 @@ import { FragmentCameraFeed } from './fragment-camera-feed'
 import { FragmentDashboard } from './fragment-dashboard'
 import { FragmentSalesData } from './fragment-sales-data'
 import { FragmentStaffManagement } from './fragment-staff-management'
+import { FragmentInventoryManagement } from './fragment-inventory-management'
+import { FragmentCostAnalytics } from './fragment-cost-analytics'
 import { FragmentHelp } from './fragment-help'
 import { ExecutionResult } from '@/lib/types'
 import { FragmentSchema } from '@/lib/schema'
@@ -45,6 +47,16 @@ export function FragmentPreview({
   // Handle staff management fragments
   if (fragment?.type === 'staff_management') {
     return <FragmentStaffManagement fragment={fragment as any} />
+  }
+
+  // Handle inventory management fragments
+  if (fragment?.type === 'inventory_management') {
+    return <FragmentInventoryManagement fragment={fragment as any} />
+  }
+
+  // Handle cost analytics fragments
+  if (fragment?.type === 'cost_analytics') {
+    return <FragmentCostAnalytics fragment={fragment as any} />
   }
 
   // Handle code fragments (original functionality)

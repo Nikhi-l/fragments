@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { BarChart3, Camera, MessageCircle, Users } from 'lucide-react'
+import { BarChart3, Camera, MessageCircle, Users, Package, Calculator } from 'lucide-react'
 
 interface SamplePrompt {
   icon: React.ComponentType<{ className?: string }>
@@ -40,6 +40,20 @@ const samplePrompts: SamplePrompt[] = [
     description: "Manage staff, tasks, and schedules efficiently",
     prompt: "Show me current staff status and task assignments",
     category: "Staff"
+  },
+  {
+    icon: Package,
+    title: "Inventory Management",
+    description: "Track stock levels, alerts, and reorder points",
+    prompt: "Show me my inventory levels and low stock alerts",
+    category: "Inventory"
+  },
+  {
+    icon: Calculator,
+    title: "Cost Analytics",
+    description: "Analyze operational costs and budget performance",
+    prompt: "Show me the cost breakdown for this month",
+    category: "Costs"
   }
 ]
 
@@ -81,8 +95,8 @@ export function LandingPage() {
             Try asking me about:
           </p>
           
-          {/* Vertical layout for prompts */}
-          <div className="space-y-3">
+          {/* Grid layout for prompts */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {samplePrompts.map((sample, index) => {
               const IconComponent = sample.icon
               return (
@@ -124,7 +138,7 @@ export function LandingPage() {
         <div className="text-sm text-muted-foreground w-full max-w-2xl">
           <p className="text-left">
             I can help you with store analytics, camera monitoring, inventory management, 
-            staff performance, task assignments, break scheduling, and much more. Just ask me in plain English!
+            staff performance, task assignments, break scheduling, cost analysis, and much more. Just ask me in plain English!
           </p>
         </div>
       </div>

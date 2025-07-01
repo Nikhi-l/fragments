@@ -51,6 +51,8 @@ export function Preview({
       case 'dashboard': return 'Dashboard'
       case 'sales_data': return 'Sales Data'
       case 'staff_management': return 'Staff Management'
+      case 'inventory_management': return 'Inventory'
+      case 'cost_analytics': return 'Cost Analytics'
       case 'help': return 'AI Assistant'
       default: return 'Preview'
     }
