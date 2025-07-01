@@ -229,10 +229,10 @@ export function FragmentHelp() {
             <Badge 
               variant={connectionStatus === 'connected' ? 'default' : 'secondary'}
               className={
-                connectionStatus === 'connected' ? 'bg-green-100 text-green-800 border-green-200' :
-                connectionStatus === 'connecting' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                connectionStatus === 'ended' ? 'bg-red-100 text-red-800 border-red-200' :
-                'bg-gray-100 text-gray-800 border-gray-200'
+                connectionStatus === 'connected' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-800' :
+                connectionStatus === 'connecting' ? 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800' :
+                connectionStatus === 'ended' ? 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/50 dark:text-red-300 dark:border-red-800' :
+                'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/50 dark:text-gray-300 dark:border-gray-800'
               }
             >
               {connectionStatus === 'connected' && <CheckCircle className="h-3 w-3 mr-1" />}
@@ -246,7 +246,7 @@ export function FragmentHelp() {
               onClick={resetSession}
               variant="outline"
               size="sm"
-              className="border-orange-200 text-orange-700 hover:bg-orange-50"
+              className="border-orange-200 text-orange-700 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-300 dark:hover:bg-orange-950/30"
             >
               <RefreshCw className="h-4 w-4" />
             </Button>
@@ -272,7 +272,7 @@ export function FragmentHelp() {
                       <p className="text-sm text-muted-foreground">Starting video conversation automatically...</p>
                     </div>
                   </div>
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-800">
                     Auto-Starting
                   </Badge>
                 </div>
@@ -354,14 +354,14 @@ export function FragmentHelp() {
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <Video className="h-5 w-5 text-green-600 mt-0.5" />
+                    <Video className="h-5 w-5 text-orange-600 mt-0.5" />
                     <div>
                       <h4 className="font-medium">HD Video Calls</h4>
                       <p className="text-sm text-muted-foreground">High-quality video conversations</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <Bot className="h-5 w-5 text-purple-600 mt-0.5" />
+                    <Bot className="h-5 w-5 text-orange-600 mt-0.5" />
                     <div>
                       <h4 className="font-medium">AI-Powered</h4>
                       <p className="text-sm text-muted-foreground">Intelligent responses tailored to retail management</p>
@@ -386,13 +386,13 @@ export function FragmentHelp() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                      <Video className="h-5 w-5 text-green-600" />
+                    <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
+                      <Video className="h-5 w-5 text-orange-600" />
                     </div>
                     <div>
                       <h3 className="font-medium">{conversation.conversation_name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Session ID: {conversation.conversation_id} • Status: {conversation.status}
+                        Session ID: {conversation.conversation_id.substring(0, 8)}... • Status: {conversation.status}
                       </p>
                     </div>
                   </div>
@@ -402,7 +402,7 @@ export function FragmentHelp() {
                       onClick={openInNewTab}
                       variant="outline"
                       size="sm"
-                      className="border-orange-200 text-orange-700 hover:bg-orange-50"
+                      className="border-orange-200 text-orange-700 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-300 dark:hover:bg-orange-950/30"
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       New Tab
@@ -412,7 +412,7 @@ export function FragmentHelp() {
                       onClick={toggleFullscreen}
                       variant="outline"
                       size="sm"
-                      className="border-orange-200 text-orange-700 hover:bg-orange-50"
+                      className="border-orange-200 text-orange-700 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-300 dark:hover:bg-orange-950/30"
                     >
                       <Maximize2 className="h-4 w-4 mr-2" />
                       Fullscreen
@@ -480,7 +480,7 @@ export function FragmentHelp() {
                   </div>
 
                   <div className="text-xs text-muted-foreground">
-                    Replica ID: {conversation.replica_id}
+                    Replica ID: {conversation.replica_id.substring(0, 8)}...
                   </div>
                 </div>
               </CardContent>
