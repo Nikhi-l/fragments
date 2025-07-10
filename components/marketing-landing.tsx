@@ -49,6 +49,13 @@ export function MarketingLanding() {
     }
   ];
 
+  // Scrolling tiles data
+  const scrollingTiles = [
+    'Real-time Analytics', 'Camera Monitoring', 'Staff Management', 'Inventory Tracking',
+    'Sales Forecasting', 'Customer Insights', 'Cost Analytics', 'Performance Metrics',
+    'Security Alerts', 'Traffic Analysis', 'Revenue Optimization', 'Store Intelligence'
+  ];
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Floating Bolt Badge */}
@@ -138,46 +145,77 @@ export function MarketingLanding() {
             </div>
 
             <div className="relative animate-fade-in-right" style={{ animationDelay: '0.3s' }}>
-              {/* Dashboard Preview */}
+              {/* Video Container with Scrolling Tiles Animation */}
               <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-4 border border-orange-100 dark:border-orange-900/30 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105">
                 <div className="relative overflow-hidden rounded-2xl">
-                  <Image 
-                    src="https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&fit=crop"
-                    alt="RetailX Dashboard - Staff Performance and Store Analytics"
-                    width={1200}
-                    height={800}
-                    className="w-full h-auto object-cover rounded-2xl shadow-lg"
-                    style={{ aspectRatio: '16/10' }}
-                  />
-                  
-                  {/* Overlay with dashboard elements */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-600/20 rounded-2xl"></div>
-                  
-                  {/* Floating metrics */}
-                  <div className="absolute top-4 left-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-orange-200/50 dark:border-orange-800/50 animate-bounce-gentle">
-                    <div className="text-sm font-semibold text-orange-600 dark:text-orange-400">Live Analytics</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">Real-time insights</div>
-                  </div>
-                  
-                  <div className="absolute top-4 right-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-orange-200/50 dark:border-orange-800/50 animate-bounce-gentle" style={{ animationDelay: '0.5s' }}>
-                    <div className="text-sm font-semibold text-green-600">+27% Revenue</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">This month</div>
-                  </div>
-                  
-                  <div className="absolute bottom-4 left-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-orange-200/50 dark:border-orange-800/50 animate-bounce-gentle" style={{ animationDelay: '1s' }}>
-                    <div className="text-sm font-semibold text-blue-600">Staff Performance</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">95% efficiency</div>
-                  </div>
-                  
-                  <div className="absolute bottom-4 right-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-orange-200/50 dark:border-orange-800/50 animate-bounce-gentle" style={{ animationDelay: '1.5s' }}>
-                    <div className="text-sm font-semibold text-purple-600">Store Comparison</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">4 locations</div>
+                  {/* YouTube Video Embed */}
+                  <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+                    <iframe
+                      className="w-full h-full rounded-2xl shadow-lg"
+                      src="https://www.youtube.com/embed/ptjzZ4e0FnA?autoplay=0&mute=1&controls=1&showinfo=0&rel=0&modestbranding=1"
+                      title="RetailX Demo Video"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                    
+                    {/* Scrolling Tiles Overlay */}
+                    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+                      {/* Top scrolling tiles */}
+                      <div className="absolute top-4 left-0 right-0 flex animate-scroll-right">
+                        {[...scrollingTiles, ...scrollingTiles].map((tile, index) => (
+                          <div
+                            key={`top-${index}`}
+                            className="flex-shrink-0 bg-orange-500/90 text-white px-3 py-1 rounded-full text-xs font-medium mx-1 shadow-lg backdrop-blur-sm"
+                          >
+                            {tile}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Bottom scrolling tiles */}
+                      <div className="absolute bottom-4 left-0 right-0 flex animate-scroll-left">
+                        {[...scrollingTiles.slice().reverse(), ...scrollingTiles.slice().reverse()].map((tile, index) => (
+                          <div
+                            key={`bottom-${index}`}
+                            className="flex-shrink-0 bg-blue-500/90 text-white px-3 py-1 rounded-full text-xs font-medium mx-1 shadow-lg backdrop-blur-sm"
+                          >
+                            {tile}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Side scrolling tiles */}
+                      <div className="absolute left-4 top-0 bottom-0 flex flex-col justify-center animate-scroll-up">
+                        {[...scrollingTiles.slice(0, 6), ...scrollingTiles.slice(0, 6)].map((tile, index) => (
+                          <div
+                            key={`left-${index}`}
+                            className="flex-shrink-0 bg-green-500/90 text-white px-2 py-1 rounded-full text-xs font-medium my-1 shadow-lg backdrop-blur-sm transform -rotate-90 origin-center"
+                            style={{ writingMode: 'horizontal-tb' }}
+                          >
+                            {tile}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="absolute right-4 top-0 bottom-0 flex flex-col justify-center animate-scroll-down">
+                        {[...scrollingTiles.slice(6), ...scrollingTiles.slice(6)].map((tile, index) => (
+                          <div
+                            key={`right-${index}`}
+                            className="flex-shrink-0 bg-purple-500/90 text-white px-2 py-1 rounded-full text-xs font-medium my-1 shadow-lg backdrop-blur-sm transform rotate-90 origin-center"
+                            style={{ writingMode: 'horizontal-tb' }}
+                          >
+                            {tile}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
-                {/* Dashboard label */}
+                {/* Video label */}
                 <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg animate-pulse">
-                  Live Dashboard Preview
+                  Watch RetailX in Action
                 </div>
               </div>
 
@@ -396,6 +434,26 @@ export function MarketingLanding() {
           50% { box-shadow: 0 0 30px rgba(249, 115, 22, 0.6); }
         }
         
+        @keyframes scroll-right {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        
+        @keyframes scroll-left {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
+        }
+        
+        @keyframes scroll-up {
+          0% { transform: translateY(100%); }
+          100% { transform: translateY(-100%); }
+        }
+        
+        @keyframes scroll-down {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100%); }
+        }
+        
         .animate-float {
           animation: float 6s ease-in-out infinite;
         }
@@ -422,6 +480,22 @@ export function MarketingLanding() {
         
         .animate-pulse-glow {
           animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        .animate-scroll-right {
+          animation: scroll-right 20s linear infinite;
+        }
+        
+        .animate-scroll-left {
+          animation: scroll-left 25s linear infinite;
+        }
+        
+        .animate-scroll-up {
+          animation: scroll-up 30s linear infinite;
+        }
+        
+        .animate-scroll-down {
+          animation: scroll-down 35s linear infinite;
         }
       `}</style>
     </div>
