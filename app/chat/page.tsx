@@ -64,11 +64,11 @@ export default function ChatPage() {
     return true
   })
 
-  const currentModel = filteredModels.find(
-    (model) => model.id === languageModel.model,
-  )
+  const currentModel =
+    filteredModels.find((model) => model.id === languageModel.model) ||
+    filteredModels[0]
   const currentTemplate =
-    selectedTemplate === 'auto'
+    selectedTemplate === 'auto' || !templates[selectedTemplate]
       ? templates
       : { [selectedTemplate]: templates[selectedTemplate] }
   const lastMessage = messages[messages.length - 1]
@@ -134,8 +134,9 @@ export default function ChatPage() {
   })
 
   const addMessage = useCallback((message: Message) => {
-    setMessages((previousMessages) => [...previousMessages, message])
-    return [...messages, message]
+    const next = [...messages, message]
+    setMessages(next)
+    return next
   }, [messages])
 
   const handleFileChange = useCallback((change: SetStateAction<File[]>) => {
@@ -188,6 +189,18 @@ export default function ChatPage() {
       window.removeEventListener('showArtifact', handleShowArtifact as EventListener)
     }
   }, [])
+
+  // Listen for prefill events from LandingPage to update input state directly
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { text } = (e as CustomEvent).detail || {}
+      if (typeof text === 'string') {
+        setChatInput(text)
+      }
+    }
+    window.addEventListener('prefillChatInput', handler)
+    return () => window.removeEventListener('prefillChatInput', handler)
+  }, [setChatInput])
 
   function setMessage(message: Partial<Message>, index?: number) {
     setMessages((previousMessages) => {
@@ -432,10 +445,6 @@ export default function ChatPage() {
   async function handleSubmitAuth(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    if (!session) {
-      return setAuthDialog(true)
-    }
-
     if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isForecastLoading || isHelpLoading) {
       stop()
       setIsCameraLoading(false)
@@ -461,6 +470,16 @@ export default function ChatPage() {
       role: 'user',
       content,
     })
+
+    // If user is not authenticated, show the auth dialog but keep the user's
+    // message in the chat so it doesn't disappear.
+    if (!session) {
+      setAuthDialog(true)
+      setChatInput('')
+      setFiles([])
+      setCurrentTab('fragment')
+      return
+    }
 
     const inputLower = chatInput.toLowerCase()
 
@@ -815,6 +834,7 @@ export default function ChatPage() {
       posthog.capture('chat_submit', {
         template: selectedTemplate,
         model: languageModel.model,
+        
       })
     }
 

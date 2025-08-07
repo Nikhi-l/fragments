@@ -59,6 +59,37 @@ export async function POST(req: Request) {
   // console.log('config', config)
 
   const { model: modelNameString, apiKey: modelApiKey, ...modelParams } = config
+
+  // Guard: ensure required provider credentials are available
+  const providerRequiresKey: Record<string, { envVar?: string; optional?: boolean }> = {
+    anthropic: { envVar: 'ANTHROPIC_API_KEY' },
+    openai: { envVar: 'OPENAI_API_KEY' },
+    google: { envVar: 'GOOGLE_GENERATIVE_AI_API_KEY' },
+    mistral: { envVar: 'MISTRAL_API_KEY' },
+    groq: { envVar: 'GROQ_API_KEY' },
+    togetherai: { envVar: 'TOGETHER_API_KEY' },
+    fireworks: { envVar: 'FIREWORKS_API_KEY' },
+    xai: { envVar: 'XAI_API_KEY' },
+    deepseek: { envVar: 'DEEPSEEK_API_KEY' },
+    // ollama and vertex are handled differently (no API key required here)
+    ollama: { optional: true },
+    vertex: { optional: true },
+  }
+
+  const providerInfo = providerRequiresKey[model.providerId]
+  const providerEnvOk = providerInfo?.optional
+    || Boolean(modelApiKey)
+    || (providerInfo?.envVar
+      ? Boolean(process.env[providerInfo.envVar as keyof NodeJS.ProcessEnv])
+      : true)
+
+  if (!providerEnvOk) {
+    return new Response(
+      `Access denied. Missing API key for provider "${model.provider}". Add it in settings or via env ${providerInfo?.envVar}.`,
+      { status: 403 },
+    )
+  }
+
   const modelClient = getModelClient(model, config)
 
   try {

@@ -33,8 +33,8 @@ export function ChatPicker({
       <div className="flex flex-col">
         <Select
           name="template"
-          defaultValue={selectedTemplate}
-          onValueChange={onSelectedTemplateChange}
+          value={selectedTemplate}
+          onValueChange={(val) => onSelectedTemplateChange((val as any) || 'auto')}
         >
           <SelectTrigger className="whitespace-nowrap border-none shadow-none focus:ring-0 px-0 py-0 h-6 text-xs">
             <SelectValue placeholder="Select a persona" />
@@ -73,7 +73,7 @@ export function ChatPicker({
       <div className="flex flex-col">
         <Select
           name="languageModel"
-          defaultValue={languageModel.model}
+          value={languageModel.model}
           onValueChange={(e) => onLanguageModelChange({ model: e })}
         >
           <SelectTrigger className="whitespace-nowrap border-none shadow-none focus:ring-0 px-0 py-0 h-6 text-xs">

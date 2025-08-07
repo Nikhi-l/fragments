@@ -66,20 +66,10 @@ const samplePrompts: SamplePrompt[] = [
 
 export function LandingPage() {
   const handlePromptClick = (prompt: string) => {
-    // Find the chat input and set its value
-    const chatInput = document.querySelector('textarea[placeholder*="Ask me about"]') as HTMLTextAreaElement
-    if (chatInput) {
-      // Set the input value
-      chatInput.value = prompt
-      chatInput.focus()
-      
-      // Trigger input event to update React state
-      const event = new Event('input', { bubbles: true })
-      chatInput.dispatchEvent(event)
-      
-      // Don't auto-submit - let the user press enter when ready
-      // The form submission will be handled by the existing onEnter handler
-    }
+    // Publish a custom event so the parent page can update React state directly
+    window.dispatchEvent(
+      new CustomEvent('prefillChatInput', { detail: { text: prompt } }),
+    )
   }
 
   return (
