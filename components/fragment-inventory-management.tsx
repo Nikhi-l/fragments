@@ -34,7 +34,7 @@ export function FragmentInventoryManagement({
     []
   )
 
-  const categories = ['all', ...new Set(items.map((i) => i.category))]
+  const categories = ['all', ...Array.from(new Set(items.map((i) => i.category)))]
   const [category, setCategory] = useState('all')
 
   const filtered = items.filter(
