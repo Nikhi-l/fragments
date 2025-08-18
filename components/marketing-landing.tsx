@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import NextLink from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type MouseEvent } from 'react'
 
 export function MarketingLanding() {
   // Command palette demo items
@@ -57,31 +57,36 @@ export function MarketingLanding() {
     return () => clearInterval(id)
   }, [commandItems.length])
 
+  const [cursor, setCursor] = useState({ x: 0, y: 0 })
+  const handleMouseMove = (e: MouseEvent<HTMLElement>) => {
+    setCursor({ x: e.clientX, y: e.clientY })
+  }
+
   // Feature highlights
   const features = [
     {
       icon: Command,
       title: 'Command-Native Interface',
       description:
-        'Run your store like you run code. Open the command palette, ask for anything, act instantly.',
+        'Run your store like code. Pull up the palette and execute instantly.',
     },
     {
       icon: Camera,
       title: 'Understands Video & Context',
       description:
-        'RetailX ingests your cameras and store data to understand traffic, dwell, queues, and intent in real time.',
+        'Sees cameras and data to read traffic, dwell, and intent live.',
     },
     {
       icon: Cpu,
       title: 'Decision Intelligence',
       description:
-        'Not just charts. RetailX turns signals into clear recommendations and automations that move KPIs.',
+        'Turns signals into actions that move KPIs.',
     },
     {
       icon: ShieldCheck,
       title: 'Privacy-First by Design',
       description:
-        'On-device redaction, no PII storage, strict retention. Security that your legal team will love.',
+        'On-device redaction, zero PII, and tight retention.',
     },
   ]
 
@@ -90,22 +95,22 @@ export function MarketingLanding() {
     {
       icon: ShoppingCart,
       title: 'Merchandising',
-      copy: 'Test end-caps, optimize planograms, and link dwell time to real sales lift.',
+      copy: 'Test end-caps, tune planograms, tie dwell to sales.',
     },
     {
       icon: Users,
       title: 'Staffing',
-      copy: 'Forecast foot traffic, balance lanes, and cut queue times without guesswork.',
+      copy: 'Forecast traffic, balance lanes, shrink queues.',
     },
     {
       icon: ShieldCheck,
       title: 'Loss Prevention',
-      copy: 'Spot suspicious patterns, track misplaced items, and notify associates in the moment.',
+      copy: 'Flag patterns, track misplaced items, notify fast.',
     },
     {
       icon: Store,
       title: 'Ops & Experience',
-      copy: 'Measure walk-bys → views → engagements → purchases. Improve conversion where it counts.',
+      copy: 'Measure walk-bys → buys and boost conversion.',
     },
   ]
 
@@ -189,15 +194,24 @@ export function MarketingLanding() {
       </header>
 
       {/* Hero */}
-      <section className="relative min-h-[92vh] flex items-center bg-gradient-to-br from-gray-50 via-orange-50 to-orange-100 overflow-hidden">
+      <section
+        onMouseMove={handleMouseMove}
+        className="relative min-h-[92vh] flex items-center bg-gradient-to-br from-gray-50 via-orange-50 to-orange-100 overflow-hidden"
+      >
         {/* Animated backdrop bubbles */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-orange-400/20 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute inset-0 pointer-events-none">
           <div
-            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-300/20 rounded-full blur-3xl animate-float"
-            style={{ animationDelay: '2s' }}
+            className="absolute top-1/4 left-1/4 w-64 h-64 bg-orange-400/20 rounded-full blur-3xl animate-float transition-transform duration-500"
+            style={{ transform: `translate3d(${cursor.x / 50}px, ${cursor.y / 50}px, 0)` }}
           ></div>
-          <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-orange-500/20 rounded-full blur-2xl animate-pulse"></div>
+          <div
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-300/20 rounded-full blur-3xl animate-float transition-transform duration-500"
+            style={{ animationDelay: '2s', transform: `translate3d(${cursor.x / -60}px, ${cursor.y / -60}px, 0)` }}
+          ></div>
+          <div
+            className="absolute top-1/2 left-1/2 w-32 h-32 bg-orange-500/20 rounded-full blur-2xl animate-pulse transition-transform duration-500"
+            style={{ transform: `translate3d(${cursor.x / 80}px, ${cursor.y / -80}px, 0)` }}
+          ></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 w-full">
@@ -208,10 +222,10 @@ export function MarketingLanding() {
               </div>
 
               <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight mb-6">
-                Run Your Store
+                Retail, Rewired.
                 <br />
                 <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent animate-pulse">
-                  From a Command Palette
+                  Your Store on Command
                 </span>
               </h1>
 
@@ -219,9 +233,7 @@ export function MarketingLanding() {
                 className="text-xl text-gray-600 mb-8 leading-relaxed animate-fade-in-up"
                 style={{ animationDelay: '0.15s' }}
               >
-                RetailX turns your cameras and store data into an intelligent,
-                command-native workspace. Ask for anything—see, analyze, and
-                act—in seconds.
+                Plug cameras & data into an AI palette. Ask, see, act—fast.
               </p>
 
               <div
@@ -427,10 +439,10 @@ export function MarketingLanding() {
             ].map((step, index) => (
               <div
                 key={step.title}
-                className="bg-white border-2 border-orange-100 rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 animate-fade-in-up"
+                className="group bg-white border-2 border-orange-100 rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1 hover:scale-105 animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.15}s` }}
               >
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-lg group-hover:shadow-xl transition-all duration-300 animate-bounce-gentle bg-gradient-to-r from-orange-400 to-orange-600">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-lg group-hover:shadow-xl transition-all duration-300 animate-bounce-gentle bg-gradient-to-r from-orange-400 to-orange-600 group-hover:scale-110">
                   <step.icon className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">
@@ -470,10 +482,10 @@ export function MarketingLanding() {
             {features.map((f, index) => (
               <div
                 key={f.title}
-                className="bg-gray-50 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border border-orange-100 animate-fade-in-up"
+                className="group bg-gray-50 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1 hover:scale-105 border border-orange-100 animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="bg-gradient-to-r from-orange-400 to-orange-600 w-14 h-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg">
+                <div className="bg-gradient-to-r from-orange-400 to-orange-600 w-14 h-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
                   <f.icon className="h-7 w-7 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -503,10 +515,10 @@ export function MarketingLanding() {
             {useCases.map((u, idx) => (
               <div
                 key={u.title}
-                className="rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border bg-white border-orange-100 animate-fade-in-up"
+                className="group rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1 hover:scale-105 border bg-white border-orange-100 animate-fade-in-up"
                 style={{ animationDelay: `${idx * 0.1}s` }}
               >
-                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <u.icon className="h-6 w-6 text-orange-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
