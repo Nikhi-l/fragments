@@ -45,16 +45,14 @@ export function NavBar({
   canUndo: boolean
 }) {
   return (
-    <nav className="w-full flex bg-background py-4">
-      <div className="flex flex-1 items-center">
-        <div className="flex items-center gap-2">
-          <Logo width={24} height={24} />
-          <h1 className="whitespace-pre">
-            Retail<span className="text-[#ff8800]">X</span>
-          </h1>
-        </div>
-      </div>
-      <div className="flex items-center gap-1 md:gap-4">
+    <nav className="flex w-full items-center justify-between border-b border-border bg-background px-4 py-2">
+      <Link href="/" className="flex items-center gap-2">
+        <Logo width={24} height={24} />
+        <span className="whitespace-pre font-medium">
+          Retail<span className="text-[#ff8800]">X</span>
+        </span>
+      </Link>
+      <div className="flex items-center gap-2">
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
