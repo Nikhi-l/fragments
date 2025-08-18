@@ -61,27 +61,27 @@ export function MarketingLanding() {
   const features = [
     {
       icon: Command,
-      title: 'Command-Native Interface',
+      title: 'Command Palette Control',
       description:
-        'Run your store like you run code. Open the command palette, ask for anything, act instantly.',
+        'Run your store like code. Ask for anything and act instantly.',
     },
     {
       icon: Camera,
-      title: 'Understands Video & Context',
+      title: 'Video & Context Aware',
       description:
-        'RetailX ingests your cameras and store data to understand traffic, dwell, queues, and intent in real time.',
+        'RetailX reads cameras and data to track traffic, dwell and intent live.',
     },
     {
       icon: Cpu,
-      title: 'Decision Intelligence',
+      title: 'Decisions, Not Dashboards',
       description:
-        'Not just charts. RetailX turns signals into clear recommendations and automations that move KPIs.',
+        'Signals become recommendations and automations that move KPIs.',
     },
     {
       icon: ShieldCheck,
-      title: 'Privacy-First by Design',
+      title: 'Built for Privacy',
       description:
-        'On-device redaction, no PII storage, strict retention. Security that your legal team will love.',
+        'On-device redaction and strict retention keep PII out.',
     },
   ]
 
@@ -90,22 +90,22 @@ export function MarketingLanding() {
     {
       icon: ShoppingCart,
       title: 'Merchandising',
-      copy: 'Test end-caps, optimize planograms, and link dwell time to real sales lift.',
+      copy: 'Test end-caps, refine planograms and tie dwell to sales.',
     },
     {
       icon: Users,
       title: 'Staffing',
-      copy: 'Forecast foot traffic, balance lanes, and cut queue times without guesswork.',
+      copy: 'Forecast traffic, balance lanes and cut queue times.',
     },
     {
       icon: ShieldCheck,
       title: 'Loss Prevention',
-      copy: 'Spot suspicious patterns, track misplaced items, and notify associates in the moment.',
+      copy: 'Catch patterns, track misplaced items and alert staff instantly.',
     },
     {
       icon: Store,
       title: 'Ops & Experience',
-      copy: 'Measure walk-bys → views → engagements → purchases. Improve conversion where it counts.',
+      copy: 'Watch walk-bys become purchases and boost conversion.',
     },
   ]
 
@@ -208,10 +208,10 @@ export function MarketingLanding() {
               </div>
 
               <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight mb-6">
-                Run Your Store
+                Command Your Store
                 <br />
                 <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent animate-pulse">
-                  From a Command Palette
+                  In Seconds
                 </span>
               </h1>
 
@@ -219,9 +219,7 @@ export function MarketingLanding() {
                 className="text-xl text-gray-600 mb-8 leading-relaxed animate-fade-in-up"
                 style={{ animationDelay: '0.15s' }}
               >
-                RetailX turns your cameras and store data into an intelligent,
-                command-native workspace. Ask for anything—see, analyze, and
-                act—in seconds.
+                Plug in cameras and POS. Ask, see and act instantly.
               </p>
 
               <div
@@ -229,7 +227,7 @@ export function MarketingLanding() {
                 style={{ animationDelay: '0.3s' }}
               >
                 <NextLink href="/chat">
-                  <button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center gap-2">
+                  <button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl flex items-center gap-2 animate-pulse-glow">
                     <Play className="h-5 w-5" /> Try Interactive Demo
                   </button>
                 </NextLink>
@@ -238,7 +236,7 @@ export function MarketingLanding() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <button className="bg-white/80 backdrop-blur-sm border border-orange-200 text-orange-600 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 shadow-lg">
+                  <button className="bg-white/80 backdrop-blur-sm border border-orange-200 text-orange-600 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 shadow-md hover:shadow-xl">
                     Book a Demo
                   </button>
                 </a>
@@ -459,10 +457,10 @@ export function MarketingLanding() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 animate-fade-in-up">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              What Makes RetailX Different
+              Why RetailX
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              It feels like your store finally has a keyboard.
+              Your store finally gets a keyboard.
             </p>
           </div>
 
@@ -470,10 +468,10 @@ export function MarketingLanding() {
             {features.map((f, index) => (
               <div
                 key={f.title}
-                className="bg-gray-50 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border border-orange-100 animate-fade-in-up"
+                className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border border-orange-100 animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="bg-gradient-to-r from-orange-400 to-orange-600 w-14 h-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg">
+                <div className="bg-gradient-to-r from-orange-400 to-orange-600 w-14 h-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg animate-pulse-glow">
                   <f.icon className="h-7 w-7 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -491,11 +489,10 @@ export function MarketingLanding() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 animate-fade-in-up">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Built for Retail Operators
+              Built for Retail Teams
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Ask questions in plain language. Turn insights into impact in the
-              same pane.
+              Ask in plain language and drive impact in one pane.
             </p>
           </div>
 
@@ -503,10 +500,10 @@ export function MarketingLanding() {
             {useCases.map((u, idx) => (
               <div
                 key={u.title}
-                className="rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border bg-white border-orange-100 animate-fade-in-up"
+                className="rounded-3xl p-6 shadow-xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border bg-white/80 backdrop-blur-sm border-orange-100 animate-fade-in-up"
                 style={{ animationDelay: `${idx * 0.1}s` }}
               >
-                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mb-4 animate-pulse-glow">
                   <u.icon className="h-6 w-6 text-orange-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -532,14 +529,14 @@ export function MarketingLanding() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6 animate-fade-in-up">
-            Make Your Store Operate at the Speed of Thought
+            Retail Ops at the Speed of Thought
           </h2>
 
           <p
             className="text-xl text-orange-100 max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in-up"
             style={{ animationDelay: '0.15s' }}
           >
-            Open the palette. Ask for what you want. RetailX handles the rest.
+            Ask. See. Act. RetailX does the rest.
           </p>
 
           <div
@@ -547,7 +544,7 @@ export function MarketingLanding() {
             style={{ animationDelay: '0.3s' }}
           >
             <NextLink href="/chat">
-              <button className="bg-white hover:bg-orange-50 text-orange-600 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl">
+              <button className="bg-white hover:bg-orange-50 text-orange-600 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl animate-pulse-glow">
                 Try the Interactive Demo
               </button>
             </NextLink>
@@ -556,7 +553,7 @@ export function MarketingLanding() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <button className="bg-transparent border-2 border-white/80 text-white hover:bg-white/10 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300">
+              <button className="bg-transparent border-2 border-white/80 text-white hover:bg-white/10 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-2xl">
                 Book a Live Walkthrough
               </button>
             </a>
