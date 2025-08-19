@@ -182,7 +182,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'online': return 'text-green-600 border-green-600'
-      case 'recording': return 'text-blue-600 border-blue-600'
+      case 'recording': return 'text-orange-600 border-orange-600'
       case 'offline': return 'text-red-600 border-red-600'
       case 'maintenance': return 'text-yellow-600 border-yellow-600'
       default: return 'text-gray-600 border-gray-600'
@@ -332,10 +332,10 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
   return (
     <div className="flex flex-col h-full">
       {/* Header with Store Selection */}
-      <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
+      <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-orange-50 to-orange-100">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <Camera className="h-5 w-5 text-blue-600" />
+            <Camera className="h-5 w-5 text-orange-600" />
             <h2 className="text-xl font-semibold">Security Camera System</h2>
           </div>
           
@@ -377,7 +377,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
 
       {/* Store Information Panel */}
       <div className="p-4 border-b">
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
+        <Card className="bg-gradient-to-r from-orange-50 to-orange-100">
           <CardContent className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="flex items-center space-x-2">
@@ -416,7 +416,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
       {/* Main Content Area - Improved Layout */}
       <div className="flex-1 flex">
         {/* Camera Selection Panel - Fixed Width */}
-        <div className="w-80 border-r bg-gray-50 dark:bg-gray-900 p-4 overflow-y-auto">
+        <div className="w-80 border-r bg-gray-50 p-4 overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium text-sm text-muted-foreground">Camera Locations</h3>
             <Badge variant="outline" className="text-xs">
@@ -429,7 +429,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
               <Card 
                 key={camera.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
-                  selectedCamera === index ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-950' : ''
+                  selectedCamera === index ? 'ring-2 ring-blue-500 bg-blue-50' : ''
                 }`}
                 onClick={() => setSelectedCamera(index)}
               >
@@ -460,7 +460,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                   {/* Camera Features */}
                   <div className="flex items-center space-x-2 mt-2">
                     {camera.hasAudio && <Volume2 className="h-3 w-3 text-green-600" />}
-                    {camera.hasMotionDetection && <Zap className="h-3 w-3 text-blue-600" />}
+                    {camera.hasMotionDetection && <Zap className="h-3 w-3 text-orange-600" />}
                     {camera.status === 'recording' && <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />}
                     {camera.lastMotion && (
                       <span className="text-xs text-orange-600">Motion: {camera.lastMotion}</span>
@@ -584,7 +584,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
               </div>
 
               {/* Camera Navigation */}
-              <div className="p-4 border-t bg-gray-50 dark:bg-gray-900">
+              <div className="p-4 border-t bg-gray-50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Button
@@ -684,7 +684,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
 
       {/* System Status Footer */}
       <div className="border-t p-4">
-        <Card className="bg-gray-50 dark:bg-gray-900">
+        <Card className="bg-gray-50">
           <CardContent className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
               <div className="flex items-center space-x-2">
@@ -692,7 +692,7 @@ export function FragmentCameraFeed({ fragment }: { fragment: CameraFeedFragmentS
                 <span>System Online</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Shield className="h-4 w-4 text-blue-600" />
+                <Shield className="h-4 w-4 text-orange-600" />
                 <span>Secure Connection</span>
               </div>
               <div className="flex items-center space-x-2">
