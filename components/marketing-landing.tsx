@@ -137,18 +137,6 @@ export function MarketingLanding() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Floating Bolt Badge */}
-      <div className="fixed z-50 bottom-6 right-6 animate-float pointer-events-none select-none">
-        <Image
-          src="/bolt_badge.svg"
-          alt="Bolt Badge"
-          width={80}
-          height={80}
-          className="drop-shadow-xl"
-          style={{ pointerEvents: 'none', userSelect: 'none' }}
-        />
-      </div>
-
       {/* Header */}
       <header className="sticky top-0 left-0 right-0 w-full px-6 py-5 z-30 backdrop-blur-md bg-white/60 border-b border-orange-200/40">
         <nav className="flex items-center justify-between max-w-7xl mx-auto">
