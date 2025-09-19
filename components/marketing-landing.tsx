@@ -3,20 +3,18 @@
 import Logo from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import {
-  Zap,
   Play,
   Command,
   Sparkles,
-  Camera,
   BarChart3,
   CheckCircle,
   ShieldCheck,
-  Cpu,
-  Plug,
-  Store,
-  ShoppingCart,
-  Users,
   Clock,
+  Glasses,
+  MessagesSquare,
+  BadgeCheck,
+  GraduationCap,
+  Navigation2,
 } from 'lucide-react'
 import Image from 'next/image'
 import NextLink from 'next/link'
@@ -26,24 +24,30 @@ export function MarketingLanding() {
   // Command palette demo items
   const commandItems = useMemo(
     () => [
-      { icon: Camera, label: 'Show live view of Aisle 3 (Cam-07)' },
-      { icon: BarChart3, label: 'Compare conversion: Today vs Last Friday' },
-      { icon: Users, label: 'Analyze queue length at checkout (real-time)' },
+      { icon: Glasses, label: 'Coach greeting for shopper comparing 65" TVs' },
       {
-        icon: ShoppingCart,
-        label: 'Correlate dwell time near promo with POS sales',
-      },
-      {
-        icon: Clock,
-        label: 'Alert when wait time > 4m; auto-ping floor manager',
+        icon: MessagesSquare,
+        label: 'Summarize Priya × Store 12 price conversation',
       },
       {
         icon: ShieldCheck,
-        label: 'Detect misplaced high-value items and notify',
+        label: 'Flag warranty script missed during checkout',
       },
       {
-        icon: Sparkles,
-        label: 'Suggest optimal end-cap placement this weekend',
+        icon: Navigation2,
+        label: 'Guide to running shoes under $150 with stock check',
+      },
+      {
+        icon: BarChart3,
+        label: 'Trend weekend sentiment by department',
+      },
+      {
+        icon: GraduationCap,
+        label: 'Build training reel from top-scoring consults',
+      },
+      {
+        icon: Clock,
+        label: 'Alert manager when consult exceeds 6 minutes',
       },
     ],
     [],
@@ -65,74 +69,74 @@ export function MarketingLanding() {
   // Feature highlights
   const features = [
     {
-      icon: Command,
-      title: 'Command-Native Interface',
+      icon: Glasses,
+      title: 'Smart Glass Capture',
       description:
-        'Run your store like code. Pull up the palette and execute instantly.',
+        'Record and transcribe every shopper conversation with lightweight, compliant hardware.',
     },
     {
-      icon: Camera,
-      title: 'Understands Video & Context',
+      icon: MessagesSquare,
+      title: 'Real-Time Coaching',
       description:
-        'Sees cameras and data to read traffic, dwell, and intent live.',
+        'AI whispers greetings, discovery prompts, and next best actions while associates serve.',
     },
     {
-      icon: Cpu,
-      title: 'Decision Intelligence',
+      icon: BadgeCheck,
+      title: 'Quality Assurance Scoring',
       description:
-        'Turns signals into actions that move KPIs.',
+        'Auto-score compliance, tone, and product knowledge so every visit meets your standard.',
     },
     {
-      icon: ShieldCheck,
-      title: 'Privacy-First by Design',
+      icon: BarChart3,
+      title: 'Insight-to-Training Loop',
       description:
-        'On-device redaction, zero PII, and tight retention.',
+        'Spot trends, create playbooks, and upskill teams from one source of truth.',
     },
   ]
 
   // Use cases
   const useCases = [
     {
-      icon: ShoppingCart,
-      title: 'Merchandising',
-      copy: 'Test end-caps, tune planograms, tie dwell to sales.',
-    },
-    {
-      icon: Users,
-      title: 'Staffing',
-      copy: 'Forecast traffic, balance lanes, shrink queues.',
+      icon: GraduationCap,
+      title: 'Onboard & Train',
+      copy: 'Give new associates instant playbooks from real conversations.',
     },
     {
       icon: ShieldCheck,
-      title: 'Loss Prevention',
-      copy: 'Flag patterns, track misplaced items, notify fast.',
+      title: 'Service Compliance',
+      copy: 'Verify greetings, disclosures, and SOPs without mystery shoppers.',
     },
     {
-      icon: Store,
-      title: 'Ops & Experience',
-      copy: 'Measure walk-bys → buys and boost conversion.',
+      icon: Navigation2,
+      title: 'Guided Selling',
+      copy: 'Surface AI prompts that steer shoppers to the right product fast.',
+    },
+    {
+      icon: Sparkles,
+      title: 'Experience Analytics',
+      copy: 'Measure sentiment, follow-ups, and close rates to lift CSAT.',
     },
   ]
 
   // Simple stat cards
   const stats = [
-    { label: 'Faster decisions', value: 'x10' },
-    { label: 'Queue time reduction', value: '-38%' },
-    { label: 'Setup time', value: '48 hrs' },
+    { label: "Conversations QA'd automatically", value: '96%' },
+    { label: 'Associate ramp time', value: '-60%' },
+    { label: 'NPS lift in pilot stores', value: '+18' },
   ]
 
   // Scrolling tiles used around the video mock
   const scrollingTiles = [
-    'Command Palette',
-    'Real-time Cameras',
-    'POS Correlation',
-    'Heatmaps',
-    'Queue Analytics',
-    'Planogram Testing',
-    'Loss Prevention',
-    'Staff Optimization',
-    'Revenue Uplift',
-    'Operational KPIs',
+    'Smart Glass QA',
+    'Real-time Coaching',
+    'Conversation Insights',
+    'AI Training Plans',
+    'Compliance Scorecards',
+    'Customer Sentiment',
+    'Guided Selling',
+    'Mystery Shop Replacement',
+    'Store Playbooks',
+    'Experience Score',
   ]
 
   return (
@@ -206,14 +210,14 @@ export function MarketingLanding() {
           <div className="grid lg:grid-cols-2 gap-14 items-center">
             <div className="text-center lg:text-left animate-fade-in-up">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-4">
-                <Command className="h-4 w-4" /> The Cursor for Retail Stores
+                <BadgeCheck className="h-4 w-4" /> Quality Assurance for Retail Floors
               </div>
 
               <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight mb-6">
-                Retail, Rewired.
+                Every Shopper Interaction, Perfected.
                 <br />
                 <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent animate-pulse">
-                  Your Store on Command
+                  Smart Glass Coaching for Retail Teams
                 </span>
               </h1>
 
@@ -221,7 +225,10 @@ export function MarketingLanding() {
                 className="text-xl text-gray-600 mb-8 leading-relaxed animate-fade-in-up"
                 style={{ animationDelay: '0.15s' }}
               >
-                Plug cameras & data into an AI palette. Ask, see, act—fast.
+                Outfit associates with smart glasses that capture every conversation.
+                Our AI agent guides greetings, product discovery, and follow-up so
+                every shopper leaves confident, while managers get instant scorecards
+                to coach the team.
               </p>
 
               <div
@@ -230,7 +237,7 @@ export function MarketingLanding() {
               >
                 <NextLink href="/chat">
                   <button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center gap-2">
-                    <Play className="h-5 w-5" /> Try Interactive Demo
+                    <Play className="h-5 w-5" /> Experience the AI Floor Coach
                   </button>
                 </NextLink>
                 <a
@@ -239,7 +246,7 @@ export function MarketingLanding() {
                   rel="noopener noreferrer"
                 >
                   <button className="bg-white/80 backdrop-blur-sm border border-orange-200 text-orange-600 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 shadow-lg">
-                    Book a Demo
+                    Talk to Our Team
                   </button>
                 </a>
               </div>
@@ -249,16 +256,16 @@ export function MarketingLanding() {
                 style={{ animationDelay: '0.45s' }}
               >
                 <div className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-orange-500" />
-                  <span>No new hardware</span>
+                  <Glasses className="h-5 w-5 text-orange-500" />
+                  <span>Smart glasses capture & transcribe</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-green-600" />
-                  <span>Privacy-first</span>
+                  <BadgeCheck className="h-5 w-5 text-green-600" />
+                  <span>QA on every conversation</span>
                 </div>
                 <div className="hidden sm:flex items-center gap-2">
-                  <Command className="h-5 w-5 text-gray-400" />
-                  <span>Press ⌘K in demo</span>
+                  <Sparkles className="h-5 w-5 text-gray-400" />
+                  <span>Guided selling prompts</span>
                 </div>
               </div>
             </div>
@@ -351,7 +358,7 @@ export function MarketingLanding() {
 
                 {/* Label */}
                 <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg animate-pulse">
-                  See • Analyze • Act
+                  Capture • Coach • Assure
                 </div>
               </div>
 
@@ -380,11 +387,11 @@ export function MarketingLanding() {
         <div className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-orange-200/50 py-6">
           <div className="max-w-7xl mx-auto px-6 text-center">
             <p className="text-gray-700 mb-3 font-medium">
-              Connect cameras. Open the palette. Improve KPIs.
+              Capture conversations. Coach teams in the moment. Delight every shopper.
             </p>
             <NextLink href="/chat">
               <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-base rounded-xl font-semibold transform hover:scale-105 transition-all duration-300">
-                Try the Command Palette
+                See Conversation Insights
               </Button>
             </NextLink>
           </div>
@@ -396,33 +403,32 @@ export function MarketingLanding() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 animate-fade-in-up">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              From Cameras to Actions—In Minutes
+              From Glass Capture to Coached Teams
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              RetailX plugs into what you already have. Turn your floor into a
-              living dataset and act with one command.
+              RetailX turns every in-store conversation into an actionable coaching and quality assurance loop.
             </p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8 mb-8">
             {[
               {
-                icon: Plug,
-                title: 'Connect',
+                icon: Glasses,
+                title: 'Capture & Transcribe',
                 description:
-                  'Link IP cameras and POS in minutes. Works with 99% of modern systems.',
+                  'Smart glasses record shopper interactions and turn them into transcripts instantly.',
               },
               {
-                icon: Sparkles,
-                title: 'Analyze',
+                icon: MessagesSquare,
+                title: 'Coach in the Moment',
                 description:
-                  'Anonymous computer vision turns traffic and behavior into KPIs—no PII.',
+                  'The AI agent whispers greetings, discovery cues, and guided selling prompts while associates serve.',
               },
               {
-                icon: Zap,
-                title: 'Act',
+                icon: ShieldCheck,
+                title: 'Train & Assure',
                 description:
-                  'Trigger alerts and automations, or just ask RetailX to do it for you.',
+                  'Score every conversation, assign micro-training, and prove compliance across stores.',
               },
             ].map((step, index) => (
               <div
@@ -447,7 +453,7 @@ export function MarketingLanding() {
           >
             <NextLink href="/chat">
               <button className="bg-white border-2 border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white px-8 py-3 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                See a Sample Dashboard
+                Review a QA Scorecard
               </button>
             </NextLink>
           </div>
@@ -459,10 +465,10 @@ export function MarketingLanding() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 animate-fade-in-up">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              What Makes RetailX Different
+              Why RetailX for Smart Glass Quality Assurance
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              It feels like your store finally has a keyboard.
+              Capture live interactions, guide teams in real time, and prove every standard is met.
             </p>
           </div>
 
@@ -491,11 +497,10 @@ export function MarketingLanding() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 animate-fade-in-up">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Built for Retail Operators
+              Built for Operators Obsessed with Service
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Ask questions in plain language. Turn insights into impact in the
-              same pane.
+              Close the loop between what guests say, how associates respond, and the training that follows.
             </p>
           </div>
 
@@ -532,14 +537,14 @@ export function MarketingLanding() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6 animate-fade-in-up">
-            Make Your Store Operate at the Speed of Thought
+            Guarantee Every Shopper Gets the Scripted Experience
           </h2>
 
           <p
             className="text-xl text-orange-100 max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in-up"
             style={{ animationDelay: '0.15s' }}
           >
-            Open the palette. Ask for what you want. RetailX handles the rest.
+            See how smart glasses plus our AI coach deliver consistent greetings, guided selling, and flawless follow-through.
           </p>
 
           <div
@@ -548,7 +553,7 @@ export function MarketingLanding() {
           >
             <NextLink href="/chat">
               <button className="bg-white hover:bg-orange-50 text-orange-600 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl">
-                Try the Interactive Demo
+                Run a Glass Coaching Session
               </button>
             </NextLink>
             <a
@@ -557,7 +562,7 @@ export function MarketingLanding() {
               rel="noopener noreferrer"
             >
               <button className="bg-transparent border-2 border-white/80 text-white hover:bg-white/10 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300">
-                Book a Live Walkthrough
+                Schedule a Quality Review
               </button>
             </a>
           </div>
@@ -568,11 +573,11 @@ export function MarketingLanding() {
           >
             <div className="flex items-center gap-2 hover:text-white transition-colors duration-300">
               <CheckCircle className="h-5 w-5 text-green-300 animate-bounce-gentle" />
-              <span>No obligation</span>
+              <span>No-obligation pilot</span>
             </div>
             <div className="flex items-center gap-2 hover:text-white transition-colors duration-300">
               <CheckCircle className="h-5 w-5 text-green-300 animate-bounce-gentle" />
-              <span>Privacy-forward</span>
+              <span>Consent & privacy built in</span>
             </div>
           </div>
         </div>
