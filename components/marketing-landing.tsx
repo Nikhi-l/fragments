@@ -138,14 +138,14 @@ export function MarketingLanding() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 left-0 right-0 w-full px-6 py-5 z-30 backdrop-blur-md bg-white/60 border-b border-orange-200/40">
+      <header className="sticky top-0 left-0 right-0 w-full px-6 py-5 z-30 backdrop-blur-md bg-white/60 border-b border-emerald-200/40">
         <nav className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center rounded-md bg-orange-500 p-2">
+            <div className="flex items-center justify-center rounded-md bg-emerald-500 p-2">
               <Logo className="text-white w-6 h-6" />
             </div>
             <span className="text-xl font-bold text-gray-900">
-              Retail<span className="text-orange-500">X</span>
+              Retail<span className="text-emerald-500">X</span>
             </span>
           </div>
 
@@ -173,7 +173,7 @@ export function MarketingLanding() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold">
+              <Button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-xl font-semibold">
                 Book Demo
               </Button>
             </a>
@@ -184,20 +184,20 @@ export function MarketingLanding() {
       {/* Hero */}
       <section
         onMouseMove={handleMouseMove}
-        className="relative min-h-[92vh] flex items-center bg-gradient-to-br from-gray-50 via-orange-50 to-orange-100 overflow-hidden"
+        className="relative min-h-[92vh] flex items-center bg-gradient-to-br from-gray-50 via-emerald-50 to-emerald-100 overflow-hidden"
       >
         {/* Animated backdrop bubbles */}
         <div className="absolute inset-0 pointer-events-none">
           <div
-            className="absolute top-1/4 left-1/4 w-64 h-64 bg-orange-400/20 rounded-full blur-3xl animate-float transition-transform duration-500"
+            className="absolute top-1/4 left-1/4 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl animate-float transition-transform duration-500"
             style={{ transform: `translate3d(${cursor.x / 50}px, ${cursor.y / 50}px, 0)` }}
           ></div>
           <div
-            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-300/20 rounded-full blur-3xl animate-float transition-transform duration-500"
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-300/20 rounded-full blur-3xl animate-float transition-transform duration-500"
             style={{ animationDelay: '2s', transform: `translate3d(${cursor.x / -60}px, ${cursor.y / -60}px, 0)` }}
           ></div>
           <div
-            className="absolute top-1/2 left-1/2 w-32 h-32 bg-orange-500/20 rounded-full blur-2xl animate-pulse transition-transform duration-500"
+            className="absolute top-1/2 left-1/2 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl animate-pulse transition-transform duration-500"
             style={{ transform: `translate3d(${cursor.x / 80}px, ${cursor.y / -80}px, 0)` }}
           ></div>
         </div>
@@ -205,14 +205,14 @@ export function MarketingLanding() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 w-full">
           <div className="grid lg:grid-cols-2 gap-14 items-center">
             <div className="text-center lg:text-left animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium mb-4">
                 <Command className="h-4 w-4" /> The Cursor for Retail Stores
               </div>
 
               <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight mb-6">
                 Retail, Rewired.
                 <br />
-                <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent animate-pulse">
+                <span className="bg-gradient-to-r from-emerald-500 to-emerald-600 bg-clip-text text-transparent animate-pulse">
                   Your Store on Command
                 </span>
               </h1>
@@ -229,7 +229,7 @@ export function MarketingLanding() {
                 style={{ animationDelay: '0.3s' }}
               >
                 <NextLink href="/chat">
-                  <button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center gap-2">
+                  <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center gap-2">
                     <Play className="h-5 w-5" /> Try Interactive Demo
                   </button>
                 </NextLink>
@@ -238,7 +238,7 @@ export function MarketingLanding() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <button className="bg-white/80 backdrop-blur-sm border border-orange-200 text-orange-600 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 shadow-lg">
+                  <button className="bg-white/80 backdrop-blur-sm border border-emerald-200 text-emerald-600 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 shadow-lg">
                     Book a Demo
                   </button>
                 </a>
@@ -249,11 +249,11 @@ export function MarketingLanding() {
                 style={{ animationDelay: '0.45s' }}
               >
                 <div className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-orange-500" />
+                  <Zap className="h-5 w-5 text-emerald-500" />
                   <span>No new hardware</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-green-600" />
+                  <ShieldCheck className="h-5 w-5 text-emerald-600" />
                   <span>Privacy-first</span>
                 </div>
                 <div className="hidden sm:flex items-center gap-2">
@@ -268,16 +268,16 @@ export function MarketingLanding() {
               className="relative animate-fade-in-right"
               style={{ animationDelay: '0.2s' }}
             >
-              <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-5 border border-orange-100 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105">
+              <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-5 border border-emerald-100 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105">
                 {/* Fake window chrome */}
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-3 h-3 rounded-full bg-red-400"></span>
                   <span className="w-3 h-3 rounded-full bg-yellow-400"></span>
-                  <span className="w-3 h-3 rounded-full bg-green-400"></span>
+                  <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
                 </div>
 
                 {/* Video pane */}
-                <div className="relative overflow-hidden rounded-2xl border border-orange-100/60">
+                <div className="relative overflow-hidden rounded-2xl border border-emerald-100/60">
                   <div
                     className="relative w-full"
                     style={{ aspectRatio: '16/9' }}
@@ -299,7 +299,7 @@ export function MarketingLanding() {
                           (tile, index) => (
                             <div
                               key={`top-${index}`}
-                              className="flex-shrink-0 bg-orange-500/90 text-white px-3 py-1 rounded-full text-xs font-medium mx-1 shadow-lg backdrop-blur-sm"
+                              className="flex-shrink-0 bg-emerald-500/90 text-white px-3 py-1 rounded-full text-xs font-medium mx-1 shadow-lg backdrop-blur-sm"
                             >
                               {tile}
                             </div>
@@ -314,7 +314,7 @@ export function MarketingLanding() {
                         ].map((tile, index) => (
                           <div
                             key={`bottom-${index}`}
-                            className="flex-shrink-0 bg-blue-500/90 text-white px-3 py-1 rounded-full text-xs font-medium mx-1 shadow-lg backdrop-blur-sm"
+                            className="flex-shrink-0 bg-emerald-600/90 text-white px-3 py-1 rounded-full text-xs font-medium mx-1 shadow-lg backdrop-blur-sm"
                           >
                             {tile}
                           </div>
@@ -326,8 +326,8 @@ export function MarketingLanding() {
 
                 {/* Command palette bar */}
                 <div className="mt-4">
-                  <div className="flex items-center gap-3 bg-white border border-orange-200/50 rounded-2xl px-4 py-3 shadow-lg">
-                    <Command className="h-5 w-5 text-orange-500" />
+                  <div className="flex items-center gap-3 bg-white border border-emerald-200/50 rounded-2xl px-4 py-3 shadow-lg">
+                    <Command className="h-5 w-5 text-emerald-500" />
                     <div className="relative flex-1">
                       {commandItems.map((item, idx) => (
                         <div
@@ -350,7 +350,7 @@ export function MarketingLanding() {
                 </div>
 
                 {/* Label */}
-                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg animate-pulse">
+                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg animate-pulse">
                   See • Analyze • Act
                 </div>
               </div>
@@ -363,9 +363,9 @@ export function MarketingLanding() {
                 {stats.map((s) => (
                   <div
                     key={s.label}
-                    className="bg-white/70 rounded-xl p-4 text-center backdrop-blur-sm border border-orange-200/50 hover:scale-105 transition-transform duration-300"
+                    className="bg-white/70 rounded-xl p-4 text-center backdrop-blur-sm border border-emerald-200/50 hover:scale-105 transition-transform duration-300"
                   >
-                    <div className="text-2xl font-bold text-orange-600 animate-bounce-gentle">
+                    <div className="text-2xl font-bold text-emerald-600 animate-bounce-gentle">
                       {s.value}
                     </div>
                     <div className="text-xs text-gray-600">{s.label}</div>
@@ -377,13 +377,13 @@ export function MarketingLanding() {
         </div>
 
         {/* Bottom CTA strip */}
-        <div className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-orange-200/50 py-6">
+        <div className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-emerald-200/50 py-6">
           <div className="max-w-7xl mx-auto px-6 text-center">
             <p className="text-gray-700 mb-3 font-medium">
               Connect cameras. Open the palette. Improve KPIs.
             </p>
             <NextLink href="/chat">
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-base rounded-xl font-semibold transform hover:scale-105 transition-all duration-300">
+              <Button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 text-base rounded-xl font-semibold transform hover:scale-105 transition-all duration-300">
                 Try the Command Palette
               </Button>
             </NextLink>
@@ -427,10 +427,10 @@ export function MarketingLanding() {
             ].map((step, index) => (
               <div
                 key={step.title}
-                className="group bg-white border-2 border-orange-100 rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1 hover:scale-105 animate-fade-in-up"
+                className="group bg-white border-2 border-emerald-100 rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1 hover:scale-105 animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.15}s` }}
               >
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-lg group-hover:shadow-xl transition-all duration-300 animate-bounce-gentle bg-gradient-to-r from-orange-400 to-orange-600 group-hover:scale-110">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-lg group-hover:shadow-xl transition-all duration-300 animate-bounce-gentle bg-gradient-to-r from-emerald-400 to-emerald-600 group-hover:scale-110">
                   <step.icon className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">
@@ -446,7 +446,7 @@ export function MarketingLanding() {
             style={{ animationDelay: '0.6s' }}
           >
             <NextLink href="/chat">
-              <button className="bg-white border-2 border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white px-8 py-3 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+              <button className="bg-white border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-500 hover:text-white px-8 py-3 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                 See a Sample Dashboard
               </button>
             </NextLink>
@@ -470,10 +470,10 @@ export function MarketingLanding() {
             {features.map((f, index) => (
               <div
                 key={f.title}
-                className="group bg-gray-50 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1 hover:scale-105 border border-orange-100 animate-fade-in-up"
+                className="group bg-gray-50 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1 hover:scale-105 border border-emerald-100 animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="bg-gradient-to-r from-orange-400 to-orange-600 w-14 h-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
+                <div className="bg-gradient-to-r from-emerald-400 to-emerald-600 w-14 h-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
                   <f.icon className="h-7 w-7 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -503,11 +503,11 @@ export function MarketingLanding() {
             {useCases.map((u, idx) => (
               <div
                 key={u.title}
-                className="group rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1 hover:scale-105 border bg-white border-orange-100 animate-fade-in-up"
+                className="group rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1 hover:scale-105 border bg-white border-emerald-100 animate-fade-in-up"
                 style={{ animationDelay: `${idx * 0.1}s` }}
               >
-                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <u.icon className="h-6 w-6 text-orange-600" />
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <u.icon className="h-6 w-6 text-emerald-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {u.title}
@@ -520,7 +520,7 @@ export function MarketingLanding() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-float"></div>
           <div
@@ -536,7 +536,7 @@ export function MarketingLanding() {
           </h2>
 
           <p
-            className="text-xl text-orange-100 max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in-up"
+            className="text-xl text-emerald-100 max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in-up"
             style={{ animationDelay: '0.15s' }}
           >
             Open the palette. Ask for what you want. RetailX handles the rest.
@@ -547,7 +547,7 @@ export function MarketingLanding() {
             style={{ animationDelay: '0.3s' }}
           >
             <NextLink href="/chat">
-              <button className="bg-white hover:bg-orange-50 text-orange-600 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl">
+              <button className="bg-white hover:bg-emerald-50 text-emerald-600 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl">
                 Try the Interactive Demo
               </button>
             </NextLink>
@@ -563,15 +563,15 @@ export function MarketingLanding() {
           </div>
 
           <div
-            className="flex flex-col sm:flex-row justify-center items-center gap-6 text-orange-200 mt-8 animate-fade-in-up"
+            className="flex flex-col sm:flex-row justify-center items-center gap-6 text-emerald-200 mt-8 animate-fade-in-up"
             style={{ animationDelay: '0.45s' }}
           >
             <div className="flex items-center gap-2 hover:text-white transition-colors duration-300">
-              <CheckCircle className="h-5 w-5 text-green-300 animate-bounce-gentle" />
+              <CheckCircle className="h-5 w-5 text-emerald-300 animate-bounce-gentle" />
               <span>No obligation</span>
             </div>
             <div className="flex items-center gap-2 hover:text-white transition-colors duration-300">
-              <CheckCircle className="h-5 w-5 text-green-300 animate-bounce-gentle" />
+              <CheckCircle className="h-5 w-5 text-emerald-300 animate-bounce-gentle" />
               <span>Privacy-forward</span>
             </div>
           </div>
@@ -638,10 +638,10 @@ export function MarketingLanding() {
         @keyframes pulse-glow {
           0%,
           100% {
-            box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
           }
           50% {
-            box-shadow: 0 0 30px rgba(249, 115, 22, 0.6);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
           }
         }
         @keyframes scroll-right {
