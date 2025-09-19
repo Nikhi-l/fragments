@@ -61,6 +61,7 @@ export function MarketingLanding() {
   const handleMouseMove = (e: MouseEvent<HTMLElement>) => {
     setCursor({ x: e.clientX, y: e.clientY })
   }
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
 
   // Feature highlights
   const features = [
@@ -203,8 +204,8 @@ export function MarketingLanding() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 w-full">
-          <div className="grid lg:grid-cols-2 gap-14 items-center">
-            <div className="text-center lg:text-left animate-fade-in-up">
+          <div className="grid gap-14 items-center">
+            <div className="text-center animate-fade-in-up max-w-3xl mx-auto">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-4">
                 <Command className="h-4 w-4" /> The Cursor for Retail Stores
               </div>
@@ -245,7 +246,7 @@ export function MarketingLanding() {
               </div>
 
               <div
-                className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 animate-fade-in-up"
+                className="flex items-center justify-center gap-4 text-gray-500 animate-fade-in-up"
                 style={{ animationDelay: '0.45s' }}
               >
                 <div className="flex items-center gap-2">
@@ -265,7 +266,7 @@ export function MarketingLanding() {
 
             {/* Command Palette / Video Mock */}
             <div
-              className="relative animate-fade-in-right"
+              className="relative animate-fade-in-right mx-auto"
               style={{ animationDelay: '0.2s' }}
             >
               <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-5 border border-orange-100 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105">
@@ -282,14 +283,30 @@ export function MarketingLanding() {
                     className="relative w-full"
                     style={{ aspectRatio: '16/9' }}
                   >
-                    <iframe
-                      className="w-full h-full rounded-2xl"
-                      src="https://www.youtube.com/embed/ptjzZ4e0FnA?autoplay=0&mute=1&controls=1&rel=0&modestbranding=1"
-                      title="RetailX Demo Video"
-                      frameBorder={0}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    />
+                    {isVideoPlaying ? (
+                      <iframe
+                        className="w-full h-full rounded-2xl"
+                        src="https://www.youtube.com/embed/ptjzZ4e0FnA?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1"
+                        title="RetailX Demo Video"
+                        frameBorder={0}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <button
+                        className="group relative w-full h-full flex items-center justify-center overflow-hidden"
+                        onClick={() => setIsVideoPlaying(true)}
+                      >
+                        <Image
+                          src="https://img.youtube.com/vi/ptjzZ4e0FnA/hqdefault.jpg"
+                          alt="RetailX Demo Video thumbnail"
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
+                        <Play className="h-16 w-16 text-white drop-shadow-lg" />
+                      </button>
+                    )}
 
                     {/* Animated tags around video */}
                     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
