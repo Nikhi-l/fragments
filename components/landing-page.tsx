@@ -9,58 +9,50 @@ interface SamplePrompt {
   title: string
   description: string
   prompt: string
-  category: string
 }
 
 const samplePrompts: SamplePrompt[] = [
   {
     icon: BarChart3,
     title: "Analyze Sales Data",
-    description: "Get detailed sales analytics and performance metrics",
+    description: "View quick sales insights and trends",
     prompt: "Help me analyze my sales data for this month",
-    category: "Analytics"
   },
   {
     icon: Camera,
     title: "View Camera Feeds",
-    description: "Monitor live security camera feeds from your store",
+    description: "Check in on live store cameras",
     prompt: "Show me the camera feeds for my store",
-    category: "Security"
   },
   {
     icon: MessageCircle,
     title: "Store Performance",
-    description: "Get comprehensive dashboard insights",
+    description: "See today's store dashboard",
     prompt: "How is my store performing today?",
-    category: "Dashboard"
   },
   {
     icon: Users,
     title: "Staff Management",
-    description: "Manage staff, tasks, and schedules efficiently",
+    description: "Review staff schedules and tasks",
     prompt: "Show me current staff status and task assignments",
-    category: "Staff"
   },
   {
     icon: Package,
     title: "Inventory Management",
-    description: "Track stock levels, alerts, and reorder points",
+    description: "Monitor stock levels and alerts",
     prompt: "Show me my inventory levels and low stock alerts",
-    category: "Inventory"
   },
   {
     icon: Calculator,
     title: "Cost Analytics",
-    description: "Analyze operational costs and budget performance",
+    description: "Check this month's cost breakdown",
     prompt: "Show me the cost breakdown for this month",
-    category: "Costs"
   },
   {
     icon: Calendar,
     title: "Sales Forecast",
-    description: "View predicted sales and high-demand days",
+    description: "Plan with upcoming demand forecasts",
     prompt: "Show me the sales forecast for next month",
-    category: "Forecast"
   }
 ]
 
@@ -97,31 +89,23 @@ export function LandingPage() {
             {samplePrompts.map((sample, index) => {
               const IconComponent = sample.icon
               return (
-                <Card 
-                  key={index} 
-                  className="cursor-pointer hover:shadow-md transition-all duration-200 hover:border-orange-500/50 border-2 border-transparent"
+                <Card
+                  key={index}
+                  className="cursor-pointer border border-border/60 hover:border-orange-500/50 transition-all duration-200"
                   onClick={() => handlePromptClick(sample.prompt)}
                 >
-                  <CardContent className="p-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="flex-shrink-0 p-2 bg-orange-500/10 rounded-lg">
+                  <CardContent className="p-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex-shrink-0 p-2 bg-orange-500/10 rounded-md">
                         <IconComponent className="h-5 w-5 text-orange-500" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="text-sm font-semibold text-foreground">
-                            {sample.title}
-                          </h3>
-                          <span className="text-xs px-2 py-0.5 bg-orange-500 text-white rounded-full">
-                            {sample.category}
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mb-2">
+                        <h3 className="text-sm font-semibold text-foreground">
+                          {sample.title}
+                        </h3>
+                        <p className="text-xs text-muted-foreground mt-1">
                           {sample.description}
                         </p>
-                        <div className="text-xs text-orange-600 font-medium">
-                          &quot;{sample.prompt}&quot;
-                        </div>
                       </div>
                     </div>
                   </CardContent>
