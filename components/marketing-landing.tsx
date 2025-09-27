@@ -22,6 +22,11 @@ import Image from 'next/image'
 import NextLink from 'next/link'
 import { useEffect, useMemo, useState, type MouseEvent } from 'react'
 
+const DEMO_VIDEO_ID = 'ptjzZ4e0FnA'
+const DEMO_VIDEO_EMBED_URL =
+  `https://www.youtube.com/embed/${DEMO_VIDEO_ID}?autoplay=0&mute=1&controls=1&rel=0&modestbranding=1`
+const DEMO_VIDEO_WATCH_URL = `https://www.youtube.com/watch?v=${DEMO_VIDEO_ID}`
+
 export function MarketingLanding() {
   // Command palette demo items
   const commandItems = useMemo(
@@ -168,15 +173,15 @@ export function MarketingLanding() {
             >
               Features
             </a>
-            <a
-              href="https://calendly.com/gnikhil335/30min"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold">
-                Book Demo
-              </Button>
-            </a>
+            <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold">
+              <a
+                href={DEMO_VIDEO_WATCH_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Watch Demo
+              </a>
+            </Button>
           </div>
         </nav>
       </header>
@@ -228,20 +233,19 @@ export function MarketingLanding() {
                 className="flex flex-col sm:flex-row gap-4 mb-10 animate-fade-in-up"
                 style={{ animationDelay: '0.3s' }}
               >
-                <NextLink href="/chat">
-                  <button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center gap-2">
-                    <Play className="h-5 w-5" /> Try Interactive Demo
-                  </button>
-                </NextLink>
                 <a
-                  href="https://calendly.com/gnikhil335/30min"
+                  href={DEMO_VIDEO_WATCH_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center gap-2"
                 >
-                  <button className="bg-white/80 backdrop-blur-sm border border-orange-200 text-orange-600 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 shadow-lg">
-                    Book a Demo
-                  </button>
+                  <Play className="h-5 w-5" /> Watch Demo
                 </a>
+                <NextLink href="/chat">
+                  <button className="bg-white/80 backdrop-blur-sm border border-orange-200 text-orange-600 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 shadow-lg">
+                    Try Interactive Demo
+                  </button>
+                </NextLink>
               </div>
 
               <div
@@ -284,7 +288,7 @@ export function MarketingLanding() {
                   >
                     <iframe
                       className="w-full h-full rounded-2xl"
-                      src="https://www.youtube.com/embed/ptjzZ4e0FnA?autoplay=0&mute=1&controls=1&rel=0&modestbranding=1"
+                      src={DEMO_VIDEO_EMBED_URL}
                       title="RetailX Demo Video"
                       frameBorder={0}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -382,11 +386,27 @@ export function MarketingLanding() {
             <p className="text-gray-700 mb-3 font-medium">
               Connect cameras. Open the palette. Improve KPIs.
             </p>
-            <NextLink href="/chat">
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-base rounded-xl font-semibold transform hover:scale-105 transition-all duration-300">
-                Try the Command Palette
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button
+                asChild
+                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-base rounded-xl font-semibold transform hover:scale-105 transition-all duration-300"
+              >
+                <a
+                  href={DEMO_VIDEO_WATCH_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Watch Demo
+                </a>
               </Button>
-            </NextLink>
+              <Button
+                asChild
+                variant="outline"
+                className="border-orange-300 text-orange-600 hover:bg-orange-50 px-6 py-2 text-base rounded-xl font-semibold transition-all duration-300"
+              >
+                <NextLink href="/chat">Try Interactive Demo</NextLink>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -442,13 +462,15 @@ export function MarketingLanding() {
           </div>
 
           <div
-            className="text-center animate-fade-in-up"
+            className="text-center animate-fade-in-up text-gray-600"
             style={{ animationDelay: '0.6s' }}
           >
-            <NextLink href="/chat">
-              <button className="bg-white border-2 border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white px-8 py-3 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                See a Sample Dashboard
-              </button>
+            Prefer hands-on?{' '}
+            <NextLink
+              href="/chat"
+              className="font-semibold text-orange-600 hover:text-orange-700 transition-colors"
+            >
+              Launch the interactive demo →
             </NextLink>
           </div>
         </div>
@@ -546,20 +568,19 @@ export function MarketingLanding() {
             className="flex flex-col sm:flex-row justify-center items-center gap-4 animate-fade-in-up"
             style={{ animationDelay: '0.3s' }}
           >
-            <NextLink href="/chat">
-              <button className="bg-white hover:bg-orange-50 text-orange-600 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl">
-                Try the Interactive Demo
-              </button>
-            </NextLink>
             <a
-              href="https://calendly.com/gnikhil335/30min"
+              href={DEMO_VIDEO_WATCH_URL}
               target="_blank"
               rel="noopener noreferrer"
+              className="bg-white hover:bg-orange-50 text-orange-600 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl"
             >
-              <button className="bg-transparent border-2 border-white/80 text-white hover:bg-white/10 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300">
-                Book a Live Walkthrough
-              </button>
+              Watch Demo
             </a>
+            <NextLink href="/chat">
+              <button className="bg-transparent border-2 border-white/80 text-white hover:bg-white/10 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300">
+                Try Interactive Demo
+              </button>
+            </NextLink>
           </div>
 
           <div
