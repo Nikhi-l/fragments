@@ -82,6 +82,14 @@ const helpFragmentSchema = baseFragmentSchema.extend({
   type: z.literal('help'),
 })
 
+// Loss prevention fragment schema
+const lossPreventionFragmentSchema = baseFragmentSchema.extend({
+  type: z.literal('loss_prevention'),
+  store_name: z.string().describe('Name of the store for which loss prevention is being displayed.'),
+  alert_types: z.array(z.string()).describe('Types of loss prevention alerts (e.g., "Suspicious Activity", "Theft Detected", "Door Alarm", "Inventory Discrepancy").'),
+  time_period: z.string().describe('Time period for loss prevention data (e.g., "Today", "This Week", "This Month").'),
+})
+
 // Union of all fragment types
 export const fragmentSchema = z.discriminatedUnion('type', [
   codeFragmentSchema,
@@ -93,6 +101,7 @@ export const fragmentSchema = z.discriminatedUnion('type', [
   costAnalyticsFragmentSchema,
   forecastFragmentSchema,
   helpFragmentSchema,
+  lossPreventionFragmentSchema,
 ])
 
 export type FragmentSchema = z.infer<typeof fragmentSchema>
@@ -105,3 +114,4 @@ export type InventoryManagementFragmentSchema = z.infer<typeof inventoryManageme
 export type CostAnalyticsFragmentSchema = z.infer<typeof costAnalyticsFragmentSchema>
 export type ForecastFragmentSchema = z.infer<typeof forecastFragmentSchema>
 export type HelpFragmentSchema = z.infer<typeof helpFragmentSchema>
+export type LossPreventionFragmentSchema = z.infer<typeof lossPreventionFragmentSchema>

@@ -12,7 +12,7 @@ import { useAuth } from '@/lib/auth'
 import { Message, toAISDKMessages, toMessageImage } from '@/lib/messages'
 import { LLMModelConfig } from '@/lib/models'
 import modelsList from '@/lib/models.json'
-import { FragmentSchema, fragmentSchema as schema, CameraFeedFragmentSchema, DashboardFragmentSchema, SalesDataFragmentSchema, StaffManagementFragmentSchema, InventoryManagementFragmentSchema, CostAnalyticsFragmentSchema, ForecastFragmentSchema, HelpFragmentSchema } from '@/lib/schema'
+import { FragmentSchema, fragmentSchema as schema, CameraFeedFragmentSchema, DashboardFragmentSchema, SalesDataFragmentSchema, StaffManagementFragmentSchema, InventoryManagementFragmentSchema, CostAnalyticsFragmentSchema, ForecastFragmentSchema, HelpFragmentSchema, LossPreventionFragmentSchema } from '@/lib/schema'
 import { supabase } from '@/lib/supabase'
 import templates, { TemplateId } from '@/lib/templates'
 import { ExecutionResult } from '@/lib/types'
@@ -54,6 +54,7 @@ export default function ChatPage() {
   const [isCostAnalyticsLoading, setIsCostAnalyticsLoading] = useState(false)
   const [isForecastLoading, setIsForecastLoading] = useState(false)
   const [isHelpLoading, setIsHelpLoading] = useState(false)
+  const [isLossPreventionLoading, setIsLossPreventionLoading] = useState(false)
   const [showArtifact, setShowArtifact] = useState(false)
   const { session, userTeam } = useAuth(setAuthDialog, setAuthView)
 
@@ -442,10 +443,39 @@ export default function ChatPage() {
     }
   }
 
+  // Function to create hardcoded loss prevention fragment
+  function createLossPreventionFragment(userInput: string): LossPreventionFragmentSchema {
+    // Extract store name from user input or use default
+    const storeNameMatch = userInput.match(/(?:store|shop|location)\s+([A-Za-z\s]+)/i)
+    const storeName = storeNameMatch ? storeNameMatch[1].trim() : 'Main Store'
+
+    // Determine time period from user input
+    let timePeriod = 'Today'
+    if (userInput.toLowerCase().includes('week')) timePeriod = 'This Week'
+    else if (userInput.toLowerCase().includes('month')) timePeriod = 'This Month'
+
+    return {
+      type: 'loss_prevention',
+      commentary: `Displaying comprehensive loss prevention and security dashboard for ${storeName}. This interface shows real-time security alerts, theft incidents, suspicious activity detection, inventory discrepancies, and zone-based security monitoring. You can view active alerts requiring attention, track shrinkage values, monitor camera feeds from flagged zones, and see the overall security score for your store. The system uses AI-powered behavior analysis to detect potential threats before they escalate.`,
+      title: 'Loss Prevention',
+      description: `Security alerts and theft prevention for ${storeName}`,
+      store_name: storeName,
+      alert_types: [
+        'Suspicious Activity',
+        'Theft Detection',
+        'Door Alarms',
+        'Inventory Discrepancy',
+        'Unauthorized Access',
+        'System Alerts'
+      ],
+      time_period: timePeriod
+    }
+  }
+
   async function handleSubmitAuth(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isForecastLoading || isHelpLoading) {
+    if (isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isForecastLoading || isHelpLoading || isLossPreventionLoading) {
       stop()
       setIsCameraLoading(false)
       setIsAnalyticsLoading(false)
@@ -455,6 +485,7 @@ export default function ChatPage() {
       setIsCostAnalyticsLoading(false)
       setIsForecastLoading(false)
       setIsHelpLoading(false)
+      setIsLossPreventionLoading(false)
     }
 
     const content: Message['content'] = [{ type: 'text', text: chatInput }]
@@ -820,6 +851,51 @@ export default function ChatPage() {
         })
       }, 2000) // 2-second delay
     }
+    // Check if user input contains loss prevention keywords
+    else if (
+      inputLower.includes('loss prevention') ||
+      inputLower.includes('theft') ||
+      inputLower.includes('security alert') ||
+      inputLower.includes('suspicious') ||
+      inputLower.includes('shrinkage') ||
+      inputLower.includes('steal') ||
+      inputLower.includes('shoplifting') ||
+      inputLower.includes('security incident') ||
+      inputLower.includes('security zone') ||
+      inputLower.includes('door alarm') ||
+      inputLower.includes('unauthorized')
+    ) {
+      // Set loading state to simulate LLM processing
+      setIsLossPreventionLoading(true)
+
+      // Add a 2-second delay to simulate LLM call
+      setTimeout(() => {
+        // Create hardcoded loss prevention fragment
+        const lossPreventionFragment = createLossPreventionFragment(chatInput)
+
+        // Set the fragment directly without LLM call
+        setFragment(lossPreventionFragment)
+        setCurrentPreview({ fragment: lossPreventionFragment, result: undefined })
+        setCurrentTab('fragment')
+        setShowArtifact(true)
+
+        // Add assistant response
+        addMessage({
+          role: 'assistant',
+          content: [{ type: 'text', text: lossPreventionFragment.commentary || '' }],
+          object: lossPreventionFragment,
+        })
+
+        // Stop loading state
+        setIsLossPreventionLoading(false)
+
+        posthog.capture('loss_prevention_triggered', {
+          store_name: lossPreventionFragment.store_name,
+          time_period: lossPreventionFragment.time_period,
+          trigger: 'hardcoded'
+        })
+      }, 2000) // 2-second delay
+    }
     else {
       // Normal LLM processing for other requests
       submit({
@@ -890,6 +966,7 @@ export default function ChatPage() {
     setIsCostAnalyticsLoading(false)
     setIsForecastLoading(false)
     setIsHelpLoading(false)
+    setIsLossPreventionLoading(false)
     setChatInput('')
     setFiles([])
     setMessages([])
@@ -920,7 +997,7 @@ export default function ChatPage() {
   }
 
   // Combine loading states for UI
-  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isForecastLoading || isHelpLoading
+  const isAnyLoading = isLoading || isCameraLoading || isAnalyticsLoading || isSalesDataLoading || isStaffManagementLoading || isInventoryLoading || isCostAnalyticsLoading || isForecastLoading || isHelpLoading || isLossPreventionLoading
 
   return (
     <main className="flex min-h-screen max-h-screen">
@@ -970,6 +1047,7 @@ export default function ChatPage() {
               setIsCostAnalyticsLoading(false)
               setIsForecastLoading(false)
               setIsHelpLoading(false)
+              setIsLossPreventionLoading(false)
             }}
             input={chatInput}
             handleInputChange={handleSaveInputChange}

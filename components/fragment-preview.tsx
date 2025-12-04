@@ -10,6 +10,7 @@ import { FragmentInventoryManagement } from './fragment-inventory-management'
 import { FragmentCostAnalytics } from './fragment-cost-analytics'
 import { FragmentForecast } from './fragment-forecast'
 import { FragmentHelp } from './fragment-help'
+import { FragmentLossPrevention } from './fragment-loss-prevention'
 import { ExecutionResult } from '@/lib/types'
 import { FragmentSchema } from '@/lib/schema'
 import { DeepPartial } from 'ai'
@@ -59,6 +60,11 @@ export function FragmentPreview({
   // Handle forecast fragments
   if (fragment?.type === 'forecast') {
     return <FragmentForecast fragment={fragment as any} />
+  }
+
+  // Handle loss prevention fragments
+  if (fragment?.type === 'loss_prevention') {
+    return <FragmentLossPrevention fragment={fragment as any} />
   }
 
   // Handle code fragments (original functionality)

@@ -1,21 +1,20 @@
 'use client'
 
 import { StaffManagementFragmentSchema } from '@/lib/schema'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { 
-  Users, 
-  Clock, 
-  CheckCircle, 
-  AlertTriangle, 
+import {
+  Users,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
   UserCheck,
   Calendar,
   RefreshCw,
@@ -25,35 +24,19 @@ import {
   TrendingUp,
   Coffee,
   UserPlus,
-  Settings,
   BarChart3,
   Activity,
   Zap,
-  Timer,
   Award,
   Bell,
   MessageSquare,
-  Phone,
-  Mail,
-  Edit,
-  Plus,
-  Minus,
-  RotateCcw,
-  PlayCircle,
-  PauseCircle,
-  StopCircle,
-  ArrowRight,
-  ArrowLeft,
-  ChevronUp,
-  ChevronDown,
-  Filter,
-  Search,
-  Download,
-  Upload,
   Eye,
-  EyeOff
+  ChevronRight,
+  Sparkles,
+  Timer,
+  RotateCcw
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import Image from 'next/image'
 
 interface Employee {
@@ -73,746 +56,447 @@ interface Employee {
   tasksCompleted: number
   tasksAssigned: number
   lastActivity: string
-  skills: string[]
-  certifications: string[]
-  hourlyRate: number
-  overtimeHours: number
   avatar: string
+  initials: string
 }
 
 interface Task {
   id: string
   title: string
-  description: string
   priority: 'low' | 'medium' | 'high' | 'urgent'
   status: 'pending' | 'in_progress' | 'completed' | 'overdue'
   assignedTo?: string
-  assignedBy: string
   location: string
   estimatedTime: number
-  actualTime?: number
-  deadline: string
-  category: string
-  requiredSkills: string[]
-  customerImpact: 'low' | 'medium' | 'high'
-}
-
-interface BreakSchedule {
-  employeeId: string
-  breakType: 'short' | 'lunch' | 'extended'
-  startTime: string
-  endTime: string
-  duration: number
-  status: 'scheduled' | 'active' | 'completed' | 'missed'
-  location: string
 }
 
 interface CrowdData {
   location: string
   currentCount: number
-  averageCount: number
-  peakTime: string
-  trend: 'increasing' | 'decreasing' | 'stable'
   staffNeeded: number
   staffAssigned: number
   priority: 'low' | 'medium' | 'high'
+  trend: 'increasing' | 'decreasing' | 'stable'
 }
 
 export function FragmentStaffManagement({ fragment }: { fragment: StaffManagementFragmentSchema }) {
-  const [employees, setEmployees] = useState<Employee[]>(generateMockEmployees())
-  const [tasks, setTasks] = useState<Task[]>(generateMockTasks())
-  const [breakSchedules, setBreakSchedules] = useState<BreakSchedule[]>(generateMockBreakSchedules())
-  const [crowdData, setCrowdData] = useState<CrowdData[]>(generateMockCrowdData())
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [selectedDepartment, setSelectedDepartment] = useState<string>('all')
-  const [selectedShift, setSelectedShift] = useState<string>('current')
   const [autoAssignEnabled, setAutoAssignEnabled] = useState(true)
-  const [optimizationMode, setOptimizationMode] = useState<'efficiency' | 'coverage' | 'balanced'>('balanced')
 
-  function generateMockEmployees(): Employee[] {
-    const roles = ['Cashier', 'Sales Associate', 'Stock Clerk', 'Security', 'Manager', 'Customer Service', 'Cleaner', 'Supervisor']
-    const departments = ['Sales', 'Operations', 'Security', 'Management', 'Customer Service', 'Maintenance']
-    const locations = ['Checkout 1', 'Checkout 2', 'Electronics', 'Clothing', 'Grocery', 'Storage', 'Entrance', 'Customer Service']
-    const skills = ['Customer Service', 'Cash Handling', 'Inventory Management', 'Security', 'Leadership', 'Problem Solving', 'Communication', 'Technical Support']
-    
-    const names = [
-      'Sarah Johnson', 'Mike Chen', 'Emily Davis', 'James Wilson', 'Lisa Brown', 'David Lee',
-      'Anna Garcia', 'Tom Anderson', 'Maria Rodriguez', 'Chris Taylor', 'Jessica White', 'Ryan Clark',
-      'Amanda Lewis', 'Kevin Martinez', 'Nicole Thompson', 'Daniel Harris', 'Rachel Green', 'Mark Turner',
-      'Stephanie Moore', 'Jason Miller', 'Ashley Jones', 'Brandon Scott', 'Melissa Adams', 'Tyler Young'
-    ]
+  const employees: Employee[] = useMemo(() => [
+    { id: 'emp-1', name: 'Sarah Johnson', role: 'Store Manager', department: 'Management', status: 'active', currentTask: 'Floor supervision', location: 'Main Floor', shiftStart: '09:00', shiftEnd: '18:00', breaksTaken: 1, maxBreaks: 3, performance: 95, efficiency: 92, tasksCompleted: 12, tasksAssigned: 14, lastActivity: '2 min ago', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face', initials: 'SJ' },
+    { id: 'emp-2', name: 'Mike Chen', role: 'Cashier', department: 'Sales', status: 'active', currentTask: 'Checkout duty', location: 'Checkout 1', shiftStart: '10:00', shiftEnd: '19:00', breaksTaken: 0, maxBreaks: 3, performance: 88, efficiency: 85, tasksCompleted: 8, tasksAssigned: 10, lastActivity: '5 min ago', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face', initials: 'MC' },
+    { id: 'emp-3', name: 'Emily Davis', role: 'Sales Associate', department: 'Sales', status: 'break', location: 'Break Room', shiftStart: '08:00', shiftEnd: '17:00', breaksTaken: 2, maxBreaks: 3, performance: 92, efficiency: 90, tasksCompleted: 15, tasksAssigned: 16, lastActivity: '15 min ago', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face', initials: 'ED' },
+    { id: 'emp-4', name: 'James Wilson', role: 'Stock Clerk', department: 'Operations', status: 'active', currentTask: 'Restocking Electronics', location: 'Electronics', shiftStart: '07:00', shiftEnd: '16:00', breaksTaken: 2, maxBreaks: 3, performance: 85, efficiency: 88, tasksCompleted: 20, tasksAssigned: 22, lastActivity: '1 min ago', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face', initials: 'JW' },
+    { id: 'emp-5', name: 'Lisa Brown', role: 'Cashier', department: 'Sales', status: 'offline', location: 'N/A', shiftStart: '14:00', shiftEnd: '23:00', breaksTaken: 0, maxBreaks: 3, performance: 78, efficiency: 75, tasksCompleted: 0, tasksAssigned: 0, lastActivity: 'Not started', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face', initials: 'LB' },
+    { id: 'emp-6', name: 'David Lee', role: 'Security', department: 'Security', status: 'active', currentTask: 'Entrance patrol', location: 'Entrance', shiftStart: '06:00', shiftEnd: '15:00', breaksTaken: 1, maxBreaks: 3, performance: 90, efficiency: 94, tasksCompleted: 5, tasksAssigned: 5, lastActivity: '3 min ago', avatar: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop&crop=face', initials: 'DL' },
+    { id: 'emp-7', name: 'Anna Garcia', role: 'Customer Service', department: 'Customer Service', status: 'busy', currentTask: 'Handling complaint', location: 'Service Desk', shiftStart: '09:00', shiftEnd: '18:00', breaksTaken: 1, maxBreaks: 3, performance: 94, efficiency: 91, tasksCompleted: 18, tasksAssigned: 20, lastActivity: 'Now', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face', initials: 'AG' },
+    { id: 'emp-8', name: 'Tom Anderson', role: 'Sales Associate', department: 'Sales', status: 'lunch', location: 'Break Room', shiftStart: '10:00', shiftEnd: '19:00', breaksTaken: 1, maxBreaks: 3, performance: 87, efficiency: 84, tasksCompleted: 9, tasksAssigned: 12, lastActivity: '30 min ago', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face', initials: 'TA' }
+  ], [])
 
-    // Professional avatar URLs from Unsplash
-    const avatars = [
-      'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1521119989659-a83eee488004?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1525134479668-1bee5c7c6845?w=150&h=150&fit=crop&crop=face',
-      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face'
-    ]
-    
-    return Array.from({ length: 24 }, (_, i) => ({
-      id: `emp-${i + 1}`,
-      name: names[i],
-      role: roles[Math.floor(Math.random() * roles.length)],
-      department: departments[Math.floor(Math.random() * departments.length)],
-      status: ['active', 'break', 'lunch', 'offline', 'busy'][Math.floor(Math.random() * 5)] as Employee['status'],
-      currentTask: Math.random() > 0.3 ? `Task ${Math.floor(Math.random() * 50) + 1}` : undefined,
-      location: locations[Math.floor(Math.random() * locations.length)],
-      shiftStart: ['06:00', '08:00', '10:00', '14:00', '18:00'][Math.floor(Math.random() * 5)],
-      shiftEnd: ['14:00', '16:00', '18:00', '22:00', '02:00'][Math.floor(Math.random() * 5)],
-      breaksTaken: Math.floor(Math.random() * 3),
-      maxBreaks: 3,
-      performance: Math.floor(Math.random() * 30) + 70,
-      efficiency: Math.floor(Math.random() * 25) + 75,
-      tasksCompleted: Math.floor(Math.random() * 15) + 5,
-      tasksAssigned: Math.floor(Math.random() * 20) + 8,
-      lastActivity: `${Math.floor(Math.random() * 60)} min ago`,
-      skills: skills.slice(0, Math.floor(Math.random() * 4) + 2),
-      certifications: ['Food Safety', 'First Aid', 'Security', 'Customer Service'][Math.floor(Math.random() * 4)] ? ['Food Safety'] : [],
-      hourlyRate: Math.floor(Math.random() * 10) + 15,
-      overtimeHours: Math.floor(Math.random() * 8),
-      avatar: avatars[i % avatars.length],
-    }))
-  }
+  const tasks: Task[] = useMemo(() => [
+    { id: 'task-1', title: 'Restock Electronics Section', priority: 'high', status: 'in_progress', assignedTo: 'emp-4', location: 'Electronics', estimatedTime: 45 },
+    { id: 'task-2', title: 'Customer Assistance - Aisle 3', priority: 'urgent', status: 'pending', location: 'Aisle 3', estimatedTime: 15 },
+    { id: 'task-3', title: 'Price Check - Clothing', priority: 'medium', status: 'pending', location: 'Clothing', estimatedTime: 10 },
+    { id: 'task-4', title: 'Clean Checkout Area', priority: 'low', status: 'completed', assignedTo: 'emp-2', location: 'Checkout', estimatedTime: 20 },
+    { id: 'task-5', title: 'Inventory Count - Storage', priority: 'high', status: 'pending', location: 'Storage', estimatedTime: 60 },
+    { id: 'task-6', title: 'Handle Customer Return', priority: 'medium', status: 'in_progress', assignedTo: 'emp-7', location: 'Service Desk', estimatedTime: 15 }
+  ], [])
 
-  function generateMockTasks(): Task[] {
-    const taskTitles = [
-      'Restock Electronics Section', 'Customer Assistance - Aisle 3', 'Price Check - Clothing',
-      'Clean Checkout Area', 'Inventory Count - Storage', 'Handle Customer Complaint',
-      'Security Check - Entrance', 'Process Returns', 'Update Display - Promotions',
-      'Assist with Heavy Lifting', 'Train New Employee', 'Equipment Maintenance'
-    ]
-    
-    const categories = ['Customer Service', 'Inventory', 'Cleaning', 'Security', 'Training', 'Maintenance']
-    const locations = ['Checkout', 'Electronics', 'Clothing', 'Grocery', 'Storage', 'Entrance', 'Customer Service']
-    
-    return Array.from({ length: 18 }, (_, i) => ({
-      id: `task-${i + 1}`,
-      title: taskTitles[Math.floor(Math.random() * taskTitles.length)],
-      description: `Detailed description for task ${i + 1}`,
-      priority: ['low', 'medium', 'high', 'urgent'][Math.floor(Math.random() * 4)] as Task['priority'],
-      status: ['pending', 'in_progress', 'completed', 'overdue'][Math.floor(Math.random() * 4)] as Task['status'],
-      assignedTo: Math.random() > 0.3 ? `emp-${Math.floor(Math.random() * 24) + 1}` : undefined,
-      assignedBy: 'manager-1',
-      location: locations[Math.floor(Math.random() * locations.length)],
-      estimatedTime: Math.floor(Math.random() * 120) + 30,
-      actualTime: Math.random() > 0.5 ? Math.floor(Math.random() * 150) + 20 : undefined,
-      deadline: new Date(Date.now() + Math.random() * 24 * 60 * 60 * 1000).toISOString(),
-      category: categories[Math.floor(Math.random() * categories.length)],
-      requiredSkills: ['Customer Service', 'Technical Support'][Math.floor(Math.random() * 2)] ? ['Customer Service'] : [],
-      customerImpact: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as Task['customerImpact'],
-    }))
-  }
-
-  function generateMockBreakSchedules(): BreakSchedule[] {
-    const employees = generateMockEmployees()
-    return employees.slice(0, 12).map((emp, i) => ({
-      employeeId: emp.id,
-      breakType: ['short', 'lunch', 'extended'][Math.floor(Math.random() * 3)] as BreakSchedule['breakType'],
-      startTime: `${Math.floor(Math.random() * 12) + 8}:${Math.random() > 0.5 ? '00' : '30'}`,
-      endTime: `${Math.floor(Math.random() * 12) + 9}:${Math.random() > 0.5 ? '00' : '30'}`,
-      duration: [15, 30, 60][Math.floor(Math.random() * 3)],
-      status: ['scheduled', 'active', 'completed', 'missed'][Math.floor(Math.random() * 4)] as BreakSchedule['status'],
-      location: 'Break Room',
-    }))
-  }
-
-  function generateMockCrowdData(): CrowdData[] {
-    const locations = ['Entrance', 'Checkout Area', 'Electronics', 'Clothing', 'Grocery', 'Customer Service', 'Food Court']
-    
-    return locations.map(location => ({
-      location,
-      currentCount: Math.floor(Math.random() * 50) + 10,
-      averageCount: Math.floor(Math.random() * 40) + 15,
-      peakTime: `${Math.floor(Math.random() * 12) + 8}:00`,
-      trend: ['increasing', 'decreasing', 'stable'][Math.floor(Math.random() * 3)] as CrowdData['trend'],
-      staffNeeded: Math.floor(Math.random() * 5) + 2,
-      staffAssigned: Math.floor(Math.random() * 4) + 1,
-      priority: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as CrowdData['priority'],
-    }))
-  }
+  const crowdData: CrowdData[] = useMemo(() => [
+    { location: 'Main Entrance', currentCount: 45, staffNeeded: 3, staffAssigned: 2, priority: 'high', trend: 'increasing' },
+    { location: 'Checkout Area', currentCount: 32, staffNeeded: 4, staffAssigned: 3, priority: 'high', trend: 'stable' },
+    { location: 'Electronics', currentCount: 28, staffNeeded: 2, staffAssigned: 2, priority: 'medium', trend: 'decreasing' },
+    { location: 'Clothing', currentCount: 18, staffNeeded: 2, staffAssigned: 1, priority: 'medium', trend: 'increasing' },
+    { location: 'Grocery', currentCount: 52, staffNeeded: 3, staffAssigned: 3, priority: 'low', trend: 'stable' }
+  ], [])
 
   function refreshData() {
-    setEmployees(generateMockEmployees())
-    setTasks(generateMockTasks())
-    setBreakSchedules(generateMockBreakSchedules())
-    setCrowdData(generateMockCrowdData())
     setLastUpdated(new Date())
   }
 
-  function getStatusColor(status: string) {
+  const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-500'
-      case 'break': return 'bg-yellow-500'
+      case 'active': return 'bg-emerald-500'
+      case 'break': return 'bg-amber-500'
       case 'lunch': return 'bg-orange-500'
-      case 'offline': return 'bg-gray-500'
+      case 'offline': return 'bg-zinc-400'
       case 'busy': return 'bg-blue-500'
-      default: return 'bg-gray-500'
+      default: return 'bg-zinc-400'
     }
   }
 
-  function getPriorityColor(priority: string) {
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30'
+      case 'break': return 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/30'
+      case 'lunch': return 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-500/30'
+      case 'offline': return 'bg-zinc-100 dark:bg-zinc-500/20 text-zinc-700 dark:text-zinc-400 border-zinc-200 dark:border-zinc-500/30'
+      case 'busy': return 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30'
+      default: return 'bg-zinc-100 dark:bg-zinc-500/20 text-zinc-700 dark:text-zinc-400'
+    }
+  }
+
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'low': return 'text-green-600 border-green-600'
-      case 'medium': return 'text-yellow-600 border-yellow-600'
-      case 'high': return 'text-orange-600 border-orange-600'
-      case 'urgent': return 'text-red-600 border-red-600'
-      default: return 'text-gray-600 border-gray-600'
-    }
-  }
-
-  function getTrendIcon(trend: string) {
-    switch (trend) {
-      case 'increasing': return <TrendingUp className="h-4 w-4 text-red-500" />
-      case 'decreasing': return <ChevronDown className="h-4 w-4 text-green-500" />
-      case 'stable': return <Minus className="h-4 w-4 text-blue-500" />
-      default: return <Minus className="h-4 w-4 text-gray-500" />
+      case 'low': return 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400'
+      case 'medium': return 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400'
+      case 'high': return 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400'
+      case 'urgent': return 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400'
+      default: return 'bg-zinc-100 dark:bg-zinc-500/20 text-zinc-700 dark:text-zinc-400'
     }
   }
 
   const activeEmployees = employees.filter(emp => emp.status === 'active' || emp.status === 'busy')
   const onBreakEmployees = employees.filter(emp => emp.status === 'break' || emp.status === 'lunch')
   const pendingTasks = tasks.filter(task => task.status === 'pending')
-  const overdueTasks = tasks.filter(task => task.status === 'overdue')
+  const avgPerformance = Math.round(employees.reduce((acc, emp) => acc + emp.performance, 0) / employees.length)
+
+  // Metric Card Component
+  const MetricCard = ({ title, value, subtitle, icon: Icon, gradient }: { title: string, value: string | number, subtitle: string, icon: any, gradient: string }) => (
+    <div className="relative group">
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl blur-xl -z-10" style={{ background: gradient }} />
+      <div className="p-5 rounded-2xl bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:border-zinc-300 dark:hover:border-zinc-600">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{title}</p>
+            <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{value}</div>
+            <p className="text-xs text-zinc-500">{subtitle}</p>
+          </div>
+          <div className="p-3 rounded-xl" style={{ background: gradient }}>
+            <Icon className="h-5 w-5 text-white" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 
   return (
-    <div className="flex flex-col h-full p-4 space-y-6 overflow-y-auto">
+    <div className="flex flex-col h-full bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900 overflow-y-auto">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Users className="h-5 w-5 text-orange-600" />
-          <h2 className="text-xl font-semibold">Staff Management - {fragment.store_name}</h2>
-          <Badge variant="outline" className="border-orange-200 text-orange-700">{fragment.shift_period}</Badge>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-muted-foreground">Auto-assign:</span>
-            <Button
-              onClick={() => setAutoAssignEnabled(!autoAssignEnabled)}
-              variant={autoAssignEnabled ? 'default' : 'outline'}
-              size="sm"
-              className={autoAssignEnabled ? 'bg-orange-500 hover:bg-orange-600' : 'border-orange-200 text-orange-700 hover:bg-orange-50'}
-            >
-              {autoAssignEnabled ? <Zap className="h-4 w-4" /> : <ZapOff className="h-4 w-4" />}
+      <div className="sticky top-0 z-20 backdrop-blur-xl bg-white/80 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800">
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center space-x-4">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 shadow-lg shadow-pink-500/25">
+              <Users className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Staff Management</h2>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">{fragment.store_name}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800">
+              <span className="text-sm text-zinc-600 dark:text-zinc-400">Auto-assign:</span>
+              <Button
+                onClick={() => setAutoAssignEnabled(!autoAssignEnabled)}
+                variant="ghost"
+                size="sm"
+                className={`rounded-lg ${autoAssignEnabled ? 'bg-pink-100 dark:bg-pink-500/20 text-pink-700 dark:text-pink-400' : ''}`}
+              >
+                <Zap className={`h-4 w-4 ${autoAssignEnabled ? 'text-pink-500' : 'text-zinc-400'}`} />
+              </Button>
+            </div>
+            <Badge variant="secondary" className="rounded-xl px-3 py-1">
+              <Clock className="h-3 w-3 mr-1" />
+              {fragment.shift_period}
+            </Badge>
+            <Button onClick={refreshData} variant="outline" size="sm" className="rounded-xl">
+              <RefreshCw className="h-4 w-4" />
             </Button>
           </div>
-          <Select value={optimizationMode} onValueChange={(value: any) => setOptimizationMode(value)}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="efficiency">Efficiency</SelectItem>
-              <SelectItem value="coverage">Coverage</SelectItem>
-              <SelectItem value="balanced">Balanced</SelectItem>
-            </SelectContent>
-          </Select>
-          <span className="text-sm text-muted-foreground">
-            Updated: {lastUpdated.toLocaleTimeString()}
-          </span>
-          <Button
-            onClick={refreshData}
-            variant="outline"
-            size="sm"
-            className="h-8"
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-orange-100 dark:border-orange-900/30">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Staff</CardTitle>
-            <UserCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeEmployees.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {Math.round((activeEmployees.length / employees.length) * 100)}% of total staff
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-orange-100 dark:border-orange-900/30">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">On Break</CardTitle>
-            <Coffee className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{onBreakEmployees.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {breakSchedules.filter(b => b.status === 'active').length} scheduled breaks
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-orange-100 dark:border-orange-900/30">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Tasks</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{pendingTasks.length}</div>
-            <p className="text-xs text-red-600">
-              {overdueTasks.length} overdue tasks
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-orange-100 dark:border-orange-900/30">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Performance</CardTitle>
-            <Star className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {Math.round(employees.reduce((acc, emp) => acc + emp.performance, 0) / employees.length)}%
-            </div>
-            <p className="text-xs text-green-600">
-              +5% from last week
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Current Staff Status - Scrollable with Fixed Height */}
-        <Card className="lg:col-span-2 border-orange-100 dark:border-orange-900/30">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center space-x-2">
-                <Users className="h-4 w-4 text-orange-600" />
-                <span>Current Staff Status</span>
-              </CardTitle>
-              <div className="flex space-x-2">
-                <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Depts</SelectItem>
-                    <SelectItem value="sales">Sales</SelectItem>
-                    <SelectItem value="operations">Operations</SelectItem>
-                    <SelectItem value="security">Security</SelectItem>
-                    <SelectItem value="management">Management</SelectItem>
-                  </SelectContent>
-                </Select>
+      <div className="p-6 space-y-6">
+        {/* Real-time Status Bar */}
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-pink-500/10 via-rose-500/10 to-red-500/10 border border-pink-200 dark:border-pink-500/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Live Tracking</span>
+              </div>
+              <div className="flex items-center space-x-4 text-sm">
+                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-800/50">
+                  <UserCheck className="h-4 w-4 text-emerald-500" />
+                  <span className="font-medium">{activeEmployees.length}</span>
+                  <span className="text-zinc-500">Active</span>
+                </div>
+                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-800/50">
+                  <Coffee className="h-4 w-4 text-amber-500" />
+                  <span className="font-medium">{onBreakEmployees.length}</span>
+                  <span className="text-zinc-500">On Break</span>
+                </div>
+                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-800/50">
+                  <Target className="h-4 w-4 text-blue-500" />
+                  <span className="font-medium">{pendingTasks.length}</span>
+                  <span className="text-zinc-500">Pending Tasks</span>
+                </div>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="h-full">
-            {/* Fixed height container with scrolling - This div will expand to fill its parent */}
-            <div className="h-full overflow-y-auto space-y-3 pr-2">
-              {employees.map((employee) => (
-                <div key={employee.id} className="flex items-center justify-between p-3 border rounded-lg border-orange-100 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors">
-                  <div className="flex items-center space-x-3">
+            <span className="text-xs text-zinc-500">Updated: {lastUpdated.toLocaleTimeString()}</span>
+          </div>
+        </div>
+
+        {/* Key Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard
+            title="Active Staff"
+            value={activeEmployees.length}
+            subtitle={`${Math.round((activeEmployees.length / employees.length) * 100)}% on duty`}
+            icon={UserCheck}
+            gradient="linear-gradient(135deg, #10b981 0%, #059669 100%)"
+          />
+          <MetricCard
+            title="On Break"
+            value={onBreakEmployees.length}
+            subtitle="Scheduled breaks"
+            icon={Coffee}
+            gradient="linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
+          />
+          <MetricCard
+            title="Pending Tasks"
+            value={pendingTasks.length}
+            subtitle={`${tasks.filter(t => t.priority === 'urgent').length} urgent`}
+            icon={Target}
+            gradient="linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)"
+          />
+          <MetricCard
+            title="Avg Performance"
+            value={`${avgPerformance}%`}
+            subtitle="+5% from last week"
+            icon={Star}
+            gradient="linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)"
+          />
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Current Staff Status */}
+          <div className="lg:col-span-2 p-6 rounded-2xl bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600">
+                  <Users className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">Team Status</h3>
+                  <p className="text-sm text-zinc-500">{employees.length} total members</p>
+                </div>
+              </div>
+              <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                <SelectTrigger className="w-36 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value="all">All Depts</SelectItem>
+                  <SelectItem value="Sales">Sales</SelectItem>
+                  <SelectItem value="Operations">Operations</SelectItem>
+                  <SelectItem value="Security">Security</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+              {employees
+                .filter(emp => selectedDepartment === 'all' || emp.department === selectedDepartment)
+                .map((employee) => (
+                <div
+                  key={employee.id}
+                  className="flex items-center justify-between p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700/50 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all"
+                >
+                  <div className="flex items-center space-x-4">
                     <div className="relative">
-                      <Image
-                        src={employee.avatar}
-                        alt={employee.name}
-                        width={48}
-                        height={48}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-orange-200"
-                      />
-                      <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${getStatusColor(employee.status)}`} />
+                      <div className="w-12 h-12 rounded-xl overflow-hidden bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white font-bold">
+                        {employee.initials}
+                      </div>
+                      <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-zinc-800 ${getStatusColor(employee.status)}`} />
                     </div>
                     <div>
-                      <div className="font-medium">{employee.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {employee.role} • {employee.location}
-                      </div>
+                      <div className="font-medium text-zinc-900 dark:text-zinc-100">{employee.name}</div>
+                      <div className="text-sm text-zinc-500">{employee.role} - {employee.location}</div>
                       {employee.currentTask && (
-                        <div className="text-xs text-orange-600">
-                          Current: {employee.currentTask}
+                        <div className="text-xs text-pink-600 dark:text-pink-400 mt-1">
+                          <span className="inline-flex items-center">
+                            <Activity className="h-3 w-3 mr-1" />
+                            {employee.currentTask}
+                          </span>
                         </div>
                       )}
                     </div>
                   </div>
-                  <div className="text-right space-y-1">
-                    <Badge variant="outline" className="text-xs border-orange-200 text-orange-700">
+                  <div className="text-right space-y-2">
+                    <Badge className={`text-xs ${getStatusBadgeColor(employee.status)}`}>
                       {employee.status}
                     </Badge>
-                    <div className="text-xs text-muted-foreground">
-                      {employee.shiftStart} - {employee.shiftEnd}
-                    </div>
-                    <div className="flex items-center space-x-1 text-xs">
-                      <Star className="h-3 w-3 text-yellow-500" />
-                      <span>{employee.performance}%</span>
+                    <div className="text-xs text-zinc-500">{employee.shiftStart} - {employee.shiftEnd}</div>
+                    <div className="flex items-center justify-end space-x-1 text-xs">
+                      <Star className="h-3 w-3 text-amber-500" />
+                      <span className="font-medium">{employee.performance}%</span>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Crowd Monitoring & Auto-Assignment */}
-        <Card className="border-orange-100 dark:border-orange-900/30">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <BarChart3 className="h-4 w-4 text-orange-600" />
-              <span>Crowd Monitoring</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+          {/* Crowd Monitoring */}
+          <div className="p-6 rounded-2xl bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600">
+                <BarChart3 className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">Crowd Monitoring</h3>
+                <p className="text-sm text-zinc-500">Real-time location data</p>
+              </div>
+            </div>
+
             <div className="space-y-4">
-              {crowdData.slice(0, 6).map((area, index) => (
+              {crowdData.map((area, index) => (
                 <div key={index} className="space-y-2">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center space-x-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">{area.location}</span>
-                      {getTrendIcon(area.trend)}
+                      <MapPin className="h-4 w-4 text-zinc-400" />
+                      <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{area.location}</span>
+                      {area.trend === 'increasing' && <TrendingUp className="h-3 w-3 text-red-500" />}
+                      {area.trend === 'decreasing' && <TrendingUp className="h-3 w-3 text-emerald-500 rotate-180" />}
                     </div>
-                    <Badge 
-                      variant="outline" 
-                      className={area.priority === 'high' ? 'border-red-500 text-red-600' : 
-                                 area.priority === 'medium' ? 'border-yellow-500 text-yellow-600' : 
-                                 'border-green-500 text-green-600'}
-                    >
+                    <Badge className={getPriorityColor(area.priority)} variant="secondary">
                       {area.priority}
                     </Badge>
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Current: {area.currentCount} | Avg: {area.averageCount} | Peak: {area.peakTime}
+                  <div className="text-xs text-zinc-500">
+                    {area.currentCount} visitors - Staff: {area.staffAssigned}/{area.staffNeeded}
                   </div>
-                  <div className="flex justify-between text-xs">
-                    <span>Staff: {area.staffAssigned}/{area.staffNeeded}</span>
-                    {area.staffAssigned < area.staffNeeded && autoAssignEnabled && (
-                      <Button size="sm" variant="outline" className="h-6 text-xs border-orange-200 text-orange-700 hover:bg-orange-50">
-                        <UserPlus className="h-3 w-3 mr-1" />
-                        Auto-assign
-                      </Button>
-                    )}
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div 
-                      className={`h-2 rounded-full ${
-                        area.staffAssigned >= area.staffNeeded ? 'bg-green-500' : 
-                        area.staffAssigned >= area.staffNeeded * 0.7 ? 'bg-yellow-500' : 'bg-red-500'
+                  <div className="h-2 bg-zinc-100 dark:bg-zinc-700 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        area.staffAssigned >= area.staffNeeded ? 'bg-emerald-500' :
+                        area.staffAssigned >= area.staffNeeded * 0.7 ? 'bg-amber-500' : 'bg-red-500'
                       }`}
                       style={{ width: `${Math.min((area.staffAssigned / area.staffNeeded) * 100, 100)}%` }}
                     />
                   </div>
+                  {area.staffAssigned < area.staffNeeded && autoAssignEnabled && (
+                    <Button size="sm" variant="outline" className="h-7 text-xs rounded-lg w-full">
+                      <UserPlus className="h-3 w-3 mr-1" />
+                      Auto-assign Staff
+                    </Button>
+                  )}
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
 
-      {/* Task Management */}
-      <Card className="border-orange-100 dark:border-orange-900/30">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <CheckCircle className="h-4 w-4 text-orange-600" />
-            <span>Task Assignment & Tracking</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Pending Tasks */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-sm">Pending Tasks ({pendingTasks.length})</h4>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {pendingTasks.slice(0, 8).map((task) => (
-                  <div key={task.id} className="p-3 border rounded-lg border-orange-100 dark:border-orange-900/30">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">{task.title}</div>
-                        <div className="text-xs text-muted-foreground">{task.location}</div>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>
-                            {task.priority}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {task.estimatedTime}min
-                          </span>
-                        </div>
-                      </div>
-                      <Button size="sm" variant="outline" className="h-6 text-xs border-orange-200 text-orange-700 hover:bg-orange-50">
-                        <UserPlus className="h-3 w-3 mr-1" />
-                        Assign
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+        {/* Task Management */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Pending Tasks */}
+          <div className="p-6 rounded-2xl bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600">
+                  <Target className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">Pending Tasks</h3>
+                  <p className="text-sm text-zinc-500">{pendingTasks.length} tasks waiting</p>
+                </div>
               </div>
             </div>
 
-            {/* Active Tasks */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-sm">Active Tasks ({tasks.filter(t => t.status === 'in_progress').length})</h4>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {tasks.filter(t => t.status === 'in_progress').slice(0, 8).map((task) => {
-                  const assignedEmployee = employees.find(emp => emp.id === task.assignedTo)
-                  return (
-                    <div key={task.id} className="p-3 border rounded-lg border-orange-100 dark:border-orange-900/30">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="font-medium text-sm">{task.title}</div>
-                          <div className="text-xs text-muted-foreground">{task.location}</div>
-                          {assignedEmployee && (
-                            <div className="text-xs text-orange-600 mt-1">
-                              Assigned to: {assignedEmployee.name}
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex space-x-1">
-                          <Button size="sm" variant="outline" className="h-6 text-xs">
-                            <Eye className="h-3 w-3" />
-                          </Button>
-                          <Button size="sm" variant="outline" className="h-6 text-xs">
-                            <MessageSquare className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
+            <div className="space-y-3 max-h-[280px] overflow-y-auto">
+              {pendingTasks.map((task) => (
+                <div key={task.id} className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700/50">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="font-medium text-zinc-900 dark:text-zinc-100 text-sm">{task.title}</div>
+                      <div className="text-xs text-zinc-500 mt-1">{task.location} - {task.estimatedTime}min</div>
+                      <Badge className={`text-xs mt-2 ${getPriorityColor(task.priority)}`}>
+                        {task.priority}
+                      </Badge>
                     </div>
-                  )
-                })}
-              </div>
+                    <Button size="sm" variant="outline" className="rounded-lg h-8">
+                      <UserPlus className="h-3 w-3 mr-1" />
+                      Assign
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Break Schedule Optimization */}
-      <Card className="border-orange-100 dark:border-orange-900/30">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4 text-orange-600" />
-            <span>Break Schedule Optimization</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Current Break Schedule */}
-            <div className="lg:col-span-2 space-y-3">
-              <h4 className="font-medium text-sm">Today&apos;s Break Schedule</h4>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {breakSchedules.map((breakSched, index) => {
-                  const employee = employees.find(emp => emp.id === breakSched.employeeId)
-                  return (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg border-orange-100 dark:border-orange-900/30">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-3 h-3 rounded-full ${
-                          breakSched.status === 'active' ? 'bg-yellow-500' :
-                          breakSched.status === 'completed' ? 'bg-green-500' :
-                          breakSched.status === 'missed' ? 'bg-red-500' : 'bg-blue-500'
-                        }`} />
-                        <div>
-                          <div className="font-medium text-sm">{employee?.name}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {breakSched.breakType} • {breakSched.duration}min
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium">
-                          {breakSched.startTime} - {breakSched.endTime}
-                        </div>
-                        <Badge variant="outline" className="text-xs border-orange-200 text-orange-700">
-                          {breakSched.status}
-                        </Badge>
-                      </div>
-                    </div>
-                  )
-                })}
+          {/* Alerts & Notifications */}
+          <div className="p-6 rounded-2xl bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-red-500 to-rose-600">
+                <Bell className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">Alerts</h3>
+                <p className="text-sm text-zinc-500">Requires attention</p>
               </div>
             </div>
 
-            {/* Optimization Controls */}
-            <div className="space-y-4">
-              <h4 className="font-medium text-sm">Optimization Settings</h4>
-              
-              <div className="space-y-3">
-                <div className="p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Zap className="h-4 w-4 text-orange-600" />
-                    <span className="text-sm font-medium">Auto-Optimization</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-2">
-                    Automatically optimize break schedules based on crowd patterns
-                  </p>
-                  <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600">
-                    Enable Auto-Optimize
-                  </Button>
-                </div>
-
-                <div className="p-3 border rounded-lg border-orange-100 dark:border-orange-900/30">
-                  <div className="text-sm font-medium mb-2">Coverage Analysis</div>
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between">
-                      <span>Peak Hours Covered:</span>
-                      <span className="text-green-600">85%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Min Staff Maintained:</span>
-                      <span className="text-green-600">✓</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Break Conflicts:</span>
-                      <span className="text-red-600">2</span>
-                    </div>
-                  </div>
-                </div>
-
-                <Button size="sm" variant="outline" className="w-full border-orange-200 text-orange-700 hover:bg-orange-50">
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  Regenerate Schedule
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Performance Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-orange-100 dark:border-orange-900/30">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Activity className="h-4 w-4 text-orange-600" />
-              <span>Performance Metrics</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">
-                    {Math.round(tasks.filter(t => t.status === 'completed').length / tasks.length * 100)}%
-                  </div>
-                  <div className="text-xs text-muted-foreground">Task Completion</div>
-                </div>
-                <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">
-                    {Math.round(employees.reduce((acc, emp) => acc + emp.efficiency, 0) / employees.length)}%
-                  </div>
-                  <div className="text-xs text-muted-foreground">Avg Efficiency</div>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <h5 className="text-sm font-medium">Top Performers</h5>
-                {employees
-                  .sort((a, b) => b.performance - a.performance)
-                  .slice(0, 5)
-                  .map((emp, index) => (
-                    <div key={emp.id} className="flex items-center justify-between text-sm">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-muted-foreground">#{index + 1}</span>
-                        <span>{emp.name}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Star className="h-3 w-3 text-yellow-500" />
-                        <span>{emp.performance}%</span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-orange-100 dark:border-orange-900/30">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Bell className="h-4 w-4 text-orange-600" />
-              <span>Alerts & Notifications</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
             <div className="space-y-3">
-              <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
                 <div className="flex items-center space-x-2">
-                  <AlertTriangle className="h-4 w-4 text-red-600" />
-                  <span className="text-sm font-medium text-red-600">High Priority</span>
+                  <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                  <span className="text-sm font-medium text-red-700 dark:text-red-300">High Priority</span>
                 </div>
-                <p className="text-xs text-red-600 mt-1">
-                  Checkout area understaffed - 3 additional staff needed
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                  Checkout area needs 1 more staff member
                 </p>
               </div>
 
-              <div className="p-3 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+              <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
                 <div className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4 text-yellow-600" />
-                  <span className="text-sm font-medium text-yellow-600">Break Reminder</span>
+                  <Timer className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                  <span className="text-sm font-medium text-amber-700 dark:text-amber-300">Break Reminder</span>
                 </div>
-                <p className="text-xs text-yellow-600 mt-1">
-                  Sarah Johnson&apos;s break starts in 15 minutes
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                  Mike Chen's break is overdue by 15 minutes
                 </p>
               </div>
 
-              <div className="p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
                 <div className="flex items-center space-x-2">
-                  <Target className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-600">Task Update</span>
+                  <Award className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Achievement</span>
                 </div>
-                <p className="text-xs text-blue-600 mt-1">
-                  Inventory count completed ahead of schedule
-                </p>
-              </div>
-
-              <div className="p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <Award className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-600">Achievement</span>
-                </div>
-                <p className="text-xs text-green-600 mt-1">
+                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
                   Team exceeded daily productivity target by 12%
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+
+        {/* Performance Summary */}
+        <div className="p-6 rounded-2xl bg-gradient-to-r from-pink-500/10 via-rose-500/10 to-red-500/10 border border-pink-200 dark:border-pink-500/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 rounded-xl bg-pink-100 dark:bg-pink-500/20">
+                <Sparkles className="h-5 w-5 text-pink-600 dark:text-pink-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">AI Optimization Available</h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                  Optimize schedules based on predicted crowd patterns
+                </p>
+              </div>
+            </div>
+            <Button className="rounded-xl bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700">
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Optimize Schedule
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
-  )
-}
-
-// Helper component for ZapOff icon (since it's not in lucide-react)
-function ZapOff({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      height="24"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-      width="24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M10.513 4.856 13.12 2.17a.5.5 0 0 1 .86.46l-1.377 4.317" />
-      <path d="M15.656 10H20a1 1 0 0 1 .78 1.63L18.5 14.5" />
-      <path d="M7.5 10.5 2.22 15.78a.5.5 0 0 0 .78.78L9.5 10" />
-      <path d="m2 2 20 20" />
-    </svg>
   )
 }
